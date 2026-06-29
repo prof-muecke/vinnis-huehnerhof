@@ -389,6 +389,24 @@
   .e-deep-txt{font-weight:800;font-size:15px;line-height:1.4;color:#3f2e6e}
   .e-deep-txt small{font-weight:700;color:#8a7bb0}
 
+  /* frag hilde (sprache) */
+  .mc-ask .modicon{background:#fde7ef}
+  .ask-convo{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:8px 14px}
+  .ask-msg{display:flex;max-width:92%}
+  .ask-msg.me{align-self:flex-end}.ask-msg.hilde{align-self:flex-start}
+  .ask-bub{border:2px solid #fff;border-radius:18px;padding:11px 14px;font-weight:800;font-size:16px;line-height:1.38;box-shadow:var(--shadow);background:linear-gradient(#fffefb,#fff5e4);color:var(--ink)}
+  .ask-msg.me .ask-bub{background:linear-gradient(var(--good),var(--good-deep));color:#fff}
+  .ask-chips{display:flex;flex-wrap:wrap;gap:8px;padding:4px 14px;justify-content:center}
+  .ask-chip{font-family:inherit;border:2px solid #fff;background:var(--paper);border-radius:30px;padding:8px 13px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink-soft)}
+  .ask-chip:active{transform:translateY(2px)}
+  .ask-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:6px 14px 8px}
+  .ask-mic{font-family:inherit;border:none;cursor:pointer;width:76px;height:76px;border-radius:50%;font-size:34px;background:linear-gradient(var(--barn),var(--barn-deep));color:#fff;box-shadow:var(--soft)}
+  .ask-mic:active{transform:translateY(3px)}
+  .ask-mic.listening{background:linear-gradient(#e3735f,#c0392b);animation:micpulse 1s ease-in-out infinite}
+  .ask-mic.thinking{background:linear-gradient(#9ad2ee,#5a9fd4)}
+  @keyframes micpulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(227,115,95,.5)}50%{transform:scale(1.08);box-shadow:0 0 0 16px rgba(227,115,95,0)}}
+  @media (prefers-reduced-motion:reduce){.ask-mic.listening{animation:none}}
+
   /* EXPLORE */
   .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
   .topic{flex:0 0 auto;border:2px solid #fff;background:var(--paper);border-radius:30px;padding:7px 13px;
@@ -554,6 +572,7 @@
       <div class="modcards">
         <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
         <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
+        <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
         <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
         <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
@@ -776,6 +795,19 @@
       <div style="height:12px"></div>
     </div>
 
+    <!-- FRAG HILDE (Sprache) -->
+    <div class="screen" id="ask">
+      <div class="hilde-row"><div class="hilde" id="ask-hilde"></div><div class="bubble" id="ask-bubble">Frag mich alles! Tippe auf 🎤 und sprich.</div></div>
+      <div class="ki-row"><span id="ask-ki-status" class="ki-status"></span><button id="ask-ki-btn" class="ki-btn">⚙️ KI</button></div>
+      <div class="ask-convo" id="ask-convo"></div>
+      <div class="ask-chips" id="ask-chips"></div>
+      <div class="ask-controls">
+        <button class="hbtn" id="ask-replay" style="display:none">🔊 Nochmal</button>
+        <button class="ask-mic" id="ask-mic" aria-label="Sprechen">🎤</button>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+
     <!-- BÖRSE -->
     <div class="screen" id="boerse">
       <div class="hilde-row"><div class="hilde" id="boerse-hilde"></div><div class="bubble" id="boerse-bubble">Willkommen an der Hühner-Börse!</div></div>
@@ -926,7 +958,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -951,8 +983,9 @@
   function closeBreathe(){$("overlay").classList.remove("show");clearInterval(bt);say("Schön durchgeatmet. Probier es ruhig nochmal. 🐔",true);}
 
   /* ---------- router ---------- */
-  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false};
+  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false,ask:false};
   function show(name){
+    try{if(typeof ASK!=="undefined"&&ASK&&ASK.stop)ASK.stop();}catch(_s){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
     try{
@@ -969,6 +1002,7 @@
     if(name==="tractor"&&!inited.tractor){inited.tractor=true;TR.start();}
     if(name==="game"&&!inited.game){inited.game=true;GAME.start();}
     if(name==="boerse"&&!inited.boerse){inited.boerse=true;BOERSE.start();}
+    if(name==="ask"&&!inited.ask){inited.ask=true;ASK.start();}
     if(name==="math")M.say0();
     if(name==="code")C.say0();
     if(name==="explore")E.say0();
@@ -1921,8 +1955,52 @@
     return {start:start,buy:buy,sell:sell,next:nextDay};
   })();
 
+  /* ===================== FRAG HILDE (Sprache, sokratisch) ===================== */
+  var ASK=(function(){
+    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    var rec=null,listening=false,busy=false,lastAnswer="",msgs=[];
+    var SYS="Du bist Hilde, ein warmherziges, kluges Huhn und die beste Freundin von Vinni (7 Jahre, hochbegabt, deutschsprachig). Beantworte seine Fragen über die ganze Welt kindgerecht, fröhlich und sachlich korrekt, aber KURZ (2 bis 4 Sätze). Sprich ihn mit „du“ an. Erkläre auch schwierige Dinge einfach, ohne kindisch zu wirken – fordere seinen klugen Kopf. Stelle am ENDE IMMER genau eine kurze, neugierig machende Rückfrage, die ihn zum Weiterdenken anregt. Bei gruseligen, gewalttätigen, traurigen oder nicht kindgerechten Themen lenke sanft und liebevoll ab und schlage etwas Spannendes vor. Antworte nur mit normalem Fließtext (kein Markdown, keine Aufzählung, höchstens 1 Emoji).";
+    var CHIPS=["Warum ist der Himmel blau?","Wie funktioniert ein Vulkan?","Warum können Vögel fliegen?","Was ist ein Schwarzes Loch?","Warum müssen wir schlafen?","Wie weit ist der Mond weg?","Warum ist das Meer salzig?","Wie entsteht ein Regenbogen?","Warum haben Zebras Streifen?","Was ist der größte Dinosaurier?","Wie wächst eine Pflanze?","Warum gibt es Tag und Nacht?"];
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function kiStatus(){var s=$("ask-ki-status");if(!s)return;s.textContent=aiKey()?"🔌 KI aktiv – sprich mit Hilde":"💡 Zum Sprechen mit Hilde: KI aktivieren ⚙️";}
+    function setupKi(){
+      if(aiKey()){if(window.confirm("KI-Schlüssel entfernen? Danach kann Hilde nicht mehr frei sprechen.")){try{window.localStorage.removeItem("vinni_ai_key");}catch(e){}kiStatus();toast("KI-Schlüssel entfernt");}return;}
+      var v=null;try{v=window.prompt("Für Erwachsene:\n\nAnthropic API-Schlüssel einfügen, damit Hilde frei sprechen und antworten kann.\n\nWird NUR lokal auf diesem Gerät gespeichert.\n\nLeer lassen zum Abbrechen.");}catch(e){v=null;}
+      if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}kiStatus();toast("KI aktiviert ✨");}
+    }
+    function speak(t){if(!("speechSynthesis"in window))return;try{window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=1;u.pitch=1.1;var vs=window.speechSynthesis.getVoices()||[];var de=vs.filter(function(v){return /^de/i.test(v.lang||"");});if(de.length)u.voice=de[0];window.speechSynthesis.speak(u);}catch(e){}}
+    function renderConvo(){var c=$("ask-convo");if(!c)return;c.innerHTML="";msgs.slice(-8).forEach(function(m){var d=document.createElement("div");d.className="ask-msg "+(m.role==="user"?"me":"hilde");d.innerHTML='<span class="ask-bub">'+esc(m.content)+"</span>";c.appendChild(d);});c.scrollTop=c.scrollHeight;}
+    function setMic(state){var b=$("ask-mic");if(!b)return;b.classList.remove("listening","thinking");if(state==="listening")b.classList.add("listening");if(state==="thinking")b.classList.add("thinking");b.textContent=state==="thinking"?"…":"🎤";}
+    function chat(){var key=aiKey(),headers={"Content-Type":"application/json"};if(key){headers["x-api-key"]=key;headers["anthropic-version"]="2023-06-01";headers["anthropic-dangerous-direct-browser-access"]="true";}
+      return fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:headers,body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:320,system:SYS,messages:msgs.map(function(m){return {role:m.role,content:m.content};})})}).then(function(r){return r.json();}).then(function(d){var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim();if(!t)throw new Error("empty");return t;});}
+    function ask(text){
+      if(busy||!text)return;text=(""+text).trim();if(!text)return;
+      if(!aiKey()){kiStatus();say("Damit Hilde mit dir sprechen kann, muss ein Erwachsener kurz die KI aktivieren (⚙️ oben).");return;}
+      busy=true;setMic("thinking");msgs.push({role:"user",content:text});if(msgs.length>12)msgs=msgs.slice(-12);renderConvo();$("ask-bubble").textContent="Hmm, lass mich überlegen … 🤔";$("ask-replay").style.display="none";
+      chat().then(function(ans){msgs.push({role:"assistant",content:ans});lastAnswer=ans;renderConvo();$("ask-bubble").textContent="Frag ruhig weiter! 🎤";$("ask-replay").style.display="";addEgg(1);speak(ans);busy=false;setMic("idle");}).catch(function(){msgs.pop();renderConvo();$("ask-bubble").textContent="Oje, das hat gerade nicht geklappt. Probier es bitte nochmal.";busy=false;setMic("idle");});
+    }
+    function startListen(){
+      if(busy)return;
+      if(!aiKey()){kiStatus();say("Bitte zuerst die KI aktivieren (⚙️ – für Erwachsene).");return;}
+      if(!SR){say("Sprechen geht auf diesem Gerät leider nicht. Tippe unten eine Frage an – ich antworte trotzdem mit Stimme!");return;}
+      if(listening){try{rec.stop();}catch(e){}return;}
+      try{rec=new SR();rec.lang="de-DE";rec.interimResults=false;rec.maxAlternatives=1;
+        rec.onstart=function(){listening=true;setMic("listening");$("ask-bubble").textContent="Ich höre zu … 👂 Sprich los!";};
+        rec.onresult=function(ev){try{var t=ev.results[0][0].transcript;listening=false;ask(t);}catch(e){listening=false;setMic("idle");}};
+        rec.onerror=function(){listening=false;if(!busy)setMic("idle");$("ask-bubble").textContent="Ich hab dich nicht ganz verstanden. Tipp nochmal auf 🎤 oder wähl unten eine Frage.";};
+        rec.onend=function(){listening=false;if(!busy)setMic("idle");};
+        rec.start();
+      }catch(e){say("Sprechen konnte nicht gestartet werden – wähl unten eine Frage.");setMic("idle");}
+    }
+    function buildChips(){var c=$("ask-chips");if(!c)return;c.innerHTML="";shuf(CHIPS).slice(0,4).forEach(function(q){var b=document.createElement("button");b.className="ask-chip";b.textContent=q;b.onclick=function(){ask(q);};c.appendChild(b);});}
+    function stop(){try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}try{if(rec&&listening)rec.stop();}catch(e){}listening=false;}
+    function start(){kiStatus();buildChips();renderConvo();var kb=$("ask-ki-btn");if(kb)kb.onclick=setupKi;var m=$("ask-mic");if(m&&!SR)m.style.opacity=".55";say(SR?"Frag mich alles! Tippe auf 🎤 und sprich – oder wähl unten eine Frage.":"Tippe unten eine Frage an – ich antworte und spreche mit dir! 🔊");}
+    return {start:start,mic:startListen,replay:function(){if(lastAnswer)speak(lastAnswer);},ask:ask,stop:stop};
+  })();
+
   /* ---------- wire up ---------- */
-  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
   $("homebtn").onclick=function(){show("home");};
@@ -1942,6 +2020,7 @@
   $("g-breathe").onclick=openBreathe;$("g-restart").onclick=function(){GAME.start();};$("g-next").onclick=function(){GAME.next();};
   $("g-mode-relax").onclick=function(){GAME.setMode(false);};$("g-mode-time").onclick=function(){GAME.setMode(true);};
   $("bo-buy").onclick=function(){BOERSE.buy();};$("bo-sell").onclick=function(){BOERSE.sell();};$("bo-next").onclick=function(){BOERSE.next();};
+  $("ask-mic").onclick=function(){ASK.mic();};$("ask-replay").onclick=function(){ASK.replay();};
   $("breathDone").onclick=closeBreathe;
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
