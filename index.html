@@ -756,12 +756,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:10,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:11,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
-    decos:_ld.decos||[],story:_ld.story||null};
+    decos:_ld.decos||[],story:_ld.story||null,
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[]};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;}
 
@@ -942,7 +943,13 @@
 
   /* ===================== EXPLORE MODULE (KI) ===================== */
   var E=(function(){
-    var st={diff:(G.eDiff||2),streak:0,recent:[],topic:"Überraschung",cur:null,answered:false,wrong:0,busy:false,eb:0};
+    var st={diff:(G.eDiff||2),streak:0,topic:"Überraschung",cur:null,answered:false,wrong:0,busy:false,firstTry:true,mode:"new",tick:0,target:null};
+    var DIFFMAX=12;
+    function levelDesc(d){if(d<=2)return "ganz leicht, erste Begriffe";if(d<=4)return "Grundschulwissen";if(d<=6)return "fortgeschrittenes Grundschulwissen, genauer";if(d<=8)return "weiterführend, wie ältere Schulkinder";if(d<=10)return "anspruchsvoll, überraschende Details";return "Experten-Niveau, sehr tiefgründig, aber kindgerecht erklärt";}
+    function seenAdd(q){if(!G.eSeen)G.eSeen=[];if(G.eSeen.indexOf(q)<0){G.eSeen.push(q);if(G.eSeen.length>24)G.eSeen.shift();}}
+    function revisitAdd(q){if(!q||!q.question)return;if(!G.eRevisit)G.eRevisit=[];if(!G.eRevisit.some(function(x){return x.question===q.question;})){G.eRevisit.push({question:q.question,options:q.options,correct:q.correct,hint:q.hint,explain:q.explain,topic:q.topic});if(G.eRevisit.length>12)G.eRevisit.shift();}}
+    function revisitDel(qt){if(G.eRevisit)G.eRevisit=G.eRevisit.filter(function(x){return x.question!==qt;});}
+    function masteredAdd(qt){if(!qt)return;if(!G.eMastered)G.eMastered=[];if(G.eMastered.indexOf(qt)<0){G.eMastered.push(qt);if(G.eMastered.length>40)G.eMastered.shift();}}
     var TOPICS=["Überraschung","Weltall","Tiere","Körper","Natur","Erde & Länder","Wissenschaft","Technik","Mathe","Sprache","Hof & Hühner"];
     var praise=["Stark, dass du drangeblieben bist!","Richtig – klasse überlegt!","Dein Gehirn wird stärker. 💪","Super gemacht!","Genau! Ein Ei für den Hof.","Toll, weiter so!"];
     var BANK=[
@@ -1006,17 +1013,26 @@
       {topic:"Hof & Hühner",question:"Was brauchen Küken zum Schlüpfen vor allem?",options:["Wärme","Schnee","Dunkelheit"],correct:0,hint:"Die Henne setzt sich darauf.",explain:"Eier brauchen Wärme zum Wachsen und Schlüpfen."},
       {topic:"Hof & Hühner",question:"Wie viele Beine hat ein Huhn?",options:["2","4","6"],correct:0,hint:"Schau Hilde genau an.",explain:"Hühner sind Vögel und haben zwei Beine."}
     ];
-    function bankPick(){var byTopic=BANK.filter(function(q){return st.topic==="Überraschung"||q.topic===st.topic;});if(!byTopic.length)byTopic=BANK.slice();var pool=byTopic.filter(function(q){return st.recent.indexOf(q.question)<0;});if(!pool.length)pool=byTopic;return pool[Math.floor(Math.random()*pool.length)];}
-    function aiPrompt(){var t=st.topic==="Überraschung"?"irgendein wichtiges Wissensgebiet der großen weiten Welt: Weltall, Tiere, menschlicher Körper, Natur, Wetter, Erde & Länder, Geschichte, Wissenschaft, Technik, Erfindungen, Mathematik, Sprache, Kunst oder Musik":st.topic;
-      return ["Du bist Hilde, ein kluges, warmherziges Huhn, das einem 7-jährigen, hochbegabten deutschsprachigen Kind (Vinni) Wissen über die ganze Welt beibringt.",
-        "Erstelle GENAU EINE Multiple-Choice-Frage zum Thema: "+t+".",
-        "Ziel ist breites Allgemeinwissen über die Welt – NICHT über Hühner oder den Bauernhof. Nur ganz selten und nur wenn es perfekt passt, darf ein Hof-Bezug vorkommen.",
-        "Schwierigkeit: "+st.diff+" von 10. Passe Wortschatz und Tiefe an ein begabtes Kind an, aber bleibe sachlich korrekt.",
-        "Kindgerecht, positiv, faktisch richtig. KEINE gruseligen, gewalttätigen oder unangemessenen Inhalte.",
-        "Genau 3 Antwortmöglichkeiten, nur eine richtig.",
-        "Vermeide diese zuletzt gestellten Fragen: "+JSON.stringify(st.recent)+".",
-        "Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown, ohne Code-Zäune, exakt:",
-        '{"topic":"Thema","question":"die Frage","options":["A","B","C"],"correct":0,"hint":"Denkanstoß ohne Lösung","explain":"kurzer fröhlicher Erklärsatz"}'].join("\n");}
+    function bankPick(){var byTopic=BANK.filter(function(q){return st.topic==="Überraschung"||q.topic===st.topic;});if(!byTopic.length)byTopic=BANK.slice();var pool=byTopic.filter(function(q){return (G.eSeen||[]).indexOf(q.question)<0;});if(!pool.length)pool=byTopic;return pool[Math.floor(Math.random()*pool.length)];}
+    function aiPrompt(){var t=st.topic==="Überraschung"?"irgendein Wissensgebiet der großen weiten Welt – z.B. Weltall, Tiere, Pflanzen, menschlicher Körper, Natur, Wetter, Erde & Länder, Geschichte, berühmte Menschen, Wissenschaft, Physik, Chemie, Technik, Erfindungen, Mathematik, Sprache, Kunst oder Musik":st.topic;
+      var L=["Du bist Hilde, ein kluges, warmherziges Huhn, das einem 7-jährigen, hochbegabten deutschsprachigen Kind (Vinni) Wissen über die ganze Welt beibringt."];
+      if(st.mode==="revisit"&&st.target){
+        L.push("Vinni hatte mit diesem Wissen noch Schwierigkeiten: „"+st.target.question+"“ (richtig wäre: "+(st.target.options?st.target.options[st.target.correct]:"?")+"; "+(st.target.explain||"")+").");
+        L.push("Stelle GENAU EINE NEUE Multiple-Choice-Frage, die GENAU DASSELBE Wissen in ANDERER, klarer Form prüft, damit er es diesmal wirklich versteht. Etwas einfacher und sehr verständlich.");
+      } else if(st.mode==="review"&&st.target){
+        L.push("Vinni hat das hier schon einmal gelernt: „"+st.target.question+"“.");
+        L.push("Stelle GENAU EINE NEUE Multiple-Choice-Frage, die dieses Wissen in einer ANDEREN Form wiederholt und vertieft (anderer Blickwinkel, ein kleines bisschen anspruchsvoller).");
+      } else {
+        L.push("Erstelle GENAU EINE NEUE Multiple-Choice-Frage zum Themenfeld: "+t+".");
+        L.push("Ziel ist breites Weltwissen (Naturwissenschaften, Geschichte, Geografie, Kunst, Musik, Sprache, Mathematik, Technik, Kultur …) – NICHT über Hühner oder den Bauernhof.");
+      }
+      L.push("Schwierigkeit: Stufe "+st.diff+" ("+levelDesc(st.diff)+"). Wähle Wortschatz, Tiefe und Feinheit der Antworten passend – fordere ihn wirklich, ohne ihn zu überfordern. Bei höheren Stufen ruhig überraschende, tiefere Details.");
+      L.push("Kindgerecht, positiv, faktisch korrekt. KEINE gruseligen, gewalttätigen oder unangemessenen Inhalte.");
+      L.push("Genau 3 Antwortmöglichkeiten, nur eine richtig; die falschen sollen plausibel klingen.");
+      L.push("Stelle NICHT erneut diese zuletzt gestellten Fragen: "+JSON.stringify((G.eSeen||[]).slice(-12))+".");
+      L.push("Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown, ohne Code-Zäune, exakt:");
+      L.push('{"topic":"Thema","question":"die Frage","options":["A","B","C"],"correct":0,"hint":"Denkanstoß ohne Lösung","explain":"kurzer fröhlicher Erklärsatz"}');
+      return L.join("\n");}
     function valid(o){return o&&typeof o.question==="string"&&Array.isArray(o.options)&&o.options.length===3&&typeof o.correct==="number"&&o.correct>=0&&o.correct<3&&typeof o.explain==="string";}
     function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
     function askAI(){
@@ -1032,10 +1048,35 @@
     }
     function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
     function loading(){$("e-next").style.display="none";$("e-card").innerHTML='<div class="loading"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#ef9f1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde denkt sich etwas aus …</div></div>';}
-    function load(){if(st.busy)return;st.busy=true;st.answered=false;st.wrong=0;loading();askAI().catch(function(){return bankPick();}).then(function(q){st.cur=q;st.recent.push(q.question);if(st.recent.length>14)st.recent.shift();renderQ(q);st.busy=false;}).catch(function(){st.cur=bankPick();renderQ(st.cur);st.busy=false;});}
+    function load(){if(st.busy)return;st.busy=true;st.answered=false;st.wrong=0;st.firstTry=true;st.tick++;loading();
+      var rev=G.eRevisit||[],mas=G.eMastered||[];
+      if(rev.length&&st.tick%4===0){st.mode="revisit";st.target=rev[0];}
+      else if(mas.length>=6&&st.tick%7===0){st.mode="review";st.target={question:mas[Math.floor(Math.random()*mas.length)]};}
+      else{st.mode="new";st.target=null;}
+      var fallback=(st.mode==="revisit"&&st.target)?function(){return st.target;}:bankPick;
+      askAI().catch(fallback).then(function(q){st.cur=q;seenAdd(q.question);renderQ(q);st.busy=false;}).catch(function(){st.cur=(st.mode==="revisit"&&st.target)?st.target:bankPick();renderQ(st.cur);st.busy=false;});}
     function renderQ(q){$("e-card").innerHTML='<div class="qtopic">'+esc(q.topic||st.topic)+'</div><div class="question">'+esc(q.question)+'</div><div class="options" id="e-opts"></div>';var opts=$("e-opts");q.options.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};opts.appendChild(b);});say("Was meinst du, Vinni?");$("e-next").style.display="none";}
-    function choose(i,btn){if(st.answered)return;if(i===st.cur.correct){st.answered=true;btn.classList.add("right");document.querySelectorAll("#e-opts .opt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});st.streak++;var r=1+Math.floor((st.diff-1)/3);addEgg(r);say(pick(praise)+" "+(st.cur.explain||""),true);toast("Richtig! +"+r+" 🥚");if(st.streak>=3&&st.diff<10){st.diff++;st.streak=0;G.eDiff=st.diff;doSave();setTimeout(function(){toast("Schwerere Fragen! ⭐",true);},900);}$("e-next").style.display="";}else{btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;if(st.wrong>=2){if(st.diff>1){st.diff--;G.eDiff=st.diff;doSave();}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡. Du schaffst das.");pulse($("e-breathe"));}else{say("Fast! Probier eine andere Antwort. Tipp: "+(st.cur.hint||"Lies die Frage nochmal."));}}}
-    function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;st.recent=[];document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
+    function choose(i,btn){if(st.answered)return;
+      if(i===st.cur.correct){
+        st.answered=true;btn.classList.add("right");document.querySelectorAll("#e-opts .opt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});
+        var r=1+Math.floor((st.diff-1)/3);addEgg(r);say(pick(praise)+" "+(st.cur.explain||""),true);toast("Richtig! +"+r+" 🥚");
+        if(st.firstTry){
+          if(st.mode==="revisit"){revisitDel(st.cur.question);if(st.target)revisitDel(st.target.question);}
+          masteredAdd(st.cur.question);
+          st.streak++;
+          if(st.streak>=2&&st.diff<DIFFMAX){st.diff++;st.streak=0;G.eDiff=st.diff;setTimeout(function(){toast("Schwerere Fragen! ⭐",true);},900);}
+        }else{
+          if(st.mode!=="revisit")revisitAdd(st.cur);
+        }
+        doSave();$("e-next").style.display="";
+      }else{
+        btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.firstTry=false;st.streak=0;
+        if(st.mode!=="revisit")revisitAdd(st.cur);
+        if(st.wrong>=2){if(st.diff>1){st.diff--;G.eDiff=st.diff;}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡. Du schaffst das.");pulse($("e-breathe"));}
+        else{say("Fast! Probier eine andere Antwort. Tipp: "+(st.cur.hint||"Lies die Frage nochmal."));}
+        doSave();
+      }}
+    function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
     return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));}};
   })();
 
@@ -1658,7 +1699,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
