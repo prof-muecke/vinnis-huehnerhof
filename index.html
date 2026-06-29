@@ -81,6 +81,27 @@
   .modtitle{font-weight:900;font-size:19px}
   .modsub{font-weight:700;font-size:13px;color:var(--ink-soft);margin-top:2px}
 
+  /* story: Das verlorene Goldhuhn */
+  .storycard{margin:10px 12px 0;background:linear-gradient(#fff8e2,#ffeebb);border:3px solid #fff;border-radius:20px;box-shadow:var(--soft);padding:12px 14px;position:relative;overflow:hidden}
+  .storycard:after{content:"";position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(255,210,90,.45),transparent 70%);pointer-events:none}
+  .sc-top{display:flex;align-items:center;gap:8px}
+  .sc-title{font-weight:900;font-size:17px;color:#9a6b00}
+  .sc-chip{margin-left:auto;font-weight:800;font-size:12px;color:#9a6b00;background:#fff3cf;border:1px solid #f0d089;border-radius:10px;padding:3px 8px;white-space:nowrap}
+  .sc-feathers{font-weight:800;font-size:12px;color:#b8860b;margin-top:3px}
+  .sc-intro{font-weight:800;font-size:14px;color:var(--ink);line-height:1.32;margin:6px 0 10px}
+  .sc-goal{display:flex;align-items:center;gap:9px;margin:7px 0}
+  .sc-goal .gi{font-size:18px;width:22px;text-align:center;flex:0 0 22px}
+  .sc-glabel{font-weight:800;font-size:12px;color:#7a5a14;margin-bottom:3px}
+  .sc-bar{height:11px;background:#fde8be;border-radius:8px;overflow:hidden;border:1px solid #f0d089}
+  .sc-fill{height:100%;background:linear-gradient(90deg,#ffd66e,#ef9f1c);border-radius:8px;transition:width .45s ease}
+  .sc-gtext{font-weight:900;font-size:12px;color:#7a5a14;min-width:42px;text-align:right}
+  .sc-goal.done .sc-gtext{color:var(--good-deep)}
+  .sc-next{width:100%;margin-top:10px;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:17px;color:#fff;background:linear-gradient(var(--yolk),var(--yolk-deep));border-radius:16px;padding:13px;box-shadow:var(--shadow);animation:scpulse 1.3s ease-in-out infinite}
+  .sc-next:active{transform:translateY(3px)}
+  @keyframes scpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+  .sc-gold{text-align:center;margin:2px 0}.sc-gold svg{width:64px;height:58px}
+  @media (prefers-reduced-motion:reduce){.sc-next{animation:none}}
+
   /* shop */
   .shopscroll{flex:1;overflow-y:auto;padding:8px 14px 8px}
   .hatchbtn{width:100%;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:19px;color:#fff;
@@ -456,6 +477,7 @@
           <path d="M64 148 L102 158 L96 162 L58 152 Z" fill="var(--wood-dark)"/>
         </svg>
       </div>
+      <div class="storycard" id="story-card"></div>
       <div class="modcards">
         <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
@@ -734,12 +756,12 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:9,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:10,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
-    decos:_ld.decos||[]};
+    decos:_ld.decos||[],story:_ld.story||null};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;}
 
@@ -754,8 +776,8 @@
   }
   function renderFlock(){var strip=$("home-flock");strip.innerHTML="";G.chickens.slice(-14).forEach(function(ch){strip.appendChild(birdEl(ch,false));});}
   function renderDecos(){var layer=$("home-deco");layer.innerHTML="";G.decos.forEach(function(id){var d=DECOS[id];if(!d)return;var s=document.createElement("span");s.className="deco";s.style.cssText="position:absolute;"+d.style;s.textContent=d.emoji;layer.appendChild(s);});}
-  function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();}
-  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();}
+  function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();if(Story)Story.progress("hatch",1);}
+  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();if(Story)Story.progress("egg",n);}
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
   function renderStats(){
     var rows=[
@@ -837,7 +859,7 @@
     if(name==="barn"){renderBarn();say("Willkommen in der Scheune! Tippe ein Huhn an, um seinen Namen zu hören. 🐔");}
     if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();say("Willkommen zurück! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();Story.render();say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
   }
 
@@ -1482,7 +1504,7 @@
       setTimeout(function(){if(!f.parentNode)return;
         try{f.animate([{transform:"translateY(0) scaleX(1) scaleY(1)"},{transform:"translateY(6px) scaleX(1.45) scaleY(.32)"}],{duration:170,easing:"ease-in",fill:"forwards"});}catch(e){}
         var stage=$("tr-stage");if(stage){var s2=document.createElement("span");s2.className="tr-dust";s2.textContent="💫";s2.style.left=f.style.left;s2.style.bottom="34px";s2.style.zIndex="5";stage.appendChild(s2);(function(el){try{var a=el.animate([{opacity:1,transform:"translateY(0) rotate(0)"},{opacity:0,transform:"translateY(-24px) rotate(200deg)"}],{duration:750,easing:"ease-out"});a.onfinish=function(){el.remove();};}catch(e){el.remove();}setTimeout(function(){if(el.parentNode)el.remove();},950);})(s2);}
-        toast("Fuchs verjagt! 🦊💨");say("Erwischt! Der freche Fuchs lässt die Hühner heute in Ruhe. 🐔",true);
+        toast("Fuchs verjagt! 🦊💨");say("Erwischt! Der freche Fuchs lässt die Hühner heute in Ruhe. 🐔",true);if(Story)Story.progress("fox",1);
         setTimeout(function(){if(!f.parentNode)return;try{var a=f.animate([{opacity:1,transform:"translateY(6px) scaleX(1.45) scaleY(.32) rotate(0)"},{opacity:1,transform:"translate(34px,0) scale(1) rotate(22deg)",offset:.35},{opacity:0,transform:"translate(130px,-6px) rotate(46deg)"}],{duration:820,easing:"ease-in"});a.onfinish=function(){if(f.parentNode)f.remove();};}catch(e){if(f.parentNode)f.remove();}},210);
       },360);
     }
@@ -1532,6 +1554,88 @@
     return {open:function(){$("hatchBtn").innerHTML='🐣 Neues Küken ausbrüten <span class="price">'+HATCH+' 🥚</span>';buildBreeds();buildDecos();say("Hier machst du mit Eiern den Hof größer!");},hatch:hatch};
   })();
 
+  /* ===================== STORY: Das verlorene Goldhuhn ===================== */
+  var Story=(function(){
+    function cnt(k){return (G.story&&G.story.c&&G.story.c[k])||0;}
+    var CH=[
+      {title:"Die leere Stange",
+       intro:"Oh nein, Vinni! Unser Goldhuhn Goldie ist weg! 🌟 Aber schau – hier glitzert eine goldene Feder. Folgen wir der Spur und finden Goldie!",
+       goals:[{ic:"🥚",label:"Sammle Eier in den Spielen",cur:function(){return cnt("egg");},need:8}]},
+      {title:"Federn am Nest",
+       intro:"Beim Nest liegen mehr goldene Federn. Mehr Hühner helfen beim Suchen – lass ein Küken schlüpfen!",
+       goals:[{ic:"🐣",label:"Küken ausbrüten (Hof ausbauen)",cur:function(){return cnt("hatch");},need:1},
+              {ic:"🥚",label:"Sammle weitere Eier",cur:function(){return cnt("egg");},need:12}]},
+      {title:"Der Zettel am Markt",
+       intro:"Am Marktstand klebt ein Zettel: „Das Goldhuhn war hier!“ Zeig, dass du dich mit Geld und Markt auskennst.",
+       goals:[{ic:"🏪",label:"Kaufmannsladen – Stufe 2",cur:function(){return G.sLevel;},need:2},
+              {ic:"📈",label:"Hühnermarkt – Stufe 2",cur:function(){return G.wLevel;},need:2}]},
+      {title:"Der freche Fuchs",
+       intro:"Der schlaue Fuchs lief mit einer goldenen Feder im Maul davon! Hol sie dir mit dem Traktor zurück.",
+       goals:[{ic:"🦊",label:"Verjage den Fuchs (Traktor)",cur:function(){return cnt("fox");},need:3},
+              {ic:"🚜",label:"Traktor – Stufe 2",cur:function(){return G.tLevel;},need:2}]},
+      {title:"Die goldene Spur",
+       intro:"Die Spur glüht golden! Lies die geheimen Wörter und knoble dich schlauer.",
+       goals:[{ic:"🔤",label:"Lesen – Stufe 2",cur:function(){return G.rLevel;},need:2},
+              {ic:"🧩",label:"Muster & Logik – Stufe 2",cur:function(){return G.pLevel;},need:2}]},
+      {title:"Das versteckte Goldnest",
+       intro:"Alle Federn glitzern – die Spur führt zu einem versteckten Nest! Zeig zum Schluss, wie schlau du bist.",
+       goals:[{ic:"🧠",label:"Denksport – Stufe 2",cur:function(){return G.iqLevel;},need:2},
+              {ic:"🥚",label:"Rechnen – Stufe 3",cur:function(){return G.mLevel;},need:3}]}
+    ];
+    function init(){
+      if(!G.story||typeof G.story.ch!=="number"){G.story={ch:0,f:0,ready:false,c:{egg:0,hatch:0,fox:0}};}
+      if(!G.story.c)G.story.c={egg:0,hatch:0,fox:0};
+    }
+    function chap(){return CH[G.story.ch]||null;}
+    function allDone(){var c=chap();return c?c.goals.every(function(g){return g.cur()>=g.need;}):false;}
+    function progress(ev,n){
+      if(!G.story)init();
+      if(G.story.ch>=CH.length)return;
+      if(G.story.c[ev]!=null)G.story.c[ev]+=(n||1);
+      doSave();
+      if(!G.story.ready&&allDone()){G.story.ready=true;doSave();toast("🌟 Neuer Hinweis! Geh zum 🏡 Hof",true);}
+      if(current==="home")render();
+    }
+    function bar(p){return '<div class="sc-bar"><div class="sc-fill" style="width:'+Math.round(Math.max(0,Math.min(1,p))*100)+'%"></div></div>';}
+    function render(){
+      var box=$("story-card");if(!box)return;if(!G.story)init();
+      if(G.story.ch>=CH.length){
+        box.innerHTML='<div class="sc-top"><span class="sc-title">🌟 Goldie ist zuhause!</span><span class="sc-chip">Geschafft 🪶'+CH.length+'</span></div>'+
+          '<div class="sc-gold">'+chick(BREEDS.gold.v,false)+'</div>'+
+          '<div class="sc-intro">Du hast alle Hinweise gefunden und das Goldhuhn Goldie gerettet! Es wohnt jetzt für immer auf deinem Hof. Spiel weiter und mach den Hof noch schöner. 🌟</div>';
+        return;
+      }
+      var c=chap();
+      var h='<div class="sc-top"><span class="sc-title">🌟 '+c.title+'</span><span class="sc-chip">Kapitel '+(G.story.ch+1)+'/'+CH.length+'</span></div>';
+      h+='<div class="sc-feathers">🪶 Goldfedern: '+G.story.f+'/'+CH.length+'</div>';
+      h+='<div class="sc-intro">'+c.intro+'</div>';
+      c.goals.forEach(function(g){var cur=Math.min(g.cur(),g.need),dn=cur>=g.need;
+        h+='<div class="sc-goal'+(dn?' done':'')+'"><span class="gi">'+g.ic+'</span><div style="flex:1"><div class="sc-glabel">'+g.label+'</div>'+bar(g.need?cur/g.need:1)+'</div><span class="sc-gtext">'+cur+'/'+g.need+(dn?' ✓':'')+'</span></div>';
+      });
+      if(allDone())h+='<button class="sc-next" id="sc-next">Hinweis einsammeln 🪶</button>';
+      box.innerHTML=h;
+      var b=$("sc-next");if(b)b.onclick=claim;
+    }
+    function claim(){
+      if(G.story.ch>=CH.length||!allDone())return;
+      var last=(G.story.ch===CH.length-1);
+      G.story.f++;G.eggs+=5;refresh();
+      if(last){
+        if(G.unlocked.indexOf("gold")<0)G.unlocked.push("gold");
+        G.story.ch=CH.length;G.story.ready=false;doSave();
+        addChicken("gold","Goldie");
+        toast("🌟 Goldie gefunden! +5 🥚",true);
+        say("Du hast Goldie gefunden! 🌟 Das Goldhuhn wohnt jetzt für immer auf deinem Hof. Du bist ein echter Hühner-Held!",true);
+        render();return;
+      }
+      G.story.ch++;G.story.ready=false;G.story.c={egg:0,hatch:0,fox:0};doSave();
+      celebrate();toast("🪶 Goldfeder gefunden! +5 🥚",true);
+      say("Eine goldene Feder! Die Spur führt weiter. 🌟",true);
+      render();
+    }
+    return {init:init,progress:progress,render:render};
+  })();
+
   /* ---------- wire up ---------- */
   ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
@@ -1554,12 +1658,12 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
   // Hof aus dem Speicher aufbauen
-  renderDecos();renderFlock();refresh();doSave();
+  renderDecos();renderFlock();refresh();Story.init();Story.render();doSave();
 })();
 </script>
 <script>
