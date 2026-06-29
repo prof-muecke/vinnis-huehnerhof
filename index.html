@@ -217,8 +217,11 @@
   /* tractor */
   .mc-tractor .modicon{background:#e3f2e0}
   .tr-stage{position:relative;height:150px;overflow:hidden;border-radius:16px;border:3px solid #fff;box-shadow:var(--shadow);margin-bottom:10px;background:linear-gradient(#cdeffb 0 60%,#dff0c8 60% 100%)}
-  .tr-vehicle{position:absolute;left:6px;bottom:4px;width:162px;transition:transform 1.1s cubic-bezier(.2,.8,.3,1)}
+  .tr-vehicle{position:absolute;left:6px;bottom:4px;width:162px;z-index:3;transition:transform 1.1s cubic-bezier(.2,.8,.3,1)}
   .tr-vehicle svg{display:block;width:100%;height:auto;overflow:visible}
+  .tr-fox{position:absolute;bottom:10px;font-size:30px;z-index:1;transform-origin:bottom center;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2));pointer-events:none}
+  .tr-fox.lurk{animation:foxlurk 1.1s ease-in-out infinite}
+  @keyframes foxlurk{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(4deg)}}
   .trpart{opacity:0;transition:opacity .45s}
   .trpart.show{opacity:1}
   .tr-dust{position:absolute;left:8px;font-size:18px;pointer-events:none}
@@ -1426,7 +1429,7 @@
     function showPart(k){var el=$("trp-"+k);if(el)el.classList.add("show");}
     function hideAll(){STEPS.forEach(function(s){var e=$("trp-"+s.k);if(e)e.classList.remove("show");});var f=$("trp-fahrer");if(f)f.classList.remove("show");}
     function allParts(){STEPS.forEach(function(s){showPart(s.k);});showPart("fahrer");}
-    function start(){if(st.built){allParts();drivePhase();}else{st.phase="build";st.step=0;hideAll();$("tr-engine").style.display="none";buildStep();}}
+    function start(){clearFox();if(st.built){allParts();drivePhase();}else{st.phase="build";st.step=0;hideAll();$("tr-engine").style.display="none";buildStep();}}
     function buildStep(){
       $("tr-engine").style.display="none";var s=STEPS[st.step];
       var pool=EXTRA.concat(STEPS.map(function(x){return x.n;}).filter(function(nm){return nm!==s.n;}));
@@ -1449,7 +1452,7 @@
     function finishBuild(){showPart("fahrer");st.built=true;G.tBuilt=true;doSave();say("Der Traktor ist fertig! 🎉 Jetzt darfst du ihn mit Zahlen steuern.",true);addEgg(3);drivePhase();}
     function drivePhase(){st.phase="drive";allParts();$("tr-engine").style.display="none";newRound();}
     function newRound(){
-      st.answered=false;st.wrong=0;resetVehicle();
+      st.answered=false;st.wrong=0;resetVehicle();spawnFox();
       var L=st.level,count=L<2?3:4,max=L<2?20:(L<3?50:100),rule=L<2?"max":pick(["max","max","min"]);
       var nums=[];while(nums.length<count){var x=rnd(2,max);if(nums.indexOf(x)<0)nums.push(x);}
       var target=rule==="max"?Math.max.apply(null,nums):Math.min.apply(null,nums);
@@ -1471,8 +1474,18 @@
         if(st.wrong>=2)say("Tipp: Vergleiche die Zahlen Stelle für Stelle. Die "+(st.cur.rule==="max"?"größte":"kleinste")+" ist "+st.cur.target+". Tippe sie an!");
         else say(st.cur.rule==="max"?"Noch nicht die höchste. Welche Zahl ist am größten?":"Das ist nicht die kleinste. Welche Zahl ist am niedrigsten?");}
     }
-    function resetVehicle(){var v=$("tr-vehicle");if(!v)return;v.style.transition="none";v.style.transform="translateX(0)";void v.offsetWidth;v.style.transition="";}
-    function drive(v){var stage=$("tr-stage"),veh=$("tr-vehicle");if(!stage||!veh)return;var maxX=Math.max(20,stage.clientWidth-veh.clientWidth-10);var frac=Math.min(1,v/st.cur.max);veh.style.transform="translateX("+Math.round((0.25+0.75*frac)*maxX)+"px)";puff();}
+    function resetVehicle(){clearFox();var v=$("tr-vehicle");if(!v)return;v.style.transition="none";v.style.transform="translateX(0)";void v.offsetWidth;v.style.transition="";}
+    function drive(v){var stage=$("tr-stage"),veh=$("tr-vehicle");if(!stage||!veh)return;var maxX=Math.max(20,stage.clientWidth-veh.clientWidth-10);var frac=Math.min(1,v/st.cur.max);veh.style.transform="translateX("+Math.round((0.25+0.75*frac)*maxX)+"px)";puff();runOverFox();}
+    function clearFox(){var f=$("tr-fox");if(f&&f.parentNode)f.parentNode.removeChild(f);}
+    function spawnFox(){var stage=$("tr-stage"),veh=$("tr-vehicle");if(!stage||!veh)return;clearFox();var f=document.createElement("span");f.id="tr-fox";f.className="tr-fox lurk";f.textContent="🦊";f.style.left=Math.round(veh.offsetLeft+veh.clientWidth+18)+"px";stage.appendChild(f);}
+    function runOverFox(){var f=$("tr-fox");if(!f)return;f.classList.remove("lurk");
+      setTimeout(function(){if(!f.parentNode)return;
+        try{f.animate([{transform:"translateY(0) scaleX(1) scaleY(1)"},{transform:"translateY(6px) scaleX(1.45) scaleY(.32)"}],{duration:170,easing:"ease-in",fill:"forwards"});}catch(e){}
+        var stage=$("tr-stage");if(stage){var s2=document.createElement("span");s2.className="tr-dust";s2.textContent="💫";s2.style.left=f.style.left;s2.style.bottom="34px";s2.style.zIndex="5";stage.appendChild(s2);(function(el){try{var a=el.animate([{opacity:1,transform:"translateY(0) rotate(0)"},{opacity:0,transform:"translateY(-24px) rotate(200deg)"}],{duration:750,easing:"ease-out"});a.onfinish=function(){el.remove();};}catch(e){el.remove();}setTimeout(function(){if(el.parentNode)el.remove();},950);})(s2);}
+        toast("Fuchs verjagt! 🦊💨");say("Erwischt! Der freche Fuchs lässt die Hühner heute in Ruhe. 🐔",true);
+        setTimeout(function(){if(!f.parentNode)return;try{var a=f.animate([{opacity:1,transform:"translateY(6px) scaleX(1.45) scaleY(.32) rotate(0)"},{opacity:1,transform:"translate(34px,0) scale(1) rotate(22deg)",offset:.35},{opacity:0,transform:"translate(130px,-6px) rotate(46deg)"}],{duration:820,easing:"ease-in"});a.onfinish=function(){if(f.parentNode)f.remove();};}catch(e){if(f.parentNode)f.remove();}},210);
+      },360);
+    }
     function puff(){var stage=$("tr-stage");if(!stage)return;for(var i=0;i<4;i++){var d=document.createElement("span");d.className="tr-dust";d.textContent="💨";d.style.bottom=(4+Math.random()*12)+"px";stage.appendChild(d);(function(el){try{var a=el.animate([{opacity:.8,transform:"translateX(0) scale(.6)"},{opacity:0,transform:"translateX(46px) scale(1.2)"}],{duration:700,easing:"ease-out"});a.onfinish=function(){el.remove();};}catch(e){el.remove();}setTimeout(function(){if(el.parentNode)el.remove();},900);})(d);}}
     function hint(){if(st.phase==="build"){var s=STEPS[st.step];say("💡 Wir bauen gerade Teil "+(st.step+1)+": "+s.n+". "+s.l);}else say("💡 Vergleiche die Zahlen: Welche ist am "+(st.cur&&st.cur.rule==="min"?"kleinsten":"größten")+"? Tippe sie an.");}
     return {start:start,say0:function(){},hint:hint};
