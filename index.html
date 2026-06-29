@@ -127,6 +127,48 @@
   .g-timebar.on{display:block}
   .g-timefill{height:100%;width:100%;background:linear-gradient(90deg,#e3735f,#ffd66e 55%,#7ec8a2);border-radius:8px}
 
+  /* boerse */
+  .mc-boerse .modicon{background:#e7f3ea}
+  .bo-price{font-weight:900;font-size:21px;text-align:center;color:#5a3e00}
+  .bo-chart{margin:8px 0 4px}
+  .bo-news{font-weight:800;font-size:14px;color:var(--ink-soft);background:#eef7ef;border-radius:12px;padding:9px 10px;min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3;margin-bottom:12px}
+  .bo-holdings{display:flex;justify-content:space-around;font-weight:800;font-size:16px;margin-bottom:14px}
+  .bo-controls{display:flex;gap:10px;margin-bottom:12px}
+  .bo-btn{flex:1;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:17px;color:#fff;border-radius:16px;padding:15px 8px;box-shadow:var(--shadow)}
+  .bo-btn:active{transform:translateY(3px)}
+  .bo-btn.buy{background:linear-gradient(var(--good),var(--good-deep))}
+  .bo-btn.sell{background:linear-gradient(var(--barn),var(--barn-deep))}
+  #bo-next{display:block;margin:0 auto}
+
+  /* ---------- responsive: Handy / iPad / Computer ---------- */
+  html,body{overflow-x:hidden}
+  @supports (height:100dvh){#app{height:100dvh}}
+  .header{padding-top:calc(9px + env(safe-area-inset-top,0px))}
+  #app{padding-bottom:env(safe-area-inset-bottom,0px)}
+  img,svg,video{max-width:100%}
+  /* kleine Handys */
+  @media (max-width:360px){
+    .stat{padding:5px 7px;font-size:14px}.stat small{font-size:9px}
+    .modcard{padding:11px;gap:11px}.modicon{width:50px;height:50px;flex-basis:50px;font-size:26px}
+    .modtitle{font-size:17px}.modsub{font-size:11.5px}
+    .g-opt{font-size:18px;padding:13px 6px}.g-mode{font-size:13px}
+    .question,.prompt{font-size:19px}
+  }
+  /* Tablet & Computer: etwas größer und luftiger, weiterhin zentriert */
+  @media (min-width:740px){
+    #app{max-width:680px}
+    .bubble{font-size:18px}
+    .modtitle{font-size:21px}.modsub{font-size:14px}
+    .modcard{padding:16px 18px}
+    .question,.prompt,.g-prompt-t{font-size:24px}
+    .g-prompt .g-eq{font-size:38px}
+    .opt,.g-opt,.iqopt,.popt,.labopt,.uopt,.bo-btn,.labopt{font-size:19px}
+    .key{font-size:30px}
+  }
+  @media (min-width:1100px) and (min-height:760px){
+    #app{max-width:760px}
+  }
+
   /* shop */
   .shopscroll{flex:1;overflow-y:auto;padding:8px 14px 8px}
   .hatchbtn{width:100%;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:19px;color:#fff;
@@ -506,6 +548,7 @@
       <div class="storycard" id="story-card"></div>
       <div class="modcards">
         <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
+        <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
         <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
         <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
@@ -727,6 +770,22 @@
       <div style="height:12px"></div>
     </div>
 
+    <!-- BÖRSE -->
+    <div class="screen" id="boerse">
+      <div class="hilde-row"><div class="hilde" id="boerse-hilde"></div><div class="bubble" id="boerse-bubble">Willkommen an der Hühner-Börse!</div></div>
+      <div class="stagepad">
+        <div class="card">
+          <div class="bo-price">Eier-Preis: <span id="bo-price">8</span> 🪙 <span id="bo-arrow"></span></div>
+          <div class="bo-chart" id="bo-chart"></div>
+          <div class="bo-news" id="bo-news"></div>
+          <div class="bo-holdings"><div>📦 Anteile: <b id="bo-shares">0</b></div><div>💰 Wert: <b id="bo-value">0</b> 🪙</div></div>
+          <div class="bo-controls"><button class="bo-btn buy" id="bo-buy">Kaufen 🛒</button><button class="bo-btn sell" id="bo-sell">Verkaufen 💵</button></div>
+          <button class="hbtn next" id="bo-next">📅 Nächster Tag</button>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+
     <!-- SHOP -->
     <div class="screen" id="shop">
       <div class="hilde-row"><div class="hilde" id="shop-hilde"></div><div class="bubble" id="shop-bubble">Hier kannst du mit deinen Eiern den Hof größer machen!</div></div>
@@ -810,13 +869,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:13,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:14,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -861,7 +920,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -886,7 +945,7 @@
   function closeBreathe(){$("overlay").classList.remove("show");clearInterval(bt);say("Schön durchgeatmet. Probier es ruhig nochmal. 🐔",true);}
 
   /* ---------- router ---------- */
-  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false};
+  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false};
   function show(name){
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
@@ -903,6 +962,7 @@
     if(name==="read"&&!inited.read){inited.read=true;R.start();}
     if(name==="tractor"&&!inited.tractor){inited.tractor=true;TR.start();}
     if(name==="game"&&!inited.game){inited.game=true;GAME.start();}
+    if(name==="boerse"&&!inited.boerse){inited.boerse=true;BOERSE.start();}
     if(name==="math")M.say0();
     if(name==="code")C.say0();
     if(name==="explore")E.say0();
@@ -1805,8 +1865,33 @@
     return {start:start,next:next,setMode:setMode};
   })();
 
+  /* ===================== BÖRSE / Hühner-Börse ===================== */
+  var BOERSE=(function(){
+    var NEWS=[
+      {t:"☀️ Schönes Wetter – die Hühner legen viele Eier. Viel Angebot!",d:-2},
+      {t:"🎉 Großes Hoffest – alle wollen Eier! Hohe Nachfrage.",d:2},
+      {t:"🌧️ Regen – die Hühner legen weniger. Eier werden knapp.",d:2},
+      {t:"🦊 Der Fuchs war da – heute gibt es wenige Eier.",d:1},
+      {t:"🥚 Ein Nachbar verkauft auch viele Eier. Mehr Angebot.",d:-2},
+      {t:"😴 Ruhiger Tag, der Preis bewegt sich kaum.",d:0},
+      {t:"🍰 Der Bäcker braucht viele Eier für Kuchen! Nachfrage steigt.",d:2},
+      {t:"📦 Eine große Eier-Lieferung kommt an. Viel Angebot.",d:-2}
+    ];
+    function init(){if(!G.boerse||typeof G.boerse.price!=="number"){G.boerse={price:8,shares:0,avg:0,hist:[8],day:1,news:""};}if(!G.boerse.hist||!G.boerse.hist.length)G.boerse.hist=[G.boerse.price];}
+    function chartSVG(h){var w=260,ht=72,min=Math.min.apply(null,h),max=Math.max.apply(null,h),rng=Math.max(1,max-min);
+      var pts=h.map(function(v,i){var x=h.length<2?w:i/(h.length-1)*w;var y=ht-((v-min)/rng)*(ht-12)-6;return x.toFixed(1)+","+y.toFixed(1);}).join(" ");
+      var up=h[h.length-1]>=h[0],col=up?"#3a8c63":"#c75f40";
+      return '<svg viewBox="0 0 '+w+' '+ht+'" preserveAspectRatio="none" style="width:100%;height:84px"><polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>';}
+    function render(){var b=G.boerse;$("bo-price").textContent=b.price;var prev=b.hist.length>1?b.hist[b.hist.length-2]:b.price;var ar=$("bo-arrow");ar.textContent=b.price>prev?"▲":(b.price<prev?"▼":"▬");ar.style.color=b.price>prev?"#3a8c63":(b.price<prev?"#c75f40":"#9a8a6a");$("bo-chart").innerHTML=chartSVG(b.hist);$("bo-shares").textContent=b.shares;$("bo-value").textContent=b.shares*b.price;$("bo-news").textContent=b.news||("Tag "+b.day+": Kaufe günstig, verkaufe teuer!");}
+    function buy(){var b=G.boerse;if((G.coins||0)<b.price){say("Dafür brauchst du mehr Münzen 🪙. Hol dir welche im ⏱️ Zeitmodus der Challenge!");return;}spendCoin(b.price);b.avg=(b.avg*b.shares+b.price)/(b.shares+1);b.shares++;doSave();render();say("Anteil gekauft für "+b.price+" 🪙. Jetzt hoffen, dass der Preis steigt! 📈",true);}
+    function sell(){var b=G.boerse;if(b.shares<=0){say("Du hast noch keine Anteile. Kauf erst günstig ein! 🛒");return;}addCoin(b.price);var profit=Math.round(b.price-b.avg);b.shares--;if(b.shares===0)b.avg=0;doSave();render();if(profit>0)say("Verkauft für "+b.price+" 🪙 – Gewinn! 📈 Klasse gemacht!",true);else if(profit<0)say("Verkauft für "+b.price+" 🪙. Diesmal kleiner Verlust 📉 – nächstes Mal günstiger kaufen!");else say("Verkauft für "+b.price+" 🪙 – genau zum Einkaufspreis.");}
+    function nextDay(){var b=G.boerse;var n=pick(NEWS);var np=Math.max(3,Math.min(15,b.price+n.d+rnd(-1,1)));b.price=np;b.hist.push(np);if(b.hist.length>14)b.hist.shift();b.day++;b.news=n.t;doSave();render();say(n.t,true);}
+    function start(){init();render();say("An der Hühner-Börse kaufst du Eier-Anteile günstig und verkaufst sie teuer. Tippe „Nächster Tag“, dann ändert sich der Preis. 💹",true);}
+    return {start:start,buy:buy,sell:sell,next:nextDay};
+  })();
+
   /* ---------- wire up ---------- */
-  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
   $("homebtn").onclick=function(){show("home");};
@@ -1825,11 +1910,12 @@
   $("hatchBtn").onclick=function(){SHOP.hatch();};
   $("g-breathe").onclick=openBreathe;$("g-restart").onclick=function(){GAME.start();};$("g-next").onclick=function(){GAME.next();};
   $("g-mode-relax").onclick=function(){GAME.setMode(false);};$("g-mode-time").onclick=function(){GAME.setMode(true);};
+  $("bo-buy").onclick=function(){BOERSE.buy();};$("bo-sell").onclick=function(){BOERSE.sell();};$("bo-next").onclick=function(){BOERSE.next();};
   $("breathDone").onclick=closeBreathe;
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
