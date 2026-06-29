@@ -1,0 +1,17 @@
+{
+  "name": "Vinnis Hühnerhof",
+  "short_name": "Hühnerhof",
+  "description": "Vinnis Lern-Hof: Rechnen, Lesen, Wissen, Programmieren, Denksport, Traktor und mehr.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#bfe3f5",
+  "theme_color": "#7ec8a2",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

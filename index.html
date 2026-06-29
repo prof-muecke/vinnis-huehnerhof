@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vinnis Hühnerhof</title>
+<meta name="theme-color" content="#7ec8a2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Hühnerhof">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+  :root{
+    --sky1:#cdeafb;--sky2:#9ad2ee;--grass1:#8ecb6a;--grass2:#5e9d44;
+    --paper:#fffdf6;--cream:#fff7e4;--ink:#36291f;--ink-soft:#6e5e50;
+    --yolk:#ffc94b;--yolk-deep:#ef9f1c;--barn:#e07856;--barn-deep:#c75f40;
+    --good:#54b07e;--good-deep:#3a8c63;--blue:#5a9fd4;--blue-deep:#3f82b8;--wrong:#e3735f;
+    --wood:#c79a5e;--wood-dark:#9c6f3e;--roof:#b14b39;--roof-dark:#8f3a2b;
+    --shadow:0 6px 0 rgba(54,41,31,.14);--soft:0 8px 22px rgba(54,41,31,.16);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{font-family:"Nunito",ui-rounded,"Segoe UI Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);overflow:hidden;user-select:none;-webkit-user-select:none;
+    background:radial-gradient(120% 80% at 18% 6%,rgba(255,255,210,.9),transparent 42%),
+      linear-gradient(var(--sky1) 0%,var(--sky2) 34%,#cfeaba 35%,var(--grass1) 60%,var(--grass2) 100%);}
+  #app{height:100%;max-width:860px;margin:0 auto;display:flex;flex-direction:column;position:relative}
+
+  /* header */
+  .header{display:flex;align-items:center;gap:8px;padding:9px 12px 4px;z-index:6}
+  .homebtn{font-family:inherit;border:none;background:var(--paper);border:2px solid #fff;border-radius:16px;
+    padding:8px 12px;font-weight:900;font-size:16px;box-shadow:var(--shadow);cursor:pointer;display:none}
+  .homebtn.show{display:block}
+  .spacer{flex:1}
+  .stat{background:var(--paper);border-radius:16px;padding:6px 12px;font-weight:800;font-size:16px;
+    box-shadow:var(--shadow);display:flex;align-items:center;gap:5px;border:2px solid #fff}
+  .stat small{font-weight:700;font-size:11px;color:var(--ink-soft)}
+  .gear{font-family:inherit;border:none;background:transparent;font-size:17px;opacity:.5;cursor:pointer;padding:6px;line-height:1}
+  .gear:active{transform:translateY(2px)}
+
+  /* screens */
+  .screens{flex:1;position:relative;overflow:hidden}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column}
+  .screen.on{display:flex}
+
+  /* Hilde bubble (shared style) */
+  .hilde-row{display:flex;align-items:flex-end;gap:10px;padding:4px 16px 0}
+  .hilde{width:56px;height:52px;flex:0 0 56px;filter:drop-shadow(0 5px 4px rgba(0,0,0,.2))}
+  .hilde.happy{animation:hop .55s ease}
+  @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px) rotate(-5deg)}}
+  .bubble{background:var(--paper);border:3px solid #fff;border-radius:20px;padding:10px 15px;box-shadow:var(--soft);
+    font-weight:800;font-size:16px;flex:1;position:relative;min-height:48px;display:flex;align-items:center;line-height:1.25}
+  .bubble:before{content:"";position:absolute;left:-13px;bottom:13px;border:9px solid transparent;border-right-color:var(--paper)}
+
+  /* HOME */
+  #home{overflow-y:auto}
+  .farm{position:relative;height:200px;flex:0 0 200px;margin:8px 12px 0;border-radius:22px;overflow:hidden;
+    border:3px solid #fff;box-shadow:var(--soft);
+    background:linear-gradient(#bfe6fa 0%,#9ad2ee 40%,#cfeaba 42%,var(--grass1) 64%,var(--grass2) 100%)}
+  .sun{position:absolute;top:12px;left:18px;width:44px;height:44px;border-radius:50%;
+    background:radial-gradient(circle at 40% 40%,#fff2a8,var(--yolk));box-shadow:0 0 26px rgba(255,201,75,.7)}
+  .cloud{position:absolute;top:16px;font-size:30px;opacity:.92;animation:drift 28s linear infinite}
+  @keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(900px)}}
+  .coop{position:absolute;right:8px;bottom:2px;width:188px}
+  .fence{position:absolute;left:0;bottom:0;width:62%;height:74px;pointer-events:none}
+  .run-label{position:absolute;left:12px;bottom:58px;font-size:11px;font-weight:800;color:#fff;
+    background:rgba(54,41,31,.45);padding:2px 8px;border-radius:10px;z-index:3}
+  .feeder{position:absolute;font-size:20px;bottom:6px;z-index:2}
+  .home-deco{position:absolute;inset:0;pointer-events:none}
+  .home-deco .deco{filter:drop-shadow(0 3px 2px rgba(0,0,0,.18))}
+  .home-flock{position:absolute;inset:0;pointer-events:none}
+
+  .modcards{padding:12px 14px 18px;display:flex;flex-direction:column;gap:11px}
+  .modcard{display:flex;align-items:center;gap:14px;background:var(--paper);border:3px solid #fff;border-radius:20px;
+    padding:14px;box-shadow:var(--shadow);cursor:pointer;text-align:left;font-family:inherit;transition:transform .07s}
+  .modcard:active{transform:translateY(3px)}
+  .modicon{width:58px;height:58px;flex:0 0 58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px}
+  .mc-math .modicon{background:#eafbe7}.mc-code .modicon{background:#e6f1fb}.mc-exp .modicon{background:#fff2d4}.mc-pat .modicon{background:#efe7fb}.mc-lab .modicon{background:#e3f4f7}.mc-clk .modicon{background:#fdeede}.mc-store .modicon{background:#fbf2da}.mc-market .modicon{background:#e7f3ea}.mc-read .modicon{background:#fbe7ef}.mc-shop .modicon{background:#ffe7e0}
+  .modtitle{font-weight:900;font-size:19px}
+  .modsub{font-weight:700;font-size:13px;color:var(--ink-soft);margin-top:2px}
+
+  /* shop */
+  .shopscroll{flex:1;overflow-y:auto;padding:8px 14px 8px}
+  .hatchbtn{width:100%;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:19px;color:#fff;
+    background:linear-gradient(var(--good),var(--good-deep));border-radius:18px;padding:16px;box-shadow:var(--shadow);
+    display:flex;align-items:center;justify-content:center;gap:8px}
+  .hatchbtn:active{transform:translateY(3px)}
+  .hatchbtn .price{background:rgba(255,255,255,.25);border-radius:12px;padding:3px 10px;font-size:15px}
+  .shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px;padding:2px 0 6px}
+  .shopitem{font-family:inherit;border:3px solid #fff;background:var(--paper);border-radius:16px;padding:10px 6px;
+    box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .shopitem:active{transform:translateY(3px)}
+  .shopitem.owned{background:#eafbe7;cursor:default}
+  .shopitem.cant{opacity:.6}
+  .si-icon{width:50px;height:46px;display:flex;align-items:center;justify-content:center}
+  .si-icon svg{width:46px;height:42px}
+  .si-emoji{font-size:34px;line-height:1}
+  .si-label{font-weight:800;font-size:12px;text-align:center;line-height:1.15;color:var(--ink)}
+  .si-badge{font-weight:900;font-size:13px;color:var(--barn-deep)}
+  .shopitem.owned .si-badge{color:var(--good-deep)}
+
+  /* pattern */
+  .pprompt{font-size:20px;font-weight:900;line-height:1.3;margin-bottom:10px}
+  .pdisplay{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-bottom:14px}
+  .ptok{font-size:34px;line-height:1;width:46px;height:46px;display:flex;align-items:center;justify-content:center;
+    background:var(--cream);border-radius:12px;border:2px solid #fff;box-shadow:0 3px 0 rgba(54,41,31,.1)}
+  .ptok.pnum{font-weight:900;color:var(--barn-deep);font-size:26px}
+  .ptok.pq{background:var(--yolk);color:#fff;font-weight:900}
+  .poptions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .popt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:16px;padding:14px 6px;
+    cursor:pointer;box-shadow:var(--shadow);font-size:38px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .popt.pnum{font-weight:900;color:var(--barn-deep);font-size:30px}
+  .popt:active{transform:translateY(3px)}
+  .popt.right{background:var(--good)}.popt.wrong{background:var(--wrong);animation:nudge .35s}
+  .popt.dim{opacity:.5}
+
+  /* lab */
+  .lab-stage{min-height:130px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+  .lab-prompt{font-size:19px;font-weight:900;line-height:1.3;margin-bottom:12px}
+  .laboptions{display:flex;flex-direction:column;gap:10px}
+  .labopt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:16px;padding:13px;font-weight:800;font-size:17px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink)}
+  .labopt:active{transform:translateY(3px)}
+  .labopt.right{background:var(--good);color:#fff}.labopt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}
+  .lab-explain{margin-top:12px;font-weight:800;font-size:15px;color:var(--ink-soft);background:#eef7ef;border-radius:14px;padding:10px;display:none}
+  .lab-explain.show{display:block}
+  .tank{position:relative;width:148px;height:148px;border:4px solid #b9c6cc;border-top:none;border-radius:0 0 16px 16px;background:#f1f8fb}
+  .tank .water{position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(#bfe6fa,#8fcfee);opacity:.85;border-radius:0 0 12px 12px}
+  .tank .lobj{position:absolute;left:50%;transform:translateX(-50%);font-size:38px;transition:top 1s ease;z-index:2}
+  .mixstage{position:relative;height:120px;width:100%;max-width:240px}
+  .mixstage .drop{position:absolute;top:38px;width:46px;height:46px;border-radius:50%;transform:translateX(-50%);transition:left .7s ease,opacity .5s;box-shadow:0 3px 6px rgba(0,0,0,.18)}
+  .mixstage #lab-da{left:28%}.mixstage #lab-db{left:72%}
+  .mixstage .drop.result{left:50%;opacity:0;background:#ccc}
+  .magstage{position:relative;height:110px;width:100%;max-width:240px}
+  .magstage .lobj2{position:absolute;left:14%;top:32px;font-size:42px;transform:translateX(-50%);transition:left .8s cubic-bezier(.4,1.7,.5,1)}
+  .magstage .magnet{position:absolute;right:14%;top:28px;font-size:46px;transform:translateX(50%)}
+
+  /* clock */
+  .u-clock{display:flex;justify-content:center;margin-bottom:10px}
+  .clockface{width:172px;height:172px;filter:drop-shadow(0 5px 6px rgba(0,0,0,.12))}
+  .uoptions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .uopt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:16px;padding:14px 4px;font-weight:900;font-size:20px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
+  .uopt:active{transform:translateY(3px)}
+  .uopt.right{background:var(--good);color:#fff}.uopt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}.uopt.dim{opacity:.5}
+
+  /* store / Kaufmannsladen */
+  .st-item{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px}
+  .st-emoji{font-size:48px;line-height:1}
+  .st-name{font-weight:900;font-size:18px}
+  .st-price{font-weight:900;font-size:22px;color:var(--barn-deep)}
+  .st-ask{font-weight:800;font-size:16px;margin-bottom:10px}
+  .st-tray{min-height:56px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;background:#fff7e4;border:3px dashed #e2cfa0;border-radius:14px;padding:8px;margin-bottom:6px}
+  .st-ph{color:#b6a585;font-weight:700;font-size:14px}
+  .st-total{font-weight:900;font-size:16px;margin-bottom:10px;text-align:center}
+  .st-coins{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+  .coin{font-family:inherit;border:none;border-radius:50%;width:58px;height:58px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1}
+  .coin.eu{background:radial-gradient(circle at 38% 32%,#ffe79a,#dca017);color:#5a3e00;border:3px solid #f3c659}
+  .coin.ct{background:radial-gradient(circle at 38% 32%,#f0b98a,#b9713c);color:#4a2a14;border:3px solid #d79a6a}
+  .coin.small{width:46px;height:46px;font-size:11px}
+  .coin:active{transform:translateY(3px)}
+  .st-controls{display:flex;gap:8px;justify-content:center}
+  .st-pay{background:var(--good);color:#fff}.st-clear{background:#e8b9a6;color:var(--barn-deep)}
+
+  /* market / Wirtschaft */
+  .mk-meter{position:relative;width:88px;height:128px;margin:0 auto 4px;background:#eef3f6;border-radius:12px;border:3px solid #cdd8de;display:flex;align-items:flex-end;overflow:hidden}
+  .mk-fill{width:100%;background:linear-gradient(#ffd66e,#ef9f1c);transition:height .8s ease;height:40%}
+  .mk-price{position:absolute;top:6px;left:0;right:0;text-align:center;font-weight:900;color:#5a3e00;font-size:18px}
+  .mk-arrow{font-size:30px;text-align:center;min-height:36px;font-weight:900}
+  .mk-scn{font-size:18px;font-weight:900;line-height:1.32;margin:2px 0 14px}
+
+  /* read / Lesen */
+  .r-emoji{font-size:56px;text-align:center;margin-bottom:6px;line-height:1}
+  .r-say{display:block;margin:0 auto 14px}
+  .r-slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+  .r-slots.shake{animation:nudge .35s}
+  .ltile{width:46px;height:54px;border:3px dashed #d9c9a8;border-radius:12px;background:#fff7e4;font-weight:900;font-size:26px;color:var(--barn-deep);font-family:inherit;cursor:pointer}
+  .ltile.filled{border-style:solid;border-color:#fff;background:var(--cream);box-shadow:var(--shadow)}
+  .r-rack{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .rtile{width:48px;height:56px;border:3px solid #fff;border-radius:12px;background:var(--paper);font-weight:900;font-size:26px;color:var(--ink);box-shadow:var(--shadow);cursor:pointer;font-family:inherit}
+  .rtile:active{transform:translateY(3px)}
+  .rtile.used{opacity:.25;cursor:default}
+
+  /* stats */
+  .stats-sum{font-weight:900;font-size:17px;text-align:center;background:var(--paper);border:3px solid #fff;border-radius:16px;padding:11px;box-shadow:var(--shadow);margin-bottom:10px}
+  .statrow{display:flex;align-items:center;gap:12px;background:var(--paper);border:3px solid #fff;border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);margin-bottom:8px}
+  .staticon{font-size:26px;width:38px;text-align:center}
+  .statmid{flex:1}
+  .statname{font-weight:900;font-size:16px}
+  .statsub{font-weight:700;font-size:12px;color:var(--ink-soft)}
+  .statbadge{font-weight:900;font-size:14px;color:var(--barn-deep);background:var(--cream);border-radius:12px;padding:5px 11px;white-space:nowrap}
+  .mc-stats .modicon{background:#e6eefb}
+
+  /* iq / Denksport */
+  .iq-prompt{font-size:19px;font-weight:900;line-height:1.34;margin-bottom:12px}
+  .iq-display{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+  .iq-tok{font-size:24px;font-weight:900;min-width:44px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--cream);border-radius:12px;border:2px solid #fff;box-shadow:0 3px 0 rgba(54,41,31,.1);color:var(--barn-deep);padding:0 8px}
+  .iq-tok.q{background:var(--yolk);color:#fff}
+  .iq-matrix{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:200px;margin:0 auto 14px}
+  .iq-cell{height:58px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--cream);border-radius:12px;border:2px solid #fff;box-shadow:0 3px 0 rgba(54,41,31,.1);letter-spacing:1px}
+  .iq-cell.q{background:var(--yolk);color:#fff;font-weight:900;font-size:28px}
+  .iq-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .iqopt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:16px;padding:14px 6px;font-weight:900;font-size:24px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep);letter-spacing:1px}
+  .iqopt:active{transform:translateY(3px)}
+  .iqopt.right{background:var(--good);color:#fff}.iqopt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}.iqopt.dim{opacity:.5}
+  .iqopt-svg{padding:8px 4px}.iqopt svg{display:block;margin:0 auto;pointer-events:none}
+  .iq-matrix3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:236px;margin:0 auto 14px}
+  .iq-cell3{height:54px;display:flex;align-items:center;justify-content:center;background:var(--cream);border-radius:10px;border:2px solid #fff;box-shadow:0 3px 0 rgba(54,41,31,.1)}
+  .iq-cell3.q{background:var(--yolk);color:#fff;font-weight:900;font-size:26px}
+  .iq-tok-svg{min-width:54px;height:54px;display:flex;align-items:center;justify-content:center;background:var(--cream);border-radius:12px;border:2px solid #fff;box-shadow:0 3px 0 rgba(54,41,31,.1);padding:0 4px}
+  .iq-tok-svg.q{background:var(--yolk);color:#fff;font-weight:900;font-size:26px}
+  .iq-ref{display:flex;justify-content:center;margin-bottom:12px}
+  .iq-ref svg{background:var(--cream);border-radius:12px;border:2px solid #fff;box-shadow:0 3px 0 rgba(54,41,31,.1);padding:8px}
+  .iq-ref:after{content:"";width:0;height:60px;border-left:3px dashed #c9b48a;margin-left:10px;align-self:center}
+  .mc-iq .modicon{background:#efe3f0}.mc-barn .modicon{background:#f0e6d6}
+
+  /* tractor */
+  .mc-tractor .modicon{background:#e3f2e0}
+  .tr-stage{position:relative;height:150px;overflow:hidden;border-radius:16px;border:3px solid #fff;box-shadow:var(--shadow);margin-bottom:10px;background:linear-gradient(#cdeffb 0 60%,#dff0c8 60% 100%)}
+  .tr-vehicle{position:absolute;left:6px;bottom:4px;width:162px;transition:transform 1.1s cubic-bezier(.2,.8,.3,1)}
+  .tr-vehicle svg{display:block;width:100%;height:auto;overflow:visible}
+  .trpart{opacity:0;transition:opacity .45s}
+  .trpart.show{opacity:1}
+  .tr-dust{position:absolute;left:8px;font-size:18px;pointer-events:none}
+  .tr-progress{font-weight:800;color:var(--ink-soft);font-size:14px;margin-bottom:10px}
+  .tr-opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .tr-part-btn{font-family:inherit;border:3px solid #fff;background:linear-gradient(#fffefb,#eef7ea);border-radius:16px;padding:14px 18px;font-weight:900;font-size:18px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
+  .tr-part-btn:active{transform:translateY(3px)}.tr-part-btn.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}
+  .tr-num{font-family:inherit;min-width:64px;font-size:30px;font-weight:900;padding:16px 12px;border-radius:16px;border:3px solid #fff;background:var(--cream);box-shadow:var(--shadow);cursor:pointer;color:var(--barn-deep)}
+  .tr-num:active{transform:translateY(3px)}.tr-num.right{background:var(--good);color:#fff}.tr-num.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}
+  .tr-engine{background:linear-gradient(#fffefb,#eef3f6);border-radius:14px;border:2px solid #fff;box-shadow:var(--shadow);padding:12px;margin-bottom:10px;text-align:center}
+  .tr-strokes{font-weight:800;font-size:13px;line-height:1.55;color:var(--ink-soft)}
+  .eng{position:relative;width:120px;height:150px;margin:6px auto 4px}
+  .eng-cyl{position:absolute;left:34px;top:16px;width:52px;height:82px;background:#b9c2c8;border:3px solid #8a949b;border-radius:8px 8px 4px 4px;overflow:hidden}
+  .eng-piston{position:absolute;left:4px;right:4px;height:26px;top:6px;background:#6b7a86;border-radius:4px;animation:pistonmove 1.1s ease-in-out infinite}
+  @keyframes pistonmove{0%,100%{top:6px}50%{top:42px}}
+  .eng-spark{position:absolute;left:46px;top:0;font-size:20px;animation:sparkblink 1.1s steps(1) infinite}
+  @keyframes sparkblink{0%,44%{opacity:0}46%,54%{opacity:1}56%,100%{opacity:0}}
+  .eng-crank{position:absolute;left:42px;top:104px;width:36px;height:36px;border-radius:50%;background:#8a949b;border:3px solid #6b7a86;animation:crankspin 1.1s linear infinite}
+  @keyframes crankspin{to{transform:rotate(360deg)}}
+  .eng-pin{position:absolute;left:50%;top:3px;width:8px;height:8px;border-radius:50%;background:#3f9d6b;transform:translateX(-50%)}
+
+  /* barn / Scheune */
+  .barn-scene{flex:1;position:relative;margin:8px 12px 12px;border-radius:18px;overflow:hidden;border:3px solid #7a5a36;min-height:240px;
+    background:linear-gradient(#caa06a 0%,#bd9258 52%,#a8763f 53%,#caa06a 55%,#d8b87e 57%,#e7cf9a 100%)}
+  .barn-scene .beam{position:absolute;left:0;right:0;height:9px;background:#8a6334;opacity:.45}
+  .beam1{top:18%}.beam2{top:40%}
+  .barn-window{position:absolute;top:9%;right:11%;width:62px;height:54px;border:5px solid #7a5a36;border-radius:6px;
+    background:linear-gradient(#d6f1fb,#9ad2ee);box-shadow:0 0 22px rgba(255,247,200,.55)}
+  .barn-window:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 45%,#7a5a36 45% 55%,transparent 55%),linear-gradient(0deg,transparent 45%,#7a5a36 45% 55%,transparent 55%)}
+  .lantern{position:absolute;top:4px;left:16%;font-size:30px;transform-origin:top center;animation:sway 3s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+  .nests{position:absolute;left:8px;top:28%;display:flex;flex-direction:column;gap:6px}
+  .nestbox{width:46px;height:32px;background:#9c6f3e;border:3px solid #7a5a36;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:inset 0 -6px 0 #8a6334}
+  .roost{position:absolute;right:7%;top:30%;width:44%;height:52px}
+  .roost-bar{position:absolute;bottom:0;left:0;right:0;height:8px;background:#7a5a36;border-radius:4px}
+  .roost-hen{position:absolute;bottom:6px;width:46px;height:42px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2))}
+  .hay{position:absolute;left:32%;bottom:6px;font-size:34px}
+  .barn-flock{position:absolute;left:0;right:0;bottom:0;height:42%}
+  .barn-count{position:absolute;bottom:6px;right:10px;font-size:12px;font-weight:800;color:#fff;background:rgba(54,41,31,.5);padding:3px 9px;border-radius:10px}
+
+  /* shared bird */
+  .bird{position:absolute;bottom:6px;width:50px;height:46px;transform-origin:bottom center;filter:drop-shadow(0 4px 3px rgba(0,0,0,.22));pointer-events:auto;cursor:pointer}
+  .bird.new{animation:pop .55s ease}
+  @keyframes pop{0%{transform:scale(0) translateY(14px)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+  @keyframes life{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(4px) rotate(0)}
+    27%{transform:translateX(4px) rotate(12deg)}34%{transform:translateX(4px) rotate(0)}
+    60%{transform:translateX(-4px) rotate(0)}68%{transform:translateX(-4px) rotate(10deg)}75%{transform:translateX(-4px) rotate(0)}}
+
+  /* card (math + explore) */
+  .stagepad{flex:1;overflow-y:auto;padding:8px 16px 6px}
+  .card{background:var(--paper);border-radius:24px;padding:16px;box-shadow:var(--soft);border:3px solid #fff;text-align:center}
+
+  /* MATH */
+  .prompt{font-size:22px;font-weight:800;line-height:1.3;min-height:28px}
+  .eggrow{font-size:27px;letter-spacing:3px;margin:4px 0;line-height:1.4;word-break:break-word}
+  .equation{font-size:36px;font-weight:900;margin:6px 0}
+  .answerbox{display:inline-block;min-width:120px;background:var(--cream);border:3px dashed var(--yolk-deep);
+    border-radius:16px;padding:4px 18px;font-size:36px;font-weight:900;color:var(--barn-deep);min-height:52px;vertical-align:middle}
+  .answerbox.empty{color:#cdbfa6}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0 0}
+  .key{font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:27px;color:var(--ink);
+    background:var(--paper);border-radius:18px;padding:12px 0;box-shadow:var(--shadow);border:2px solid #fff}
+  .key:active{transform:translateY(4px)}
+  .key.del{background:#f6e7df;color:var(--barn-deep)}
+  .key.go{background:var(--good);color:#fff;font-size:23px}
+  .key.go:disabled{opacity:.45}
+
+  /* helpers */
+  .helpers{display:flex;gap:10px;justify-content:center;padding:11px 16px 0;flex-wrap:wrap}
+  .hbtn{font-family:inherit;border:none;cursor:pointer;font-weight:800;font-size:15px;background:var(--paper);
+    border:2px solid #fff;border-radius:16px;padding:10px 16px;box-shadow:var(--shadow);color:var(--ink);display:flex;align-items:center;gap:7px}
+  .hbtn:active{transform:translateY(3px)}
+  .hbtn.tip{background:var(--yolk)}.hbtn.breathe{background:#d8ecf6}.hbtn.next{background:var(--good);color:#fff}
+
+  /* EXPLORE */
+  .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
+  .topic{flex:0 0 auto;border:2px solid #fff;background:var(--paper);border-radius:30px;padding:7px 13px;
+    font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink-soft);white-space:nowrap}
+  .topic.on{background:var(--yolk);color:var(--ink)}
+  .qtopic{font-size:12px;font-weight:800;color:var(--barn);text-transform:uppercase;letter-spacing:.5px}
+  .question{font-size:21px;font-weight:900;line-height:1.32;margin:6px 0 14px}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:16px;padding:13px 15px;
+    font-weight:800;font-size:17px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink);text-align:left}
+  .opt:active{transform:translateY(3px)}
+  .opt.right{background:var(--good);color:#fff}.opt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}
+  @keyframes nudge{0%,100%{transform:translateX(0)}30%{transform:translateX(-5px)}70%{transform:translateX(5px)}}
+  .opt.dim{opacity:.55}
+  .loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0;color:var(--ink-soft);font-weight:800}
+  .spinner svg{width:44px;height:44px;animation:spin 1.1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* CODE */
+  .board-wrap{padding:6px 14px 0;display:flex;justify-content:center}
+  .board{position:relative;width:100%;max-width:420px;border-radius:18px;overflow:hidden;border:4px solid var(--wood-dark);box-shadow:var(--shadow)}
+  .grid{display:grid;width:100%;height:100%}
+  .cell{position:relative;display:flex;align-items:center;justify-content:center;font-size:24px}
+  .cell.g0{background:#8ec969}.cell.g1{background:#83c060}
+  .cell.fence{background:repeating-linear-gradient(180deg,#b98a4f 0 6px,#a3764000 6px 9px),#caa06a;box-shadow:inset 0 0 0 3px #9c6f3e}
+  .cell .egg{font-size:22px;transition:opacity .2s,transform .2s}.cell .egg.gone{opacity:0;transform:scale(0)}
+  .overlay-layer{position:absolute;inset:0;pointer-events:none}
+  .hrobot{position:absolute;width:13%;left:0;top:0;transform:translate(-50%,-50%);transition:left .35s ease,top .35s ease}
+  .hrobot.shake{animation:shake .4s}
+  @keyframes shake{0%,100%{margin-left:0}25%{margin-left:-5px}75%{margin-left:5px}}
+  .hrobot .sprite.flip{transform:scaleX(-1)}
+  .hrobot .antenna{position:absolute;left:50%;top:-6px;width:2px;height:8px;background:#777;transform:translateX(-50%)}
+  .hrobot .antenna:after{content:"";position:absolute;top:-4px;left:-2px;width:6px;height:6px;border-radius:50%;background:#e23}
+  .facing{position:absolute;font-size:13px;color:#c75f40;font-weight:900;text-shadow:0 0 3px #fff}
+  .face-e .facing{right:-9px;top:42%}.face-w .facing{left:-9px;top:42%}.face-n .facing{top:-12px;left:38%}.face-s .facing{bottom:-12px;left:38%}
+  .codescroll{flex:1;overflow-y:auto}
+  .section-label{font-weight:800;font-size:13px;color:var(--ink-soft);padding:10px 16px 4px}
+  .palette{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px}
+  .pbtn{font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:15px;color:#fff;border-radius:14px;
+    padding:11px 14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+  .pbtn:active{transform:translateY(3px)}
+  .pbtn.vor{background:var(--good)}.pbtn.turn{background:var(--blue)}.pbtn.loop{background:var(--yolk-deep)}.pbtn.cond{background:#9b6fd4}
+  .program{display:flex;flex-wrap:wrap;gap:7px;padding:6px 14px;min-height:50px;margin:6px 14px 0;
+    background:var(--paper);border:3px dashed #d9c9a8;border-radius:16px;align-content:flex-start}
+  .program.empty:before{content:"Tippe oben Bausteine an – sie erscheinen hier.";color:#b6a585;font-weight:700;font-size:14px;padding:8px}
+  .chip{border:none;font-family:inherit;font-weight:800;font-size:14px;color:#fff;border-radius:12px;
+    padding:8px 10px;display:flex;align-items:center;gap:5px;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+  .chip.vor{background:var(--good)}.chip.turn{background:var(--blue)}
+  .chip.hi{outline:3px solid #ffd54a;outline-offset:1px}.chip.bad{outline:3px solid #e23;outline-offset:1px}
+  .loopchip.hi,.ifchip.hi{outline:3px solid #ffd54a;outline-offset:1px;border-radius:14px}
+  .loopchip.bad,.ifchip.bad{outline:3px solid #e23;outline-offset:1px}
+  .ifchip{background:#ece4fb;border:2px solid #9b6fd4;border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:5px;max-width:100%}
+  .ifhead{display:flex;align-items:center;gap:6px;font-weight:900;color:#5a3a9c;font-size:14px}
+  .ifslot{background:#f6f1ff;border-radius:10px;padding:5px;display:flex;flex-direction:column;gap:4px}
+  .ifslot-top{display:flex;align-items:center;gap:6px}
+  .ifslot-label{font-weight:800;font-size:12px;color:#5a3a9c}
+  .chip .x{background:rgba(0,0,0,.18);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-weight:900;cursor:pointer;font-size:12px;line-height:1}
+  .loopchip{background:#fbe6b0;border:2px solid var(--yolk-deep);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:5px;max-width:100%}
+  .loophead{display:flex;align-items:center;gap:6px;font-weight:900;color:#7a5a14;font-size:14px}
+  .loophead .step{background:#fff;border:2px solid var(--yolk-deep);border-radius:8px;width:24px;height:24px;font-weight:900;cursor:pointer;color:#7a5a14;font-size:16px;line-height:1}
+  .loophead .open{margin-left:4px;background:var(--yolk-deep);color:#fff;border:none;border-radius:9px;padding:5px 9px;font-weight:800;cursor:pointer;font-size:12px}
+  .loophead .open.active{background:var(--good-deep)}
+  .loopbody{display:flex;flex-wrap:wrap;gap:6px;min-height:34px;background:#fff5da;border-radius:9px;padding:5px}
+  .loopbody.empty:before{content:"hier rein";color:#c2ab74;font-weight:700;font-size:12px;padding:4px}
+  .controls{display:flex;gap:8px;padding:10px 14px 14px;flex-wrap:wrap}
+  .cbtn{font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:16px;color:#fff;border-radius:16px;padding:12px 18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:7px}
+  .cbtn:active{transform:translateY(3px)}.cbtn:disabled{opacity:.5}
+  .cbtn.run{background:var(--good);flex:1;justify-content:center;font-size:18px}.cbtn.reset{background:#e8b9a6;color:var(--barn-deep)}.cbtn.tip{background:var(--yolk);color:var(--ink)}
+
+  /* toast + breathing */
+  .toast{position:fixed;left:50%;top:32%;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;z-index:50;
+    background:var(--good-deep);color:#fff;font-weight:900;font-size:23px;padding:15px 24px;border-radius:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,.28);border:3px solid #fff;transition:transform .25s cubic-bezier(.2,1.5,.4,1),opacity .25s}
+  .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}.toast.lvl{background:var(--barn)}
+  .overlay{position:fixed;inset:0;background:rgba(154,210,238,.95);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+  .overlay.show{display:flex}
+  .breath{width:120px;height:120px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 14px rgba(255,255,255,.4);animation:breathe 8s ease-in-out infinite}
+  .breath svg{width:74px;height:70px}
+  @keyframes breathe{0%,100%{transform:scale(.7)}50%{transform:scale(1.25)}}
+  .btext{font-size:26px;font-weight:900;color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important}.breath{transform:scale(1)}.cloud{display:none}}
+  @media (max-height:720px){.farm{height:160px;flex-basis:160px}.coop{width:150px}.question{font-size:18px}.opt{font-size:15px;padding:11px}.equation{font-size:30px}.answerbox{font-size:30px}}
+  /* ---------- visual polish ---------- */
+  #sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .skycloud{position:absolute;opacity:.4;animation:skydrift linear infinite;filter:drop-shadow(0 6px 6px rgba(120,140,160,.15))}
+  @keyframes skydrift{from{transform:translateX(-22vw)}to{transform:translateX(122vw)}}
+  #app{position:relative;z-index:2}
+  body::after{z-index:1}
+  #fx{position:fixed;inset:0;z-index:55;pointer-events:none;overflow:hidden}
+  .fxp{position:absolute;font-size:22px;will-change:transform,opacity}
+  .hilde svg{animation:idlebob 3.4s ease-in-out infinite}
+  @keyframes idlebob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-3px) rotate(-1.5deg)}}
+  .card{background:linear-gradient(#fffefb,#fff5e4);box-shadow:0 12px 28px rgba(54,41,31,.14),inset 0 2px 0 rgba(255,255,255,.7)}
+  .bubble{background:linear-gradient(#fffefb,#fff5e4)}
+  .stat{background:linear-gradient(#fffefb,#fff5e4)}
+  .modcard{background:linear-gradient(#fffefb,#fdf1dc);transition:transform .13s ease,box-shadow .13s ease}
+  .modcard:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(54,41,31,.17)}
+  .modcard:active{transform:translateY(1px) scale(.99)}
+  .modicon{box-shadow:inset 0 -3px 0 rgba(0,0,0,.05);transition:transform .13s ease}
+  .modcard:hover .modicon{transform:scale(1.08) rotate(-4deg)}
+  .hbtn{background-image:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,0))}
+  .opt,.iqopt,.popt,.labopt,.uopt{background-image:linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,0))}
+  @media (prefers-reduced-motion:reduce){.skycloud,.hilde svg,.lantern{animation:none}}
+  .ki-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 14px 8px}
+  .ki-status{font-size:12px;font-weight:800;color:var(--ink-soft)}
+  .ki-btn{font-family:inherit;border:2px solid #fff;background:linear-gradient(#fffefb,#eef3f6);border-radius:12px;padding:6px 12px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
+  .ki-btn:active{transform:translateY(2px)}
+</style>
+</head>
+<body>
+<div id="sky"><span class="skycloud" style="top:7%;font-size:46px;animation-duration:65s">☁️</span><span class="skycloud" style="top:20%;font-size:30px;animation-duration:90s;animation-delay:-30s">☁️</span><span class="skycloud" style="top:4%;font-size:24px;animation-duration:110s;animation-delay:-70s">☁️</span></div>
+<div id="fx"></div>
+<div id="app">
+  <div class="header">
+    <button class="homebtn" id="homebtn">🏡 Hof</button>
+    <div class="spacer"></div>
+    <div class="stat">🥚 <span id="eggs">0</span> <small>Eier</small></div>
+    <div class="stat">🐔 <span id="flock">0</span> <small>Hühner</small></div>
+    <button class="gear" id="gear" title="Für Erwachsene: Fortschritt zurücksetzen">⚙️</button>
+  </div>
+
+  <div class="screens">
+
+    <!-- HOME -->
+    <div class="screen on" id="home">
+      <div class="hilde-row">
+        <div class="hilde" id="home-hilde"></div>
+        <div class="bubble" id="home-bubble">Willkommen auf deinem Hof, Vinni! Was möchtest du heute machen?</div>
+      </div>
+      <div class="farm">
+        <div class="sun"></div>
+        <div class="cloud" style="left:-40px">☁️</div>
+        <div class="cloud" style="left:-40px;top:34px;font-size:22px;animation-duration:36s;animation-delay:-14s">☁️</div>
+        <div class="run-label">Außengehege</div>
+        <svg class="fence" viewBox="0 0 360 78" preserveAspectRatio="none" aria-hidden="true">
+          <defs><pattern id="wire" width="14" height="14" patternUnits="userSpaceOnUse">
+            <path d="M0 0 L14 14 M14 0 L0 14" stroke="#b9c2c7" stroke-width="1.4" fill="none"/></pattern></defs>
+          <rect x="0" y="18" width="360" height="52" fill="url(#wire)" opacity="0.5"/>
+          <rect x="0" y="16" width="360" height="6" rx="3" fill="#9c6f3e"/>
+          <g fill="#9c6f3e"><rect x="4" y="14" width="8" height="60" rx="3"/><rect x="116" y="14" width="8" height="60" rx="3"/>
+          <rect x="228" y="14" width="8" height="60" rx="3"/><rect x="340" y="14" width="8" height="60" rx="3"/></g>
+        </svg>
+        <div class="feeder" style="left:16%">🌾</div><div class="feeder" style="left:38%">💧</div>
+        <div class="home-deco" id="home-deco"></div>
+        <div class="home-flock" id="home-flock"></div>
+        <svg class="coop" viewBox="0 0 200 160" aria-label="Hühnerstall">
+          <ellipse cx="105" cy="150" rx="92" ry="9" fill="rgba(54,41,31,.18)"/>
+          <line x1="104" y1="10" x2="104" y2="40" stroke="#6b4a2a" stroke-width="3"/><path d="M104 16 l16 6 -16 6 z" fill="#3a2e25"/><circle cx="104" cy="11" r="3" fill="#f4ab2e"/>
+          <path d="M40 64 L104 30 L168 64 L156 70 L104 42 L52 70 Z" fill="var(--roof-dark)"/>
+          <path d="M48 66 L104 38 L160 66 L160 78 L104 50 L48 78 Z" fill="var(--roof)"/>
+          <rect x="54" y="74" width="100" height="74" rx="4" fill="var(--wood)"/>
+          <g stroke="var(--wood-dark)" stroke-width="1.4" opacity=".7"><line x1="70" y1="76" x2="70" y2="146"/><line x1="86" y1="76" x2="86" y2="146"/><line x1="104" y1="76" x2="104" y2="146"/><line x1="122" y1="76" x2="122" y2="146"/><line x1="138" y1="76" x2="138" y2="146"/></g>
+          <rect x="54" y="74" width="100" height="74" rx="4" fill="none" stroke="var(--wood-dark)" stroke-width="2"/>
+          <rect x="118" y="86" width="26" height="26" rx="3" fill="#dff0f6" stroke="var(--wood-dark)" stroke-width="2"/>
+          <line x1="131" y1="86" x2="131" y2="112" stroke="var(--wood-dark)" stroke-width="2"/><line x1="118" y1="99" x2="144" y2="99" stroke="var(--wood-dark)" stroke-width="2"/>
+          <path d="M104 84 q-5 -7 -10 -1 q-4 5 10 13 q14 -8 10 -13 q-5 -6 -10 1 z" fill="var(--barn)"/>
+          <path d="M64 148 L64 116 q0 -10 10 -10 q10 0 10 10 L84 148 Z" fill="#2c2118"/>
+          <path d="M64 148 L102 158 L96 162 L58 152 Z" fill="var(--wood-dark)"/>
+        </svg>
+      </div>
+      <div class="modcards">
+        <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
+        <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
+        <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
+        <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor bauen</div><div class="modsub">Zusammenbauen, Motor verstehen & mit Zahlen fahren</div></div></button>
+        <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Natur, Welt, Logik – von Hilde erdacht</div></div></button>
+        <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
+        <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
+        <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
+        <button class="modcard mc-clk" data-go="clock"><div class="modicon">⏰</div><div><div class="modtitle">Uhr & Zeit</div><div class="modsub">Die analoge Uhr lesen lernen</div></div></button>
+        <button class="modcard mc-store" data-go="store"><div class="modicon">🏪</div><div><div class="modtitle">Kaufmannsladen</div><div class="modsub">Mit Geld bezahlen & rechnen lernen</div></div></button>
+        <button class="modcard mc-market" data-go="market"><div class="modicon">📈</div><div><div class="modtitle">Hühnermarkt</div><div class="modsub">Angebot & Nachfrage – warum Preise sich ändern</div></div></button>
+        <button class="modcard mc-read" data-go="read"><div class="modicon">🔤</div><div><div class="modtitle">Lesen & Buchstaben</div><div class="modsub">Wörter bauen und hören</div></div></button>
+        <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
+        <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
+      </div>
+    </div>
+
+    <!-- MATH -->
+    <div class="screen" id="math">
+      <div class="hilde-row"><div class="hilde" id="math-hilde"></div><div class="bubble" id="math-bubble">Lass uns Eier sammeln – tipp deine Antwort ein!</div></div>
+      <div class="stagepad">
+        <div class="card">
+          <div class="prompt" id="m-prompt"></div><div class="eggrow" id="m-eggrow"></div>
+          <div class="equation" id="m-eq"></div><div class="answerbox empty" id="m-ans">?</div>
+          <div class="pad" id="m-pad"></div>
+        </div>
+      </div>
+      <div class="helpers"><button class="hbtn tip" id="m-tip">💡 Tipp</button><button class="hbtn breathe" id="m-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- CODE -->
+    <div class="screen" id="code">
+      <div class="hilde-row"><div class="hilde" id="code-hilde"></div><div class="bubble" id="code-bubble">Steuere mich zum Stall – und sammle alle Eier ein!</div></div>
+      <div class="codescroll">
+        <div class="board-wrap"><div class="board" id="c-board"></div></div>
+        <div class="section-label">Bausteine</div>
+        <div class="palette" id="c-palette"></div>
+        <div class="section-label">Dein Programm</div>
+        <div class="program empty" id="c-program"></div>
+        <div class="controls">
+          <button class="cbtn run" id="c-run">▶ Start</button>
+          <button class="cbtn reset" id="c-reset">↺ Leeren</button>
+          <button class="cbtn tip" id="c-tip">💡 Tipp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPLORE -->
+    <div class="screen" id="explore">
+      <div class="hilde-row"><div class="hilde" id="explore-hilde"></div><div class="bubble" id="explore-bubble">Wähle ein Thema oder lass dich überraschen!</div></div>
+      <div class="topics" id="e-topics"></div>
+      <div class="ki-row"><span id="e-ki-status" class="ki-status"></span><button id="e-ki-btn" class="ki-btn">⚙️ KI</button></div>
+      <div class="stagepad"><div class="card" id="e-card"><div class="loading"><div class="spinner"></div><div>Hilde denkt nach …</div></div></div></div>
+      <div class="helpers">
+        <button class="hbtn tip" id="e-tip">💡 Tipp</button>
+        <button class="hbtn breathe" id="e-breathe">🌬️ Durchatmen</button>
+        <button class="hbtn next" id="e-next" style="display:none">Nächste Frage ➜</button>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- PATTERN -->
+    <div class="screen" id="pattern">
+      <div class="hilde-row"><div class="hilde" id="pattern-hilde"></div><div class="bubble" id="pattern-bubble">Finde heraus, wie es weitergeht!</div></div>
+      <div class="stagepad"><div class="card" id="p-card"></div></div>
+      <div class="helpers"><button class="hbtn tip" id="p-tip">💡 Tipp</button><button class="hbtn breathe" id="p-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- LAB -->
+    <div class="screen" id="lab">
+      <div class="hilde-row"><div class="hilde" id="lab-hilde"></div><div class="bubble" id="lab-bubble">Im Labor erforschen wir die Welt. Was glaubst du passiert?</div></div>
+      <div class="stagepad">
+        <div class="card">
+          <div class="lab-stage" id="lab-stage"></div>
+          <div class="lab-prompt" id="lab-prompt"></div>
+          <div class="laboptions" id="lab-opts"></div>
+          <div class="lab-explain" id="lab-explain"></div>
+          <button class="hbtn next" id="lab-next" style="display:none;margin:12px auto 0">Nächstes Experiment ➜</button>
+        </div>
+      </div>
+      <div class="helpers"><button class="hbtn breathe" id="lab-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- CLOCK -->
+    <div class="screen" id="clock">
+      <div class="hilde-row"><div class="hilde" id="clock-hilde"></div><div class="bubble" id="clock-bubble">Kannst du die Uhr lesen?</div></div>
+      <div class="stagepad"><div class="card">
+        <div class="u-clock" id="u-clock"></div>
+        <div class="lab-prompt" id="u-prompt"></div>
+        <div class="uoptions" id="u-opts"></div>
+      </div></div>
+      <div class="helpers"><button class="hbtn tip" id="u-tip">💡 Tipp</button><button class="hbtn breathe" id="u-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- STORE -->
+    <div class="screen" id="store">
+      <div class="hilde-row"><div class="hilde" id="store-hilde"></div><div class="bubble" id="store-bubble">Im Kaufmannsladen lernst du, mit Geld zu bezahlen!</div></div>
+      <div class="stagepad"><div class="card">
+        <div id="st-task"></div>
+        <div class="st-tray" id="st-tray"></div>
+        <div class="st-total" id="st-total"></div>
+        <div class="st-coins" id="st-coins"></div>
+        <div class="st-controls"><button class="hbtn st-pay" id="st-pay">Bezahlen ✓</button><button class="hbtn st-clear" id="st-clear">Beutel leeren ↺</button></div>
+      </div></div>
+      <div class="helpers"><button class="hbtn tip" id="st-tip">💡 Tipp</button><button class="hbtn breathe" id="st-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- MARKET -->
+    <div class="screen" id="market">
+      <div class="hilde-row"><div class="hilde" id="market-hilde"></div><div class="bubble" id="market-bubble">Auf dem Markt lernst du, warum Preise sich ändern!</div></div>
+      <div class="stagepad"><div class="card">
+        <div class="mk-meter"><div class="mk-fill" id="mk-fill"></div><div class="mk-price" id="mk-price"></div></div>
+        <div class="mk-arrow" id="mk-arrow"></div>
+        <div class="mk-scn" id="mk-scn"></div>
+        <div class="options" id="mk-opts"></div>
+        <div class="lab-explain" id="mk-explain"></div>
+        <button class="hbtn next" id="mk-next" style="display:none;margin:12px auto 0">Nächster Markttag ➜</button>
+      </div></div>
+      <div class="helpers"><button class="hbtn tip" id="mk-tip">💡 Tipp</button><button class="hbtn breathe" id="mk-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- TRACTOR -->
+    <div class="screen" id="tractor">
+      <div class="hilde-row"><div class="hilde" id="tractor-hilde"></div><div class="bubble" id="tractor-bubble">Lass uns einen Traktor bauen!</div></div>
+      <div class="stagepad">
+        <div class="tr-stage" id="tr-stage">
+          <div class="tr-vehicle" id="tr-vehicle">
+            <svg id="tr-svg" viewBox="0 0 280 180" xmlns="http://www.w3.org/2000/svg">
+              <g id="trp-rahmen" class="trpart"><rect x="70" y="92" width="150" height="40" rx="8" fill="#57b07a"/><rect x="60" y="120" width="172" height="14" rx="6" fill="#3f8e60"/></g>
+              <g id="trp-raeder" class="trpart">
+                <circle cx="198" cy="140" r="30" fill="#3a3a3a"/><circle cx="198" cy="140" r="15" fill="#c9ced1"/><circle cx="198" cy="140" r="5" fill="#8a949b"/>
+                <circle cx="92" cy="146" r="20" fill="#3a3a3a"/><circle cx="92" cy="146" r="10" fill="#c9ced1"/><circle cx="92" cy="146" r="3.5" fill="#8a949b"/>
+              </g>
+              <g id="trp-motor" class="trpart"><rect x="56" y="96" width="48" height="38" rx="6" fill="#4a9e6c"/><line x1="62" y1="105" x2="98" y2="105" stroke="#3f8e60" stroke-width="3"/><line x1="62" y1="113" x2="98" y2="113" stroke="#3f8e60" stroke-width="3"/><line x1="62" y1="121" x2="98" y2="121" stroke="#3f8e60" stroke-width="3"/></g>
+              <g id="trp-tank" class="trpart"><rect x="120" y="78" width="40" height="18" rx="9" fill="#d8a657" stroke="#b9863c" stroke-width="2"/></g>
+              <g id="trp-auspuff" class="trpart"><rect x="66" y="58" width="9" height="40" rx="3" fill="#9aa3a9"/><rect x="61" y="54" width="19" height="8" rx="3" fill="#7d858b"/></g>
+              <g id="trp-kabine" class="trpart"><rect x="168" y="60" width="56" height="42" rx="6" fill="#2f7d52"/><rect x="176" y="68" width="40" height="26" rx="4" fill="#bfe3f5"/><circle cx="184" cy="100" r="7" fill="none" stroke="#243b2c" stroke-width="3"/></g>
+              <g id="trp-fahrer" class="trpart"><text x="190" y="86" font-size="20">🐔</text></g>
+            </svg>
+          </div>
+        </div>
+        <div class="tr-engine" id="tr-engine" style="display:none"></div>
+        <div class="card" style="padding:12px"><div id="tr-panel"></div></div>
+      </div>
+      <div class="helpers"><button class="hbtn tip" id="tr-tip">💡 Tipp</button><button class="hbtn breathe" id="tr-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- IQ -->
+    <div class="screen" id="iq">
+      <div class="hilde-row"><div class="hilde" id="iq-hilde"></div><div class="bubble" id="iq-bubble">Bereit für eine knifflige Denksport-Aufgabe?</div></div>
+      <div class="stagepad"><div class="card" id="iq-card"></div></div>
+      <div class="helpers"><button class="hbtn tip" id="iq-tip">💡 Tipp</button><button class="hbtn breathe" id="iq-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- BARN -->
+    <div class="screen" id="barn">
+      <div class="hilde-row"><div class="hilde" id="barn-hilde"></div><div class="bubble" id="barn-bubble">Willkommen in der Scheune!</div></div>
+      <div class="barn-scene" id="barn-scene">
+        <div class="beam beam1"></div><div class="beam beam2"></div>
+        <div class="barn-window"></div>
+        <div class="lantern">🏮</div>
+        <div class="nests"><div class="nestbox">🥚</div><div class="nestbox">🥚</div><div class="nestbox">🥚</div></div>
+        <div class="roost" id="barn-roost"></div>
+        <div class="hay">🌾</div>
+        <div class="barn-flock" id="barn-flock"></div>
+        <div class="barn-count" id="barn-count"></div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="screen" id="stats">
+      <div class="hilde-row"><div class="hilde" id="stats-hilde"></div><div class="bubble" id="stats-bubble">Schau, wie weit du schon bist!</div></div>
+      <div class="stagepad"><div class="stats-list" id="stats-list"></div></div>
+    </div>
+
+    <!-- READ -->
+    <div class="screen" id="read">
+      <div class="hilde-row"><div class="hilde" id="read-hilde"></div><div class="bubble" id="read-bubble">Bau das Wort aus Buchstaben zusammen!</div></div>
+      <div class="stagepad"><div class="card">
+        <div class="r-emoji" id="r-emoji"></div>
+        <button class="hbtn r-say" id="r-say">🔊 Wort hören</button>
+        <div class="r-slots" id="r-slots"></div>
+        <div class="r-rack" id="r-rack"></div>
+      </div></div>
+      <div class="helpers"><button class="hbtn tip" id="r-tip">💡 Tipp</button><button class="hbtn breathe" id="r-breathe">🌬️ Durchatmen</button></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- SHOP -->
+    <div class="screen" id="shop">
+      <div class="hilde-row"><div class="hilde" id="shop-hilde"></div><div class="bubble" id="shop-bubble">Hier kannst du mit deinen Eiern den Hof größer machen!</div></div>
+      <div class="shopscroll">
+        <button class="hatchbtn" id="hatchBtn">🐣 Neues Küken ausbrüten <span class="price">8 🥚</span></button>
+        <div class="section-label">Neue Hühner-Rassen</div>
+        <div class="shopgrid" id="shop-breeds"></div>
+        <div class="section-label">Schmuck für den Hof</div>
+        <div class="shopgrid" id="shop-decos"></div>
+        <div style="height:14px"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="overlay" id="overlay"><div class="breath" id="breathC"></div><div class="btext" id="btext">Einatmen …</div><button class="hbtn" id="breathDone">Mir geht's gut – weiter ✓</button></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){return document.getElementById(id);}
+  function pick(a){return a[Math.floor(Math.random()*a.length)];}
+  function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+  function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  var gid=0;
+  function surface(err){try{var b=$("errbar");if(!b){b=document.createElement("div");b.id="errbar";b.style.cssText="position:fixed;left:0;right:0;top:0;z-index:9999;background:#c0392b;color:#fff;font:600 13px/1.45 system-ui,-apple-system,sans-serif;padding:8px 12px;text-align:center";(document.body||document.documentElement).appendChild(b);}b.textContent="⚠️ "+(((err&&err.message)||err)+"");}catch(e){}}
+  window.addEventListener("error",function(ev){surface((ev&&ev.message)||(ev&&ev.error)||"Fehler");});
+
+  /* ---------- chicken art ---------- */
+  var VAR={weiss:{c1:"#ffffff",c2:"#e6dcc8",br:"#fffaf0"},braun:{c1:"#dcae6e",c2:"#a3713c",br:"#e8caa0"},
+    rot:{c1:"#efb160",c2:"#c0701f",br:"#f3d29a"},grau:{c1:"#9a8270",c2:"#5c4836",br:"#b39a83"}};
+  var VKEYS=Object.keys(VAR);
+  function chick(v,rooster){
+    var g=++gid,b="b"+g,h="h"+g,cm="cm"+g,bk="bk"+g;
+    var s='<svg viewBox="0 0 84 76" xmlns="http://www.w3.org/2000/svg"><defs>';
+    s+='<radialGradient id="'+b+'" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="'+v.c1+'"/><stop offset="1" stop-color="'+v.c2+'"/></radialGradient>';
+    s+='<radialGradient id="'+h+'" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="'+v.c1+'"/><stop offset="1" stop-color="'+v.c2+'"/></radialGradient>';
+    s+='<linearGradient id="'+cm+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ec5b44"/><stop offset="1" stop-color="#bd2c20"/></linearGradient>';
+    s+='<linearGradient id="'+bk+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7b53e"/><stop offset="1" stop-color="#df8a1d"/></linearGradient></defs>';
+    s+='<g stroke="#e09833" stroke-width="2.6" stroke-linecap="round" fill="none"><path d="M34 60 L31 70"/><path d="M31 70 l-4 3 M31 70 l0 4 M31 70 l4 3"/><path d="M46 60 L49 70"/><path d="M49 70 l-4 3 M49 70 l0 4 M49 70 l4 3"/></g>';
+    if(rooster){s+='<path d="M14 50 Q-4 24 16 18 Q10 36 26 42 Z" fill="#1f6e4e"/><path d="M15 52 Q1 30 20 23 Q14 40 28 44 Z" fill="#2f9268"/><path d="M17 54 Q6 38 24 30 Q19 44 30 47 Z" fill="'+v.c2+'"/>';}
+    else{s+='<path d="M16 52 Q3 38 19 30 Q16 44 28 47 Z" fill="'+v.c2+'"/><path d="M17 53 Q7 42 22 35 Q19 46 30 48 Z" fill="'+v.c1+'" opacity=".55"/>';}
+    s+='<ellipse cx="44" cy="46" rx="22" ry="17" fill="url(#'+b+')"/>';
+    s+='<path d="M30 54 Q44 66 60 52 Q50 62 30 54 Z" fill="'+v.br+'" opacity=".85"/>';
+    s+='<g stroke="'+v.c2+'" stroke-width="1.1" fill="none" opacity=".5"><path d="M34 40 Q44 44 54 40"/><path d="M33 47 Q45 52 57 46"/></g>';
+    s+='<path d="M33 40 Q47 36 58 48 Q46 50 33 44 Z" fill="'+v.c2+'" opacity=".9"/>';
+    s+='<circle cx="58" cy="26" r="11.5" fill="url(#'+h+')"/>';
+    var cy=rooster?13:15;
+    s+='<path d="M50 '+cy+' q-1 -7 5 -6 q1 -6 6 -4 q3 -5 7 -1 q3 4 -1 8 q-9 1 -17 3 z" fill="url(#'+cm+')"/>';
+    s+='<ellipse cx="62" cy="33" rx="2.6" ry="4.2" fill="url(#'+cm+')"/>';
+    s+='<path d="M68 25 l9 3 -9 3 z" fill="url(#'+bk+')"/>';
+    s+='<circle cx="61" cy="23" r="2.1" fill="#2a2018"/><circle cx="61.7" cy="22.3" r=".7" fill="#fff"/></svg>';
+    return s;
+  }
+
+  /* ---------- kataloge ---------- */
+  var NAMES=["Berta","Frieda","Greta","Lotte","Emma","Paula","Mathilda","Henni","Klara","Rosa","Erna","Käthe","Wilma","Olga","Minna","Trude","Liesel","Frida","Hedwig","Resi"];
+  var BREEDS={
+    weiss:{label:"Weiße Henne",v:VAR.weiss,rooster:false},
+    braun:{label:"Braune Henne",v:VAR.braun,rooster:false},
+    rot:{label:"Rotbraune Henne",v:VAR.rot,rooster:false,cost:10},
+    grau:{label:"Graue Henne",v:VAR.grau,rooster:false,cost:14},
+    hahn:{label:"Stolzer Hahn",v:VAR.rot,rooster:true,cost:20},
+    gold:{label:"Goldhuhn",v:{c1:"#ffe79a",c2:"#e0a11f",br:"#fff3c6"},rooster:false,cost:40}
+  };
+  var DECOS={
+    tulpen:{label:"Tulpen",emoji:"🌷",cost:8,style:"left:30%;bottom:8px;font-size:22px"},
+    sonne:{label:"Sonnenblume",emoji:"🌻",cost:10,style:"left:46%;bottom:8px;font-size:24px"},
+    baum:{label:"Apfelbaum",emoji:"🌳",cost:14,style:"left:3%;bottom:34px;font-size:40px"},
+    falter:{label:"Schmetterling",emoji:"🦋",cost:9,style:"left:60%;bottom:74px;font-size:22px"},
+    regen:{label:"Regenbogen",emoji:"🌈",cost:18,style:"left:48%;top:4px;font-size:34px"},
+    stange:{label:"Sitzstange",emoji:"🪵",cost:12,style:"left:20%;bottom:6px;font-size:24px"}
+  };
+  function randName(){return NAMES[Math.floor(Math.random()*NAMES.length)];}
+  function makeDefault(n){var a=[],bk=["weiss","braun"];for(var i=0;i<n;i++)a.push({breed:bk[i%2],name:NAMES[i%NAMES.length]});return a;}
+
+  /* ---------- global state + speichern ---------- */
+  var SAVEKEY="vinni_huehnerhof_v1";
+  function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:9,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos}));}catch(e){}}
+  var _ld=loadSave()||{};
+  var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
+    chickens:_ld.chickens||makeDefault(_ld.flock||0),
+    unlocked:_ld.unlocked||["weiss","braun"],
+    decos:_ld.decos||[]};
+  if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
+  function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;}
+
+  function birdEl(ch,isNew){
+    var d=document.createElement("div");d.className="bird"+(isNew?" new":"");
+    d.style.left=(4+Math.random()*54)+"%";
+    var br=BREEDS[ch.breed]||BREEDS.weiss;d.innerHTML=chick(br.v,br.rooster);
+    d.title=ch.name;d.onclick=function(){toast("🐔 "+ch.name);};
+    var dur=(4+Math.random()*3.2).toFixed(1),del=(Math.random()*4).toFixed(1);
+    setTimeout(function(){d.classList.remove("new");d.style.animation="life "+dur+"s ease-in-out "+del+"s infinite";},isNew?560:0);
+    return d;
+  }
+  function renderFlock(){var strip=$("home-flock");strip.innerHTML="";G.chickens.slice(-14).forEach(function(ch){strip.appendChild(birdEl(ch,false));});}
+  function renderDecos(){var layer=$("home-deco");layer.innerHTML="";G.decos.forEach(function(id){var d=DECOS[id];if(!d)return;var s=document.createElement("span");s.className="deco";s.style.cssText="position:absolute;"+d.style;s.textContent=d.emoji;layer.appendChild(s);});}
+  function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();}
+  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();}
+  function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
+  function renderStats(){
+    var rows=[
+      {i:"🥚",n:"Rechnen",s:"Zahlen & Rechnen",lvl:G.mLevel},
+      {i:"🤖",n:"Programmieren",s:"Abläufe, Schleifen, Wenn-Dann",lvl:G.cLi+1},
+      {i:"🦉",n:"Wissen",s:"Fragen aus aller Welt",lvl:G.eDiff},
+      {i:"🧩",n:"Muster & Logik",s:"Reihen & Knobeln",lvl:G.pLevel},
+      {i:"🔬",n:"Forscher-Labor",s:"Vorhersagen & Staunen",lvl:0},
+      {i:"⏰",n:"Uhr & Zeit",s:"Die Uhr lesen",lvl:G.uLevel},
+      {i:"🏪",n:"Kaufmannsladen",s:"Mit Geld bezahlen",lvl:G.sLevel},
+      {i:"📈",n:"Hühnermarkt",s:"Angebot & Nachfrage",lvl:G.wLevel},
+      {i:"🔤",n:"Lesen",s:"Wörter bauen & hören",lvl:G.rLevel},
+      {i:"🚜",n:"Traktor fahren",s:"Zahlen vergleichen",lvl:G.tLevel}
+    ];
+    var html='<div class="stats-sum">🥚 '+G.eggs+' Eier · 🐔 '+G.chickens.length+' Hühner</div>';
+    rows.forEach(function(r){var badge=r.lvl>0?("Stufe "+r.lvl):"aktiv";html+='<div class="statrow"><div class="staticon">'+r.i+'</div><div class="statmid"><div class="statname">'+r.n+'</div><div class="statsub">'+r.s+'</div></div><div class="statbadge">'+badge+'</div></div>';});
+    $("stats-list").innerHTML=html;
+  }
+  function renderBarn(){
+    $("barn-roost").innerHTML='<div class="roost-bar"></div><div class="roost-hen" style="left:18%">'+chick(VAR.braun,false)+'</div><div class="roost-hen" style="left:52%">'+chick(VAR.weiss,true)+'</div>';
+    var fl=$("barn-flock");fl.innerHTML="";
+    G.chickens.slice(-10).forEach(function(c){fl.appendChild(birdEl(c,false));});
+    $("barn-count").textContent="Hier wohnen "+G.chickens.length+" Hühner.";
+  }
+
+  /* ---------- shared Hilde / bubble ---------- */
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"]};
+  var current="home";
+  function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
+
+  /* ---------- toast + breathing (shared) ---------- */
+  var tt=null;
+  function toast(m,lvl){var t=$("toast");t.textContent=m;t.classList.toggle("lvl",!!lvl);t.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("show");},lvl?1500:1050);}
+  function pulse(el){if(el&&el.animate)el.animate([{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(1)"}],{duration:600,iterations:3});}
+  function celebrate(){
+    var fx=$("fx");if(!fx)return;var ic=["🥚","✨","⭐","🌟","🐣"];
+    for(var i=0;i<7;i++){
+      var s=document.createElement("span");s.className="fxp";s.textContent=ic[Math.floor(Math.random()*ic.length)];
+      s.style.left=(42+Math.random()*16)+"%";s.style.top="38%";fx.appendChild(s);
+      var dx=(Math.random()*2-1)*130,dy=-(70+Math.random()*130),rot=(Math.random()*2-1)*220,dur=850+Math.random()*450;
+      (function(el,dx,dy,rot,dur){
+        try{var a=el.animate([{transform:"translate(0,0) scale(.5) rotate(0deg)",opacity:1},{transform:"translate("+dx+"px,"+dy+"px) scale(1.25) rotate("+rot+"deg)",opacity:0}],{duration:dur,easing:"cubic-bezier(.2,.7,.3,1)"});a.onfinish=function(){el.remove();};}catch(e){}
+        setTimeout(function(){if(el.parentNode)el.remove();},dur+250);
+      })(s,dx,dy,rot,dur);
+    }
+  }
+  var bt=null;
+  function openBreathe(){$("overlay").classList.add("show");var ph=["Einatmen …","… halten …","Ausatmen …","… und Pause …"],i=0;$("btext").textContent=ph[0];clearInterval(bt);bt=setInterval(function(){i=(i+1)%ph.length;$("btext").textContent=ph[i];},2000);}
+  function closeBreathe(){$("overlay").classList.remove("show");clearInterval(bt);say("Schön durchgeatmet. Probier es ruhig nochmal. 🐔",true);}
+
+  /* ---------- router ---------- */
+  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false};
+  function show(name){
+    Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
+    current=name;$("homebtn").classList.toggle("show",name!=="home");
+    try{
+    if(name==="math"&&!inited.math){inited.math=true;M.start();}
+    if(name==="code"&&!inited.code){inited.code=true;C.start();}
+    if(name==="explore"&&!inited.explore){inited.explore=true;E.start();}
+    if(name==="pattern"&&!inited.pattern){inited.pattern=true;P.start();}
+    if(name==="iq"&&!inited.iq){inited.iq=true;IQ.start();}
+    if(name==="lab"&&!inited.lab){inited.lab=true;LAB.start();}
+    if(name==="clock"&&!inited.clock){inited.clock=true;U.start();}
+    if(name==="store"&&!inited.store){inited.store=true;KL.start();}
+    if(name==="market"&&!inited.market){inited.market=true;W.start();}
+    if(name==="read"&&!inited.read){inited.read=true;R.start();}
+    if(name==="tractor"&&!inited.tractor){inited.tractor=true;TR.start();}
+    if(name==="math")M.say0();
+    if(name==="code")C.say0();
+    if(name==="explore")E.say0();
+    if(name==="pattern")P.say0();
+    if(name==="iq")IQ.say0();
+    if(name==="lab")LAB.say0();
+    if(name==="clock")U.say0();
+    if(name==="store")KL.say0();
+    if(name==="market")W.say0();
+    if(name==="read")R.say0();
+    if(name==="tractor")TR.say0();
+    if(name==="barn"){renderBarn();say("Willkommen in der Scheune! Tippe ein Huhn an, um seinen Namen zu hören. 🐔");}
+    if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
+    if(name==="shop")SHOP.open();
+    if(name==="home"){renderDecos();renderFlock();say("Willkommen zurück! Was als Nächstes?",false);}
+    }catch(_e){surface(_e);}
+  }
+
+  /* ===================== MATH MODULE ===================== */
+  var M=(function(){
+    var st={level:(G.mLevel||1),max:12,streak:0,cur:null,input:"",hints:0,wrong:0};
+    var praise=["Stark, dass du drangeblieben bist!","Super – Schritt für Schritt!","Dein Gehirn wird stärker. 💪","Klasse Weg!","Geschafft – ein Ei mehr!","Du wirst immer schneller."];
+    var facts=["Hühner stammen vom Bankivahuhn aus Südostasien ab.","Vögel sind die heutigen Verwandten der Dinosaurier!","Hühner erkennen über 100 Gesichter.","Ein Ei trägt viel, weil seine runde Form die Kraft verteilt.","Hühner sehen mehr Farben als Menschen."];
+    function cap(){var c=[0,5,10,20,30,50,80,120,200,300,500,800,1000];return c[Math.min(st.level,12)];}
+    function allowed(){var L=st.level;if(L<=1)return["count","add"];if(L===2)return["count","add","sub"];if(L===3)return["add","sub"];if(L===4)return["add","sub","mul"];if(L===5)return["mul","add","sub","div"];return["mul","div","add","sub","missing"];}
+    function gen(){var t=pick(allowed()),p={type:t,hints:[]},c=cap();
+      if(t==="count"){var n=rnd(1,Math.min(12,Math.max(4,c)));p.answer=n;p.prompt="Wie viele Eier liegen im Nest?";p.eggs="🥚".repeat(n);p.hints=["Tippe jedes Ei einmal an.","Zähl langsam: eins, zwei, drei …","Zähl noch einmal nach."];}
+      else if(t==="add"){var a=rnd(1,c),b=rnd(1,c);p.answer=a+b;p.eq=a+" + "+b+" = ";p.prompt="Wie viele Eier zusammen?";var hi=Math.max(a,b),lo=Math.min(a,b);p.hints=["Fang bei der größeren Zahl an.","Starte bei "+hi+" und zähl "+lo+" weiter.","Erst zur nächsten Zehnerzahl auffüllen."];}
+      else if(t==="sub"){var x=rnd(2,c),y=rnd(1,x);p.answer=x-y;p.eq=x+" − "+y+" = ";p.prompt="Der Fuchs nahm Eier mit. Wie viele bleiben?";p.hints=["Beginne bei "+x+" und zähl "+y+" rückwärts.","Wie weit ist "+y+" von "+x+"?","Zähl von "+y+" hoch bis "+x+"."];}
+      else if(t==="mul"){var f1,f2;if(st.level<=4){f1=pick([2,5,10]);f2=rnd(2,9);}else{f1=rnd(2,Math.min(12,st.level));f2=rnd(2,Math.min(12,st.level));}p.answer=f1*f2;p.eq=f1+" × "+f2+" = ";p.prompt=f1+" Körbe mit je "+f2+" Eiern. Wie viele?";p.hints=["Das sind "+f1+"-mal die "+f2+".","Zähl in "+f2+"er-Schritten.","Nutze eine Reihe, die du kennst."];}
+      else if(t==="div"){var dv=rnd(2,Math.min(10,Math.max(2,st.level))),q=rnd(2,Math.min(10,Math.max(2,st.level))),tot=dv*q;p.answer=q;p.eq=tot+" ÷ "+dv+" = ";p.prompt=tot+" Eier auf "+dv+" Hühner. Wie viele je Huhn?";p.hints=["Jedes Huhn gleich viel.","Welche Zahl mal "+dv+" ergibt "+tot+"?","Zähl in "+dv+"er-Schritten bis "+tot+"."];}
+      else{var base=rnd(1,c),miss=rnd(1,c),sum=base+miss;p.answer=miss;p.eq=base+" + ▢ = "+sum;p.prompt="Wie viele Eier fehlen noch?";p.hints=["Was fehlt von "+base+" bis "+sum+"?","Zähl von "+base+" hoch bis "+sum+".","Oder rechne "+sum+" − "+base+"."];}
+      return p;}
+    function next(){st.cur=gen();st.input="";st.hints=0;st.wrong=0;$("m-prompt").textContent=st.cur.prompt||"";$("m-eggrow").textContent=st.cur.eggs||"";$("m-eq").textContent=st.cur.eq||"";render();}
+    function render(){var box=$("m-ans");if(st.input===""){box.textContent="?";box.classList.add("empty");}else{box.textContent=st.input;box.classList.remove("empty");}$("m-go").disabled=(st.input==="");}
+    function ok(){st.streak++;var r=1+Math.floor((st.level-1)/2);addEgg(r);say(pick(praise),true);toast("Richtig! +"+r+" 🥚");if(st.streak>=3&&st.level<st.max){st.level++;st.streak=0;G.mLevel=st.level;doSave();setTimeout(function(){toast("Stufe "+st.level+"! 🎉",true);say("Wusstest du? "+pick(facts),true);},900);setTimeout(next,1700);}else setTimeout(next,850);}
+    function bad(){st.wrong++;st.streak=0;st.input="";render();if(st.wrong===1){say("Fast! Kein Problem – probier es nochmal. 💡 hilft.");toast("Versuch's nochmal 🙂");}else{if(st.level>1){st.level--;G.mLevel=st.level;doSave();}say("Das ist knifflig, oder? Das heißt: dein Gehirn wächst gerade. Atme durch 🌬️ oder nimm 💡.");pulse($("m-breathe"));}}
+    function key(k){if(k==="⌫"){st.input=st.input.slice(0,-1);render();return;}if(k==="✓"){if(st.input==="")return;parseInt(st.input,10)===st.cur.answer?ok():bad();return;}if(st.input.length<5){st.input+=k;render();}}
+    function buildPad(){var pad=$("m-pad"),keys=["1","2","3","4","5","6","7","8","9","⌫","0","✓"];keys.forEach(function(k){var b=document.createElement("button");b.className="key";b.textContent=k;if(k==="⌫")b.classList.add("del");if(k==="✓"){b.classList.add("go");b.id="m-go";}b.onclick=function(){key(k);};pad.appendChild(b);});}
+    return {start:function(){buildPad();next();},say0:function(){},hint:function(){if(st.cur){say("💡 "+(st.cur.hints[Math.min(st.hints,st.cur.hints.length-1)]||"Zähl langsam nach."));st.hints++;if(st.hints>=3)pulse($("m-breathe"));}}};
+  })();
+
+  /* ===================== CODE MODULE ===================== */
+  var C=(function(){
+    var LEVELS=[
+      {cols:5,rows:3,start:{x:0,y:1,dir:1},eggs:[{x:2,y:1}],coop:{x:4,y:1},fences:[],blocks:["vor"],hint:"Tippe »Vor«, bis Hilde rechts am Stall ist. Am Ei läuft sie vorbei und sammelt es ein."},
+      {cols:4,rows:4,start:{x:0,y:0,dir:1},eggs:[{x:2,y:0}],coop:{x:2,y:3},fences:[],blocks:["vor","links","rechts"],hint:"Erst nach rechts zum Ei. »Rechts« dreht nach unten – dann hinunter zum Stall."},
+      {cols:5,rows:4,start:{x:0,y:3,dir:1},eggs:[{x:4,y:0}],coop:{x:0,y:0},fences:[{x:2,y:1},{x:2,y:2}],blocks:["vor","links","rechts"],hint:"Nach rechts, hoch zum Ei, dann nach links zum Stall. »Links« dreht gegen den Uhrzeigersinn."},
+      {cols:8,rows:3,start:{x:0,y:1,dir:1},eggs:[{x:4,y:1}],coop:{x:7,y:1},fences:[],blocks:["vor","links","rechts","loop"],hint:"Viel »Vor«! Kürzer mit »Wiederhole 7× { Vor }«. Öffne die Schleife und leg »Vor« hinein."},
+      {cols:5,rows:5,start:{x:1,y:1,dir:1},eggs:[{x:3,y:1},{x:3,y:3},{x:1,y:3}],coop:{x:1,y:1},fences:[],blocks:["vor","links","rechts","loop"],hint:"Ein Quadrat! Jede Ecke: »Vor, Vor, Rechts«. Wiederhole das 4-mal."},
+      {cols:3,rows:5,start:{x:0,y:2,dir:1},eggs:[{x:1,y:2},{x:2,y:3}],coop:{x:2,y:4},fences:[],blocks:["vor","links","rechts","loop","wenn"],hint:"Lass Hilde selbst entscheiden! Baue »Wiederhole 5× { Wenn Weg frei: Vor, sonst: Rechts }«."},
+      {cols:4,rows:5,start:{x:0,y:1,dir:1},eggs:[{x:2,y:1},{x:3,y:3}],coop:{x:3,y:4},fences:[],blocks:["vor","links","rechts","loop","wenn"],hint:"Gleiches Muster, nur länger: »Wiederhole 7× { Wenn Weg frei: Vor, sonst: Rechts }«."}
+    ];
+    var ARROW={0:"▲",1:"▶",2:"▼",3:"◀"},FACECLS={0:"face-n",1:"face-e",2:"face-s",3:"face-w"},DX={0:0,1:1,2:0,3:-1},DY={0:-1,1:0,2:1,3:0};
+    var li=(G.cLi||0),L=null,hx,hy,hdir,collected={},running=false,failCount=0,program=[],uidc=0,openC=null,eggEls={},hrobot=null;
+    function isFence(x,y){return L.fences.some(function(f){return f.x===x&&f.y===y;});}
+    function eggAt(x,y){return L.eggs.find(function(f){return f.x===x&&f.y===y;});}
+    function aheadFree(){var nx=hx+DX[hdir],ny=hy+DY[hdir];return nx>=0&&ny>=0&&nx<L.cols&&ny<L.rows&&!isFence(nx,ny);}
+    function miniCoop(){return '<svg viewBox="0 0 100 100" width="86%" height="86%"><path d="M16 44 L50 22 L84 44 L78 49 L50 30 L22 49 Z" fill="#8f3a2b"/><path d="M22 47 L50 28 L78 47 L78 54 L50 35 L22 54 Z" fill="#b14b39"/><rect x="28" y="52" width="44" height="40" rx="3" fill="#c79a5e" stroke="#9c6f3e" stroke-width="2"/><path d="M40 92 L40 66 q0 -8 10 -8 q10 0 10 8 L60 92 Z" fill="#2c2118"/></svg>';}
+    function buildBoard(){L=LEVELS[li];var b=$("c-board");b.style.aspectRatio=L.cols+" / "+L.rows;b.innerHTML="";var grid=document.createElement("div");grid.className="grid";grid.style.gridTemplateColumns="repeat("+L.cols+",1fr)";grid.style.gridTemplateRows="repeat("+L.rows+",1fr)";eggEls={};for(var y=0;y<L.rows;y++)for(var x=0;x<L.cols;x++){var c=document.createElement("div");c.className="cell "+((x+y)%2?"g1":"g0");if(isFence(x,y))c.className="cell fence";if(L.coop.x===x&&L.coop.y===y)c.innerHTML=miniCoop();if(eggAt(x,y)){var s=document.createElement("span");s.className="egg";s.textContent="🥚";c.appendChild(s);eggEls[x+","+y]=s;}grid.appendChild(c);}b.appendChild(grid);var layer=document.createElement("div");layer.className="overlay-layer";hrobot=document.createElement("div");hrobot.className="hrobot";hrobot.innerHTML='<div class="antenna"></div><div class="sprite">'+chick(VAR.weiss,false)+'</div><div class="facing"></div>';layer.appendChild(hrobot);b.appendChild(layer);resetBoard(false);}
+    function resetBoard(an){hx=L.start.x;hy=L.start.y;hdir=L.start.dir;collected={};for(var k in eggEls)eggEls[k].classList.remove("gone");place(an);}
+    function place(an){if(!an)hrobot.style.transition="none";hrobot.style.left=((hx+0.5)/L.cols*100)+"%";hrobot.style.top=((hy+0.5)/L.rows*100)+"%";hrobot.className="hrobot "+FACECLS[hdir];hrobot.querySelector(".sprite").className="sprite"+(hdir===3?" flip":"");hrobot.querySelector(".facing").textContent=ARROW[hdir];if(!an){void hrobot.offsetWidth;hrobot.style.transition="";}}
+    function buildPalette(){var p=$("c-palette");p.innerHTML="";var defs={vor:["pbtn vor","⬆️ Vor"],links:["pbtn turn","↺ Links"],rechts:["pbtn turn","↻ Rechts"],loop:["pbtn loop","⟳ Wiederhole"],wenn:["pbtn cond","❓ Wenn frei"]};L.blocks.forEach(function(bk){var btn=document.createElement("button");btn.className=defs[bk][0];btn.textContent=defs[bk][1];btn.onclick=function(){bk==="loop"?addLoop():bk==="wenn"?addIf():addCmd(bk);};p.appendChild(btn);});}
+    function arrays(b){return b.kind==="loop"?[b.body]:b.kind==="if"?[b.then,b.els]:[];}
+    function locate(uid){function s(arr){for(var i=0;i<arr.length;i++){var b=arr[i];if(b.uid===uid)return b;var sub=arrays(b);for(var j=0;j<sub.length;j++){var r=s(sub[j]);if(r)return r;}}return null;}return s(program);}
+    function slotArr(c,slot){return c.kind==="loop"?c.body:(slot==="then"?c.then:c.els);}
+    function addInto(b){if(openC){var c=locate(openC.uid);if(c){slotArr(c,openC.slot).push(b);return;}}program.push(b);}
+    function addCmd(cmd){addInto({uid:++uidc,kind:"cmd",cmd:cmd});renderProg();}
+    function addLoop(){var b={uid:++uidc,kind:"loop",times:2,body:[]};addInto(b);openC={uid:b.uid,slot:"body"};renderProg();}
+    function addIf(){var b={uid:++uidc,kind:"if",cond:"frei",then:[],els:[]};addInto(b);openC={uid:b.uid,slot:"then"};renderProg();}
+    function delBlock(uid){(function rm(arr){for(var i=arr.length-1;i>=0;i--){var b=arr[i];if(b.uid===uid){arr.splice(i,1);continue;}arrays(b).forEach(rm);}})(program);if(openC&&openC.uid===uid)openC=null;renderProg();}
+    function cmdChip(b){var cls=b.cmd==="vor"?"vor":"turn";var label=b.cmd==="vor"?"⬆️ Vor":(b.cmd==="links"?"↺ Links":"↻ Rechts");var c=document.createElement("div");c.className="chip "+cls;c.dataset.uid=b.uid;c.innerHTML='<span>'+label+'</span>';var x=document.createElement("button");x.className="x";x.textContent="×";x.onclick=function(e){e.stopPropagation();delBlock(b.uid);};c.appendChild(x);return c;}
+    function delBtn(uid){var x=document.createElement("button");x.className="x";x.textContent="×";x.onclick=function(){delBlock(uid);};return x;}
+    function openBtn(b,slot){var act=(openC&&openC.uid===b.uid&&openC.slot===slot);var op=document.createElement("button");op.className="open"+(act?" active":"");op.textContent=act?"schließen":"öffnen";op.onclick=function(){openC=act?null:{uid:b.uid,slot:slot};renderProg();};return op;}
+    function slotEl(b,slot,label,arr){var wrap=document.createElement("div");wrap.className="ifslot";var top=document.createElement("div");top.className="ifslot-top";var lab=document.createElement("span");lab.className="ifslot-label";lab.textContent=label;top.appendChild(lab);top.appendChild(openBtn(b,slot));var body=document.createElement("div");body.className="loopbody"+(arr.length?"":" empty");arr.forEach(function(c){body.appendChild(renderBlock(c));});wrap.appendChild(top);wrap.appendChild(body);return wrap;}
+    function renderBlock(b){
+      if(b.kind==="cmd")return cmdChip(b);
+      if(b.kind==="loop"){var box=document.createElement("div");box.className="loopchip";box.dataset.uid=b.uid;var head=document.createElement("div");head.className="loophead";var minus=document.createElement("button");minus.className="step";minus.textContent="−";minus.onclick=function(){b.times=Math.max(1,b.times-1);renderProg();};var plus=document.createElement("button");plus.className="step";plus.textContent="+";plus.onclick=function(){b.times=Math.min(9,b.times+1);renderProg();};var lbl=document.createElement("span");lbl.textContent="⟳ "+b.times+"×";head.appendChild(lbl);head.appendChild(minus);head.appendChild(plus);head.appendChild(openBtn(b,"body"));head.appendChild(delBtn(b.uid));var body=document.createElement("div");body.className="loopbody"+(b.body.length?"":" empty");b.body.forEach(function(c){body.appendChild(renderBlock(c));});box.appendChild(head);box.appendChild(body);return box;}
+      var box=document.createElement("div");box.className="ifchip";box.dataset.uid=b.uid;var head=document.createElement("div");head.className="ifhead";var lbl=document.createElement("span");lbl.textContent="❓ Wenn Weg frei";head.appendChild(lbl);head.appendChild(delBtn(b.uid));box.appendChild(head);box.appendChild(slotEl(b,"then","dann ✓",b.then));box.appendChild(slotEl(b,"els","sonst ↻",b.els));return box;
+    }
+    function renderProg(){var area=$("c-program");area.innerHTML="";area.classList.toggle("empty",program.length===0);program.forEach(function(b){area.appendChild(renderBlock(b));});}
+    function chipEls(uid){return $("c-program").querySelectorAll('[data-uid="'+uid+'"]');}
+    function hi(uid,on){chipEls(uid).forEach(function(el){el.classList.toggle("hi",on);});}
+    function badMark(uid){chipEls(uid).forEach(function(el){el.classList.add("bad");});}
+    function clearMarks(){$("c-program").querySelectorAll(".hi,.bad").forEach(function(el){el.classList.remove("hi","bad");});}
+    function setControls(on){$("c-run").disabled=!on;$("c-reset").disabled=!on;$("c-palette").style.pointerEvents=on?"":"none";$("c-palette").style.opacity=on?"":".5";}
+    function doMove(cmd,uid){if(cmd==="links"){hdir=(hdir+3)%4;place(true);return true;}if(cmd==="rechts"){hdir=(hdir+1)%4;place(true);return true;}var nx=hx+DX[hdir],ny=hy+DY[hdir];if(nx<0||ny<0||nx>=L.cols||ny>=L.rows)return crash(uid,"Hilde wäre vom Feld gefallen! Lass sie vorher abbiegen.");if(isFence(nx,ny))return crash(uid,"Hoppla – da ist ein Zaun! Hilde muss drumherum.");hx=nx;hy=ny;place(true);var key=hx+","+hy;if(eggEls[key]&&!collected[key]){collected[key]=true;eggEls[key].classList.add("gone");}return true;}
+    function crash(uid,msg){badMark(uid);hrobot.classList.add("shake");setTimeout(function(){hrobot.classList.remove("shake");},400);failCount++;say("🐔 "+msg+(failCount>=2?(" Tipp: "+L.hint):" Schau die Schritte in Ruhe an und probier es nochmal."));return false;}
+    function runSeq(items,done){var i=0;(function step(){if(!running){done(false);return;}if(i>=items.length){done(true);return;}var it=items[i++];if(it.kind==="cmd"){hi(it.uid,true);if(!doMove(it.cmd,it.uid)){running=false;setControls(true);done(false);return;}setTimeout(function(){hi(it.uid,false);step();},460);}else if(it.kind==="loop"){runLoop(it,0,function(ok){if(!ok){done(false);return;}step();});}else{hi(it.uid,true);var branch=aheadFree()?it.then:it.els;setTimeout(function(){hi(it.uid,false);runSeq(branch,function(ok){if(!ok){done(false);return;}step();});},300);}})();}
+    function runLoop(it,iter,cb){if(!running){cb(false);return;}if(iter>=it.times){cb(true);return;}hi(it.uid,true);setTimeout(function(){hi(it.uid,false);runSeq(it.body,function(ok){if(!ok){cb(false);return;}runLoop(it,iter+1,cb);});},180);}
+    function run(){if(running)return;if(program.length===0){say("Bau zuerst ein paar Bausteine, dann ▶ Start.");return;}resetBoard(false);clearMarks();running=true;setControls(false);say("Los geht's … 🐔");runSeq(program,function(ok){if(ok)finish();});}
+    function finish(){var left=L.eggs.length-Object.keys(collected).length,onCoop=(hx===L.coop.x&&hy===L.coop.y);if(left===0&&onCoop){addEgg(3);say("Geschafft! 🎉 Alle Eier im Stall. Stark! (+3 🥚)",true);running=false;setTimeout(function(){if(li<LEVELS.length-1){li++;G.cLi=li;doSave();failCount=0;program=[];openC=null;buildBoard();buildPalette();renderProg();setControls(true);say("Neues Rätsel! "+(li+1===4?"Jetzt gibt es die Schleife ⟳.":(li+1===6?"Neu: »Wenn Weg frei … sonst …« – jetzt entscheidet Hilde selbst!":"Bring Hilde wieder zum Stall.")));}else{say("Wow – alle Rätsel gelöst! Du hast Abläufe, Schleifen UND Bedingungen gemeistert. 🐔✨");setControls(true);}},1600);}else{running=false;failCount++;say("Fast! "+(!onCoop?"Hilde steht noch nicht am Stall.":"Es fehlt noch ein Ei.")+" Schau die Schritte nochmal an."+(failCount>=2?(" Tipp: "+L.hint):""));setControls(true);}}
+    return {start:function(){buildBoard();buildPalette();renderProg();$("c-run").onclick=run;$("c-reset").onclick=function(){if(running)return;program=[];openC=null;failCount=0;renderProg();resetBoard(false);say("Sauber gemacht. Bau dein Programm neu.");};},say0:function(){},hint:function(){say("💡 "+L.hint);}};
+  })();
+
+  /* ===================== EXPLORE MODULE (KI) ===================== */
+  var E=(function(){
+    var st={diff:(G.eDiff||2),streak:0,recent:[],topic:"Überraschung",cur:null,answered:false,wrong:0,busy:false,eb:0};
+    var TOPICS=["Überraschung","Weltall","Tiere","Körper","Natur","Erde & Länder","Wissenschaft","Technik","Mathe","Sprache","Hof & Hühner"];
+    var praise=["Stark, dass du drangeblieben bist!","Richtig – klasse überlegt!","Dein Gehirn wird stärker. 💪","Super gemacht!","Genau! Ein Ei für den Hof.","Toll, weiter so!"];
+    var BANK=[
+      {topic:"Weltall",question:"Welcher Planet ist der Sonne am nächsten?",options:["Merkur","Mars","Erde"],correct:0,hint:"Er ist klein und sehr heiß.",explain:"Merkur ist der innerste Planet."},
+      {topic:"Weltall",question:"Was ist die Sonne?",options:["Ein Planet","Ein Stern","Ein Mond"],correct:1,hint:"Sie leuchtet von selbst.",explain:"Die Sonne ist ein riesiger, heißer Stern."},
+      {topic:"Weltall",question:"Welcher Planet wird »der Rote Planet« genannt?",options:["Mars","Venus","Jupiter"],correct:0,hint:"Er sieht rostrot aus.",explain:"Der Mars wirkt rot wegen seines rostigen Staubs."},
+      {topic:"Weltall",question:"Was umkreist die Erde?",options:["Die Sonne","Der Mond","Der Mars"],correct:1,hint:"Wir sehen ihn nachts leuchten.",explain:"Der Mond kreist um die Erde."},
+      {topic:"Weltall",question:"Welcher ist der größte Planet im Sonnensystem?",options:["Jupiter","Erde","Mars"],correct:0,hint:"Er ist ein riesiger Gas-Planet.",explain:"Jupiter ist der größte Planet."},
+      {topic:"Weltall",question:"Warum sehen wir tagsüber keine Sterne?",options:["Sie schlafen","Die Sonne ist zu hell","Sie sind weg"],correct:1,hint:"Etwas überstrahlt sie.",explain:"Das helle Sonnenlicht überstrahlt die Sterne."},
+      {topic:"Weltall",question:"Wie viele Planeten hat unser Sonnensystem?",options:["7","8","12"],correct:1,hint:"Mehr als sieben.",explain:"Es sind acht Planeten."},
+      {topic:"Tiere",question:"Welches ist das größte Tier der Welt?",options:["Elefant","Blauwal","Giraffe"],correct:1,hint:"Es lebt im Meer.",explain:"Der Blauwal ist größer als jedes Landtier."},
+      {topic:"Tiere",question:"Wie viele Arme hat ein Krake (Tintenfisch)?",options:["6","8","10"],correct:1,hint:"Mehr als sechs.",explain:"Ein Krake hat acht Arme."},
+      {topic:"Tiere",question:"Welches Tier rennt an Land am schnellsten?",options:["Gepard","Pferd","Hase"],correct:0,hint:"Eine schnelle Raubkatze.",explain:"Der Gepard ist das schnellste Landtier."},
+      {topic:"Tiere",question:"Was fressen Pandas am liebsten?",options:["Fleisch","Bambus","Fisch"],correct:1,hint:"Eine grüne Pflanze.",explain:"Pandas essen vor allem Bambus."},
+      {topic:"Tiere",question:"Welches Tier hat den längsten Hals?",options:["Giraffe","Zebra","Löwe"],correct:0,hint:"Es frisst hohe Blätter.",explain:"Die Giraffe ist das höchste Tier der Welt."},
+      {topic:"Tiere",question:"Wo leben Pinguine vor allem?",options:["In der Wüste","In kalten Gegenden","Im Dschungel"],correct:1,hint:"Dort liegt oft Eis.",explain:"Viele Pinguine leben in eisigen Regionen."},
+      {topic:"Tiere",question:"Welches Tier kann seine Farbe wechseln, um sich zu verstecken?",options:["Chamäleon","Hund","Kuh"],correct:0,hint:"Eine besondere Echse.",explain:"Das Chamäleon kann seine Farbe ändern."},
+      {topic:"Körper",question:"Welches Organ pumpt unser Blut?",options:["Das Herz","Die Lunge","Der Magen"],correct:0,hint:"Es macht »bumm, bumm«.",explain:"Das Herz pumpt das Blut durch den Körper."},
+      {topic:"Körper",question:"Womit atmen wir?",options:["Mit der Lunge","Mit dem Magen","Mit der Leber"],correct:0,hint:"Sie holt Luft.",explain:"Die Lunge nimmt den Sauerstoff aus der Luft auf."},
+      {topic:"Körper",question:"Was schützt unser Gehirn?",options:["Der Schädel","Die Haut","Das Haar"],correct:0,hint:"Ein harter Knochen.",explain:"Der Schädelknochen schützt das Gehirn."},
+      {topic:"Körper",question:"Wofür brauchen wir unsere Knochen?",options:["Zum Sehen","Um den Körper zu stützen","Zum Atmen"],correct:1,hint:"Ohne sie wären wir ganz weich.",explain:"Knochen geben dem Körper Halt und Form."},
+      {topic:"Körper",question:"Womit riechen wir?",options:["Mit der Nase","Mit dem Ohr","Mit dem Knie"],correct:0,hint:"Mitten im Gesicht.",explain:"Mit der Nase riechen wir Düfte."},
+      {topic:"Körper",question:"Was passiert vor allem, wenn wir schlafen?",options:["Der Körper erholt sich","Wir wachsen Federn","Nichts"],correct:0,hint:"Wir tanken Kraft.",explain:"Im Schlaf erholt sich der Körper und wird wieder stark."},
+      {topic:"Natur",question:"Was brauchen Pflanzen zum Wachsen?",options:["Licht und Wasser","Nur Dunkelheit","Nur Steine"],correct:0,hint:"Eins kommt von der Sonne.",explain:"Pflanzen brauchen Licht, Wasser und Luft."},
+      {topic:"Natur",question:"Woraus stellen Blätter ihre Nahrung her?",options:["Aus Sonnenlicht","Aus Sand","Aus Plastik"],correct:0,hint:"Es kommt von oben am Tag.",explain:"Mit Sonnenlicht machen Blätter Nahrung – das heißt Fotosynthese."},
+      {topic:"Natur",question:"Was entsteht am Himmel, wenn Sonne und Regen zusammenkommen?",options:["Ein Regenbogen","Ein Blitz","Schnee"],correct:0,hint:"Es ist bunt.",explain:"Sonnenlicht im Regen zaubert einen Regenbogen."},
+      {topic:"Natur",question:"Was spuckt ein Vulkan aus?",options:["Glühende Lava","Eis","Federn"],correct:0,hint:"Es ist sehr heiß.",explain:"Aus einem Vulkan fließt glühend heiße Lava."},
+      {topic:"Natur",question:"Wie nennt man gefrorenes Wasser?",options:["Eis","Dampf","Sand"],correct:0,hint:"Es ist kalt und hart.",explain:"Wird Wasser sehr kalt, wird es zu Eis."},
+      {topic:"Natur",question:"Welcher Baum verliert im Herbst seine Blätter?",options:["Die Eiche","Die Tanne","Keiner"],correct:0,hint:"Tannen bleiben grün.",explain:"Laubbäume wie die Eiche werfen im Herbst ihre Blätter ab."},
+      {topic:"Erde & Länder",question:"Wie viele Kontinente gibt es?",options:["5","7","10"],correct:1,hint:"Mehr als fünf.",explain:"Die Erde hat sieben Kontinente."},
+      {topic:"Erde & Länder",question:"Was bedeckt den größten Teil der Erde?",options:["Wasser","Wüste","Wald"],correct:0,hint:"Schau auf einen Globus – viel Blau.",explain:"Über die Hälfte der Erde ist von Meeren bedeckt."},
+      {topic:"Erde & Länder",question:"Welcher ist der höchste Berg der Welt?",options:["Mount Everest","Zugspitze","Brocken"],correct:0,hint:"Er liegt im Himalaya.",explain:"Der Mount Everest ist der höchste Berg der Erde."},
+      {topic:"Erde & Länder",question:"Wie ist es am Nordpol?",options:["Sehr kalt","Sehr heiß","Immer Sommer"],correct:0,hint:"Dort liegt Eis.",explain:"Am Nordpol ist es eisig kalt."},
+      {topic:"Erde & Länder",question:"In welchem Land stehen die großen Pyramiden?",options:["Ägypten","Island","Norwegen"],correct:0,hint:"Ein heißes Land mit viel Wüste.",explain:"Die berühmten Pyramiden stehen in Ägypten."},
+      {topic:"Erde & Länder",question:"Wie nennt man einen sehr heißen, trockenen Ort mit viel Sand?",options:["Wüste","Sumpf","Gletscher"],correct:0,hint:"Kamele leben dort.",explain:"In der Wüste ist es heiß und trocken."},
+      {topic:"Wissenschaft",question:"Was zieht alle Dinge zum Boden?",options:["Die Schwerkraft","Der Wind","Die Farbe"],correct:0,hint:"Darum fällt ein Apfel nach unten.",explain:"Die Schwerkraft zieht alles zur Erde."},
+      {topic:"Wissenschaft",question:"Was zieht ein Magnet an?",options:["Eisen","Holz","Papier"],correct:0,hint:"Ein hartes, glänzendes Metall.",explain:"Magnete ziehen Eisen an."},
+      {topic:"Wissenschaft",question:"Was passiert mit Wasser, wenn es sehr heiß wird?",options:["Es wird zu Dampf","Es wird zu Eis","Es wird hart"],correct:0,hint:"Über dem Kochtopf steigt es auf.",explain:"Heißes Wasser verdampft zu Wasserdampf."},
+      {topic:"Wissenschaft",question:"Was ist am allerschnellsten?",options:["Das Licht","Ein Auto","Ein Vogel"],correct:0,hint:"Es kommt von der Sonne zu uns.",explain:"Licht ist das Schnellste, das wir kennen."},
+      {topic:"Wissenschaft",question:"Warum schwimmt ein Stück Holz auf dem Wasser?",options:["Es ist leichter als Wasser","Es ist aus Eisen","Weil es nass ist"],correct:0,hint:"Schwere Dinge sinken.",explain:"Holz ist leichter als Wasser und schwimmt deshalb oben."},
+      {topic:"Wissenschaft",question:"Was leitet Strom gut?",options:["Metall","Gummi","Holz"],correct:0,hint:"Kabel sind innen daraus.",explain:"Metall leitet Strom – darum ist es im Kabel."},
+      {topic:"Technik",question:"Welche Erfindung half am meisten beim Rollen und Fahren?",options:["Das Rad","Der Ballon","Der Hut"],correct:0,hint:"Es ist rund.",explain:"Mit dem Rad kann man Dinge rollen statt schleppen."},
+      {topic:"Technik",question:"Womit kann man ferne Sterne ganz nah sehen?",options:["Mit einem Teleskop","Mit einer Brille","Mit einem Löffel"],correct:0,hint:"Forscher schauen damit ins All.",explain:"Ein Teleskop holt ferne Dinge ganz nah heran."},
+      {topic:"Technik",question:"Was treibt einen Traktor an?",options:["Ein Motor","Ein Drachen","Ein Segel"],correct:0,hint:"Darin entsteht die Kraft.",explain:"Im Motor entsteht die Kraft zum Fahren."},
+      {topic:"Technik",question:"Was braucht ein Computer, um zu arbeiten?",options:["Strom","Wasser","Sand"],correct:0,hint:"Es kommt aus der Steckdose.",explain:"Ein Computer arbeitet mit elektrischem Strom."},
+      {topic:"Technik",question:"Was nutzt ein Segelboot, um zu fahren?",options:["Den Wind","Nur die Sonne","Den Mond"],correct:0,hint:"Er bläst ins Segel.",explain:"Der Wind drückt ins Segel und schiebt das Boot."},
+      {topic:"Mathe",question:"Was ist die Hälfte von 10?",options:["3","5","8"],correct:1,hint:"Teile 10 in zwei gleiche Teile.",explain:"5 und 5 ergeben 10 – die Hälfte ist 5."},
+      {topic:"Mathe",question:"Wie viele Seiten hat ein Dreieck?",options:["3","4","5"],correct:0,hint:"Das Wort verrät es.",explain:"Ein Dreieck hat drei Seiten."},
+      {topic:"Mathe",question:"Was ist 3 + 4?",options:["6","7","8"],correct:1,hint:"Zähl von 4 noch drei weiter.",explain:"3 und 4 sind zusammen 7."},
+      {topic:"Mathe",question:"Wie viele Ecken hat ein Würfel?",options:["6","8","12"],correct:1,hint:"Zähl die Spitzen.",explain:"Ein Würfel hat acht Ecken."},
+      {topic:"Mathe",question:"Welche Zahl ist größer: 17 oder 71?",options:["17","71","gleich"],correct:1,hint:"Schau auf die Zehner-Stelle.",explain:"71 hat mehr Zehner, also ist es größer."},
+      {topic:"Mathe",question:"Wie viele Minuten hat eine Stunde?",options:["30","60","100"],correct:1,hint:"Schau auf eine Uhr.",explain:"Eine Stunde hat 60 Minuten."},
+      {topic:"Sprache",question:"Wie viele Buchstaben hat das deutsche Alphabet?",options:["20","26","30"],correct:1,hint:"Von A bis Z.",explain:"Das Alphabet hat 26 Buchstaben."},
+      {topic:"Sprache",question:"Welche sind die Selbstlaute (Vokale)?",options:["a e i o u","b c d","x y z"],correct:0,hint:"Man kann sie singen.",explain:"a, e, i, o, u sind die Vokale."},
+      {topic:"Sprache",question:"Was ist die Mehrzahl von »Kind«?",options:["Kinder","Kinds","Kinden"],correct:0,hint:"Aus einem werden viele.",explain:"Ein Kind, viele Kinder."},
+      {topic:"Sprache",question:"Welches Wort reimt sich auf »Haus«?",options:["Maus","Tisch","Baum"],correct:0,hint:"Es klingt am Ende gleich.",explain:"Haus und Maus reimen sich."},
+      {topic:"Sprache",question:"Was steht am Ende einer Frage?",options:["Ein Fragezeichen","Ein Punkt","Ein Komma"],correct:0,hint:"Es sieht aus wie ein Haken mit Punkt.",explain:"Ein Fragesatz endet mit einem Fragezeichen."},
+      {topic:"Hof & Hühner",question:"Wovon stammen unsere Hühner ab?",options:["Vom Pinguin","Vom Bankivahuhn","Vom Adler"],correct:1,hint:"Es lebt wild in Asiens Wäldern.",explain:"Alle Haushühner stammen vom Bankivahuhn ab."},
+      {topic:"Hof & Hühner",question:"Welche Tiere sind die heutigen Verwandten der Dinosaurier?",options:["Fische","Vögel","Schlangen"],correct:1,hint:"Du fütterst sie jeden Tag.",explain:"Vögel – auch dein Huhn – sind lebende Dino-Verwandte!"},
+      {topic:"Hof & Hühner",question:"Welche Form macht eine Eierschale so stark?",options:["Die Ecken","Die runde Wölbung","Die Farbe"],correct:1,hint:"Brücken nutzen die gleiche Form.",explain:"Die Kuppelform verteilt die Kraft."},
+      {topic:"Hof & Hühner",question:"Was brauchen Küken zum Schlüpfen vor allem?",options:["Wärme","Schnee","Dunkelheit"],correct:0,hint:"Die Henne setzt sich darauf.",explain:"Eier brauchen Wärme zum Wachsen und Schlüpfen."},
+      {topic:"Hof & Hühner",question:"Wie viele Beine hat ein Huhn?",options:["2","4","6"],correct:0,hint:"Schau Hilde genau an.",explain:"Hühner sind Vögel und haben zwei Beine."}
+    ];
+    function bankPick(){var byTopic=BANK.filter(function(q){return st.topic==="Überraschung"||q.topic===st.topic;});if(!byTopic.length)byTopic=BANK.slice();var pool=byTopic.filter(function(q){return st.recent.indexOf(q.question)<0;});if(!pool.length)pool=byTopic;return pool[Math.floor(Math.random()*pool.length)];}
+    function aiPrompt(){var t=st.topic==="Überraschung"?"irgendein wichtiges Wissensgebiet der großen weiten Welt: Weltall, Tiere, menschlicher Körper, Natur, Wetter, Erde & Länder, Geschichte, Wissenschaft, Technik, Erfindungen, Mathematik, Sprache, Kunst oder Musik":st.topic;
+      return ["Du bist Hilde, ein kluges, warmherziges Huhn, das einem 7-jährigen, hochbegabten deutschsprachigen Kind (Vinni) Wissen über die ganze Welt beibringt.",
+        "Erstelle GENAU EINE Multiple-Choice-Frage zum Thema: "+t+".",
+        "Ziel ist breites Allgemeinwissen über die Welt – NICHT über Hühner oder den Bauernhof. Nur ganz selten und nur wenn es perfekt passt, darf ein Hof-Bezug vorkommen.",
+        "Schwierigkeit: "+st.diff+" von 10. Passe Wortschatz und Tiefe an ein begabtes Kind an, aber bleibe sachlich korrekt.",
+        "Kindgerecht, positiv, faktisch richtig. KEINE gruseligen, gewalttätigen oder unangemessenen Inhalte.",
+        "Genau 3 Antwortmöglichkeiten, nur eine richtig.",
+        "Vermeide diese zuletzt gestellten Fragen: "+JSON.stringify(st.recent)+".",
+        "Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown, ohne Code-Zäune, exakt:",
+        '{"topic":"Thema","question":"die Frage","options":["A","B","C"],"correct":0,"hint":"Denkanstoß ohne Lösung","explain":"kurzer fröhlicher Erklärsatz"}'].join("\n");}
+    function valid(o){return o&&typeof o.question==="string"&&Array.isArray(o.options)&&o.options.length===3&&typeof o.correct==="number"&&o.correct>=0&&o.correct<3&&typeof o.explain==="string";}
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function askAI(){
+      var key=aiKey(),headers={"Content-Type":"application/json"};
+      if(key){headers["x-api-key"]=key;headers["anthropic-version"]="2023-06-01";headers["anthropic-dangerous-direct-browser-access"]="true";}
+      return fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:headers,body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,messages:[{role:"user",content:aiPrompt()}]})}).then(function(r){return r.json();}).then(function(data){var text=(data.content||[]).map(function(b){return b.text||"";}).join("").trim();text=text.replace(/```json/gi,"").replace(/```/g,"").trim();var f=text.indexOf("{"),l=text.lastIndexOf("}");if(f>=0&&l>f)text=text.slice(f,l+1);var o=JSON.parse(text);if(!valid(o))throw new Error("bad");if(!o.topic)o.topic=st.topic;return o;});
+    }
+    function renderKiStatus(){var s=$("e-ki-status");if(!s)return;if(aiKey()){s.textContent="🔌 KI aktiv (eigener Schlüssel)";}else{s.textContent="💡 Offline-Wissen aktiv";}}
+    function setupKi(){
+      if(aiKey()){if(window.confirm("KI-Schlüssel entfernen? Danach werden die eingebauten Offline-Wissensfragen genutzt.")){try{window.localStorage.removeItem("vinni_ai_key");}catch(e){}renderKiStatus();toast("KI-Schlüssel entfernt");}return;}
+      var v=null;try{v=window.prompt("Für Erwachsene:\n\nHier kannst du einen Anthropic API-Schlüssel einfügen, damit Hilde unbegrenzt neue Wissensfragen erfindet – auch in der heruntergeladenen Datei.\n\nDer Schlüssel wird NUR lokal auf diesem Gerät gespeichert und ausschließlich zum Laden von Fragen verwendet.\n\nLeer lassen zum Abbrechen.");}catch(e){v=null;}
+      if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}renderKiStatus();toast("KI aktiviert ✨");load();}
+    }
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function loading(){$("e-next").style.display="none";$("e-card").innerHTML='<div class="loading"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#ef9f1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde denkt sich etwas aus …</div></div>';}
+    function load(){if(st.busy)return;st.busy=true;st.answered=false;st.wrong=0;loading();askAI().catch(function(){return bankPick();}).then(function(q){st.cur=q;st.recent.push(q.question);if(st.recent.length>14)st.recent.shift();renderQ(q);st.busy=false;}).catch(function(){st.cur=bankPick();renderQ(st.cur);st.busy=false;});}
+    function renderQ(q){$("e-card").innerHTML='<div class="qtopic">'+esc(q.topic||st.topic)+'</div><div class="question">'+esc(q.question)+'</div><div class="options" id="e-opts"></div>';var opts=$("e-opts");q.options.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};opts.appendChild(b);});say("Was meinst du, Vinni?");$("e-next").style.display="none";}
+    function choose(i,btn){if(st.answered)return;if(i===st.cur.correct){st.answered=true;btn.classList.add("right");document.querySelectorAll("#e-opts .opt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});st.streak++;var r=1+Math.floor((st.diff-1)/3);addEgg(r);say(pick(praise)+" "+(st.cur.explain||""),true);toast("Richtig! +"+r+" 🥚");if(st.streak>=3&&st.diff<10){st.diff++;st.streak=0;G.eDiff=st.diff;doSave();setTimeout(function(){toast("Schwerere Fragen! ⭐",true);},900);}$("e-next").style.display="";}else{btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;if(st.wrong>=2){if(st.diff>1){st.diff--;G.eDiff=st.diff;doSave();}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡. Du schaffst das.");pulse($("e-breathe"));}else{say("Fast! Probier eine andere Antwort. Tipp: "+(st.cur.hint||"Lies die Frage nochmal."));}}}
+    function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;st.recent=[];document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
+    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));}};
+  })();
+
+  /* ===================== PATTERN / LOGIC MODULE ===================== */
+  var P=(function(){
+    var pst={level:(G.pLevel||1),max:10,streak:0,cur:null,wrong:0,answered:false};
+    var praise=["Stark erkannt!","Genau – gutes Auge!","Dein Gehirn wird stärker. 💪","Super gedacht!","Richtig! Weiter so.","Toll kombiniert!"];
+    var T_FARM=["🥚","🐔","🐤","🌽","🌾","🪺"];
+    var T_COL=["🔴","🟡","🔵","🟢","🟠","🟣"];
+    var ODD=[["🔴","🔵"],["🟡","🟢"],["🟠","🟣"],["🔵","🟢"],["🐔","🐤"],["🥚","🪺"],["🌽","🌾"]];
+    function sample(a,n){var c=a.slice(),o=[];for(var i=0;i<n&&c.length;i++)o.push(c.splice(Math.floor(Math.random()*c.length),1)[0]);return o;}
+    function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+    function genSeq(L){
+      var alpha=Math.random()<0.5?T_FARM:T_COL;
+      var baseLen=(L>=6&&Math.random()<0.5)?3:2;
+      var base=sample(alpha,baseLen),total=rnd(5,7),full=[];
+      for(var i=0;i<total+1;i++)full.push(base[i%base.length]);
+      var correct=full[full.length-1],display=full.slice(0,full.length-1);
+      var others=shuffle(alpha.filter(function(x){return x!==correct;}));
+      var opts=shuffle([correct,others[0],others[1]]);
+      return {prompt:"Wie geht das Muster weiter?",display:display,num:false,options:opts,correct:opts.indexOf(correct),hint:"Welche Reihe wiederholt sich? Schau auf die ersten "+base.length+" Bilder."};
+    }
+    function genNum(L){
+      var s=rnd(1,L<5?6:12),d=rnd(1,Math.min(2+L,9));
+      var seq=[s,s+d,s+2*d,s+3*d],next=s+4*d;
+      var o3=(next-d>0?next-d:next+2*d);if(o3===next||o3===next+d)o3=next+2*d;
+      var opts=shuffle([next,next+d,o3]).map(String);
+      return {prompt:"Welche Zahl kommt als Nächstes?",display:seq.map(String),num:true,options:opts,correct:opts.indexOf(String(next)),hint:"Wie viel kommt jedes Mal dazu? Von "+seq[0]+" zu "+seq[1]+" sind es "+d+"."};
+    }
+    function genOdd(L){
+      var pool=L<4?ODD.slice(0,5):ODD,pair=pick(pool);
+      var common=pair[Math.random()<0.5?0:1],odd=(pair[0]===common?pair[1]:pair[0]);
+      var tiles=shuffle([common,common,odd]);
+      return {prompt:"Welches passt nicht zu den anderen?",display:null,num:false,options:tiles,correct:tiles.indexOf(odd),hint:"Zwei Bilder sind gleich – tippe das andere."};
+    }
+    function gen(){var types=pst.level<3?["seq","odd"]:["seq","num","odd"];var t=pick(types);return t==="seq"?genSeq(pst.level):t==="num"?genNum(pst.level):genOdd(pst.level);}
+    function next(){pst.cur=gen();pst.wrong=0;pst.answered=false;render();}
+    function render(){
+      var c=pst.cur,html='<div class="pprompt">'+c.prompt+'</div>';
+      if(c.display){html+='<div class="pdisplay">';c.display.forEach(function(t){html+='<span class="ptok'+(c.num?' pnum':'')+'">'+t+'</span>';});html+='<span class="ptok pq">?</span></div>';}
+      html+='<div class="poptions" id="p-opts"></div>';
+      $("p-card").innerHTML=html;
+      var g=$("p-opts");
+      c.options.forEach(function(t,i){var b=document.createElement("button");b.className="popt"+(c.num?" pnum":"");b.innerHTML="<span>"+t+"</span>";b.onclick=function(){choose(i,b);};g.appendChild(b);});
+      say("Was passt, Vinni?");
+    }
+    function choose(i,btn){
+      if(pst.answered)return;
+      if(i===pst.cur.correct){
+        pst.answered=true;btn.classList.add("right");
+        document.querySelectorAll("#p-opts .popt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});
+        pst.streak++;var r=1+Math.floor((pst.level-1)/2);addEgg(r);say(pick(praise),true);toast("Richtig! +"+r+" 🥚");
+        if(pst.streak>=3&&pst.level<pst.max){pst.level++;pst.streak=0;G.pLevel=pst.level;doSave();setTimeout(function(){toast("Schwerere Muster! ⭐",true);},900);}
+        setTimeout(next,950);
+      } else {
+        btn.classList.add("wrong");btn.disabled=true;pst.wrong++;pst.streak=0;
+        if(pst.wrong>=2){if(pst.level>1){pst.level--;G.pLevel=pst.level;doSave();}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡. Du schaffst das.");pulse($("p-breathe"));}
+        else say("Fast! Schau nochmal genau hin. Tipp: "+(pst.cur.hint||"Vergleiche die Bilder in Ruhe."));
+      }
+    }
+    return {start:function(){next();},say0:function(){},hint:function(){if(pst.cur)say("💡 "+pst.cur.hint);}};
+  })();
+
+  /* ===================== LAB MODULE ===================== */
+  var LAB=(function(){
+    var FLOAT=[{n:"Feder",e:"🪶",f:true},{n:"Stein",e:"🪨",f:false},{n:"Apfel",e:"🍎",f:true},{n:"Ei",e:"🥚",f:false},{n:"Schlüssel",e:"🔑",f:false},{n:"Schwamm",e:"🧽",f:true},{n:"Holzstück",e:"🪵",f:true},{n:"Ball",e:"⚽",f:true},{n:"Münze",e:"🪙",f:false},{n:"Eiswürfel",e:"🧊",f:true}];
+    var MAG=[{n:"Eisen-Schraube",e:"🔩",m:true},{n:"Büroklammer",e:"📎",m:true},{n:"Schraubenschlüssel",e:"🔧",m:true},{n:"Holzklotz",e:"🪵",m:false},{n:"Apfel",e:"🍎",m:false},{n:"Bleistift",e:"✏️",m:false},{n:"Schwamm",e:"🧽",m:false},{n:"Stein",e:"🪨",m:false},{n:"Gummiband",e:"➰",m:false}];
+    var MIX=[{a:"Blau",ac:"#2f6fd0",b:"Gelb",bc:"#f3c020",r:"Grün",rc:"#3aa34a"},{a:"Rot",ac:"#d6402f",b:"Gelb",bc:"#f3c020",r:"Orange",rc:"#e8862a"},{a:"Rot",ac:"#d6402f",b:"Blau",bc:"#2f6fd0",r:"Lila",rc:"#8a4bc0"}];
+    var RES=["Grün","Orange","Lila","Braun"];
+    var cur=null,answered=false,lastType="";
+    function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+    function buildFloat(){var it=pick(FLOAT);cur={
+      prompt:it.n+" "+it.e+" – schwimmt oder sinkt es im Wasser?",
+      stage:'<div class="tank"><div class="water"></div><div class="lobj" id="lab-obj" style="top:4%">'+it.e+'</div></div>',
+      options:["Schwimmt 🛟","Sinkt ⬇️"],correctIndex:it.f?0:1,
+      explain:it.n+(it.f?" ist leichter als Wasser und schwimmt oben.":" ist schwerer als Wasser und sinkt nach unten."),
+      animate:function(){var o=$("lab-obj");o.style.top=it.f?"40%":"80%";}};}
+    function buildMag(){var it=pick(MAG);cur={
+      prompt:it.n+" "+it.e+" – bleibt es am Magneten kleben?",
+      stage:'<div class="magstage"><div class="lobj2" id="lab-obj2">'+it.e+'</div><div class="magnet">🧲</div></div>',
+      options:["Ja, klebt 🧲","Nein, fällt ab"],correctIndex:it.m?0:1,
+      explain:it.n+(it.m?" ist aus Eisen oder Stahl – der Magnet zieht es an.":" ist nicht aus Eisen – der Magnet zieht es nicht an."),
+      animate:function(){var o=$("lab-obj2");if(it.m){o.style.left="56%";}else if(o.animate){o.animate([{transform:"translateX(0)"},{transform:"translateX(7px)"},{transform:"translateX(0)"}],{duration:300,iterations:2});}}};}
+    function buildMix(){var m=pick(MIX);var dis=shuffle(RES.filter(function(x){return x!==m.r;})).slice(0,2);var opts=shuffle([m.r].concat(dis));cur={
+      prompt:"Welche Farbe entsteht aus "+m.a+" + "+m.b+"?",
+      stage:'<div class="mixstage"><div class="drop" id="lab-da" style="background:'+m.ac+'"></div><div class="drop" id="lab-db" style="background:'+m.bc+'"></div><div class="drop result" id="lab-dr"></div></div>',
+      options:opts,correctIndex:opts.indexOf(m.r),
+      explain:m.a+" und "+m.b+" gemischt ergeben "+m.r+".",
+      animate:function(){var da=$("lab-da"),db=$("lab-db"),dr=$("lab-dr");da.style.left="46%";db.style.left="54%";setTimeout(function(){da.style.opacity="0";db.style.opacity="0";dr.style.background=m.rc;dr.style.opacity="1";},600);}};}
+    function newExp(){var t;do{t=pick(["float","mag","mix"]);}while(t===lastType);lastType=t;
+      if(t==="float")buildFloat();else if(t==="mag")buildMag();else buildMix();showExp();}
+    function showExp(){
+      $("lab-stage").innerHTML=cur.stage;$("lab-prompt").textContent=cur.prompt;
+      var g=$("lab-opts");g.innerHTML="";
+      cur.options.forEach(function(lb,i){var b=document.createElement("button");b.className="labopt";b.textContent=lb;b.onclick=function(){predict(i,b);};g.appendChild(b);});
+      $("lab-explain").textContent="";$("lab-explain").classList.remove("show");$("lab-next").style.display="none";answered=false;
+      say("Was glaubst du, Vinni?");
+    }
+    function predict(i,btn){
+      if(answered)return;answered=true;
+      var opts=$("lab-opts").querySelectorAll(".labopt");opts.forEach(function(o){o.disabled=true;});
+      cur.animate();
+      setTimeout(function(){
+        var correct=(i===cur.correctIndex);
+        opts[cur.correctIndex].classList.add("right");if(!correct)btn.classList.add("wrong");
+        $("lab-explain").textContent="🔬 "+cur.explain;$("lab-explain").classList.add("show");
+        var r=correct?2:1;addEgg(r);toast(correct?"Richtig! +2 🥚":"Erforscht! +1 🥚");
+        say((correct?"Richtig vorhergesagt! ":"Forscher raten oft daneben – jetzt weißt du es! ")+cur.explain,true);
+        $("lab-next").style.display="";
+      },950);
+    }
+    return {start:function(){newExp();},say0:function(){},next:function(){newExp();}};
+  })();
+
+  /* ===================== CLOCK MODULE ===================== */
+  var U=(function(){
+    var ust={level:(G.uLevel||1),max:8,streak:0,cur:null,wrong:0,answered:false};
+    function allowed(L){return L<=1?[0]:L===2?[0,30]:L===3?[0,15,30,45]:[0,5,10,15,20,25,30,35,40,45,50,55];}
+    function fmt(h,m){return h+":"+(m<10?"0"+m:m);}
+    function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+    function clockSVG(h,m){
+      var ma=m*6,ha=(h%12)*30+m*0.5;
+      var s='<svg viewBox="0 0 200 200" class="clockface" xmlns="http://www.w3.org/2000/svg">';
+      s+='<circle cx="100" cy="100" r="92" fill="#fffdf6" stroke="#c79a5e" stroke-width="6"/>';
+      for(var t=0;t<60;t++){var a2=t*6*Math.PI/180;var r1=t%5===0?82:87;var x1=100+Math.sin(a2)*r1,y1=100-Math.cos(a2)*r1,x2=100+Math.sin(a2)*92,y2=100-Math.cos(a2)*92;s+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="#d8c4a0" stroke-width="'+(t%5===0?2.2:1)+'"/>';}
+      for(var n=1;n<=12;n++){var a=n*30*Math.PI/180,x=100+Math.sin(a)*70,y=100-Math.cos(a)*70;s+='<text x="'+x.toFixed(1)+'" y="'+(y+7).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="900" fill="#3a2e25" font-family="sans-serif">'+n+'</text>';}
+      s+='<line x1="100" y1="100" x2="100" y2="50" stroke="#3a2e25" stroke-width="7" stroke-linecap="round" transform="rotate('+ha.toFixed(1)+' 100 100)"/>';
+      s+='<line x1="100" y1="100" x2="100" y2="30" stroke="#e07856" stroke-width="5" stroke-linecap="round" transform="rotate('+ma.toFixed(1)+' 100 100)"/>';
+      s+='<circle cx="100" cy="100" r="6" fill="#3a2e25"/></svg>';
+      return s;
+    }
+    function gen(){
+      var L=ust.level,h=rnd(1,12),am=allowed(L),m=pick(am);
+      var hP=h===12?1:h+1,hM=h===1?12:h-1,correct=fmt(h,m);
+      var cands=[fmt(hP,m),fmt(hM,m)];
+      if(am.length>1)cands.push(fmt(h,pick(am.filter(function(x){return x!==m;}))));
+      cands.push(fmt(hP,am.length>1?pick(am):m));
+      var ds=[];cands.forEach(function(c){if(c!==correct&&ds.indexOf(c)<0)ds.push(c);});
+      ds=ds.slice(0,2);while(ds.length<2){var cc=fmt(rnd(1,12),pick(am));if(cc!==correct&&ds.indexOf(cc)<0)ds.push(cc);}
+      var opts=shuf([correct].concat(ds));
+      var hint=m===0?"Der lange Zeiger steht auf 12 – das ist eine volle Stunde. Der kurze Zeiger zeigt die Stunde.":(m===30?"Der lange Zeiger steht auf 6 – das ist eine halbe Stunde (30 Minuten).":"Der kurze Zeiger zeigt die Stunde, der lange die Minuten. Zähl die Minuten in 5er-Schritten.");
+      return {h:h,m:m,prompt:"Wie spät ist es?",options:opts,correct:opts.indexOf(correct),hint:hint};
+    }
+    function next(){ust.cur=gen();ust.wrong=0;ust.answered=false;render();}
+    function render(){
+      var c=ust.cur;$("u-clock").innerHTML=clockSVG(c.h,c.m);$("u-prompt").textContent=c.prompt;
+      var g=$("u-opts");g.innerHTML="";
+      c.options.forEach(function(t,i){var b=document.createElement("button");b.className="uopt";b.textContent=t+" Uhr";b.onclick=function(){choose(i,b);};g.appendChild(b);});
+      say("Lies die Uhr, Vinni.");
+    }
+    function choose(i,btn){
+      if(ust.answered)return;
+      if(i===ust.cur.correct){
+        ust.answered=true;btn.classList.add("right");
+        document.querySelectorAll("#u-opts .uopt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});
+        ust.streak++;var r=1+Math.floor((ust.level-1)/2);addEgg(r);say("Richtig gelesen! 🕐",true);toast("Richtig! +"+r+" 🥚");
+        if(ust.streak>=3&&ust.level<ust.max){ust.level++;ust.streak=0;G.uLevel=ust.level;doSave();setTimeout(function(){toast("Schwerere Uhrzeiten! ⭐",true);},900);}
+        setTimeout(next,1050);
+      } else {
+        btn.classList.add("wrong");btn.disabled=true;ust.wrong++;ust.streak=0;
+        if(ust.wrong>=2){if(ust.level>1){ust.level--;G.uLevel=ust.level;doSave();}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡.");pulse($("u-breathe"));}
+        else say("Fast! "+ust.cur.hint);
+      }
+    }
+    return {start:function(){next();},say0:function(){},hint:function(){if(ust.cur)say("💡 "+ust.cur.hint);}};
+  })();
+
+  /* ===================== STORE (Kaufmannsladen) MODULE ===================== */
+  var KL=(function(){
+    var st={level:(G.sLevel||1),max:8,streak:0,cur:null,placed:[],tries:0,answered:false};
+    var ITEMS=[{e:"🌽",n:"Hühnerfutter"},{e:"🌾",n:"Strohballen"},{e:"💧",n:"Wassertränke"},{e:"🪺",n:"Legenest"},{e:"🥚",n:"Eierkarton"},{e:"🧹",n:"Stallbesen"},{e:"🌿",n:"Kräuter"},{e:"🪣",n:"Futtereimer"},{e:"🔦",n:"Stalllampe"},{e:"🧪",n:"Wurmkur"}];
+    var praise=["Genau richtig bezahlt! 💰","Super gerechnet!","Stark – stimmt auf den Cent!","Klasse, das passt genau!","Toll, weiter so!"];
+    function eur(c){return (c/100).toFixed(2).replace(".",",")+" €";}
+    function coinsFor(L){return L<=1?[200,100]:L===2?[200,100,50]:L===3?[200,100,50,20,10]:[200,100,50,20,10,5,2,1];}
+    function priceFor(L){return L<=1?rnd(1,5)*100:L===2?rnd(2,8)*50:L===3?rnd(5,50)*10:rnd(20,650);}
+    function total(){return st.placed.reduce(function(a,b){return a+b;},0);}
+    function gen(){
+      var L=st.level,coins=coinsFor(L),item=pick(ITEMS),mode=(L>=4&&Math.random()<0.35)?"change":"pay";
+      if(mode==="pay"){st.cur={mode:"pay",item:item,target:priceFor(L),coins:coins};}
+      else{var price=priceFor(L),paid=Math.ceil((price+1)/100)*100;if(paid<=price)paid+=100;st.cur={mode:"change",item:item,price:price,paid:paid,target:paid-price,coins:coins};}
+    }
+    function next(){gen();st.placed=[];st.tries=0;st.answered=false;render();}
+    function render(){
+      var t=st.cur,h;
+      if(t.mode==="pay")h='<div class="st-item"><span class="st-emoji">'+t.item.e+'</span><div><div class="st-name">'+t.item.n+'</div><div class="st-price">'+eur(t.target)+'</div></div></div><div class="st-ask">Bezahle genau '+eur(t.target)+'.</div>';
+      else h='<div class="st-item"><span class="st-emoji">'+t.item.e+'</span><div><div class="st-name">'+t.item.n+'</div><div class="st-price">'+eur(t.price)+'</div></div></div><div class="st-ask">Vinni zahlt mit '+eur(t.paid)+'. Lege das Rückgeld: '+eur(t.target)+'.</div>';
+      $("st-task").innerHTML=h;renderCoins();renderTray();
+      say(t.mode==="pay"?"Such die passenden Münzen, Vinni.":"Wie viel Rückgeld ist das?");
+    }
+    function renderCoins(){var g=$("st-coins");g.innerHTML="";st.cur.coins.forEach(function(v){var b=document.createElement("button");b.className="coin "+(v>=100?"eu":"ct");b.textContent=v>=100?(v/100)+" €":v+" ct";b.onclick=function(){if(st.answered)return;st.placed.push(v);renderTray();};g.appendChild(b);});}
+    function renderTray(){var tr=$("st-tray");tr.innerHTML="";if(!st.placed.length){var ph=document.createElement("span");ph.className="st-ph";ph.textContent="Tippe unten Münzen an …";tr.appendChild(ph);}st.placed.forEach(function(v,i){var c=document.createElement("button");c.className="coin small "+(v>=100?"eu":"ct");c.textContent=v>=100?(v/100)+" €":v+" ct";c.onclick=function(){if(st.answered)return;st.placed.splice(i,1);renderTray();};tr.appendChild(c);});$("st-total").textContent="Im Beutel: "+eur(total())+" von "+eur(st.cur.target);}
+    function pay(){
+      if(st.answered)return;var tot=total(),target=st.cur.target;
+      if(tot===target){st.answered=true;var r=1+Math.floor((st.level-1)/2);addEgg(r);say(pick(praise),true);toast("Richtig! +"+r+" 🥚");st.streak++;if(st.streak>=3&&st.level<st.max){st.level++;st.streak=0;G.sLevel=st.level;doSave();setTimeout(function(){toast("Schwerere Beträge! ⭐",true);},900);}setTimeout(next,1250);}
+      else if(tot<target){st.tries++;say("Es fehlt noch "+eur(target-tot)+"."+(st.tries>=2?" Tipp: Fang mit den größten Münzen an, die noch passen.":""));if(st.tries>=2)pulse($("st-breathe"));}
+      else{st.tries++;say("Das ist "+eur(tot-target)+" zu viel. Tippe eine Münze im Beutel an, um sie wegzunehmen."+(st.tries>=2?" Du schaffst das – ruhig nochmal probieren. 🌬️":""));if(st.tries>=2)pulse($("st-breathe"));}
+    }
+    function clear(){if(st.answered)return;st.placed=[];renderTray();}
+    return {start:function(){next();},say0:function(){},pay:pay,clear:clear,hint:function(){say("💡 Fang mit den größten Münzen an, die noch in den Betrag passen. Kleine Beträge baust du aus 50-, 20-, 10-, 5-, 2- und 1-Cent-Münzen.");}};
+  })();
+
+  /* ===================== MARKET (Wirtschaft) MODULE ===================== */
+  var W=(function(){
+    var SC=[
+      {t:"Bald ist Ostern – alle wollen ganz viele Eier kaufen.",eff:1,why:"Wenn viele Leute Eier wollen (große Nachfrage), wird der Preis höher.",d:1},
+      {t:"Im Winter legen die Hennen weniger Eier. Eier sind knapp.",eff:1,why:"Wenn es wenig gibt (kleines Angebot), steigt der Preis.",d:1},
+      {t:"Frühling! Alle Hennen legen ganz viele Eier – es gibt Eier im Überfluss.",eff:-1,why:"Wenn es sehr viel gibt (großes Angebot), sinkt der Preis.",d:1},
+      {t:"Sommerferien: viele Familien sind verreist und kaufen kaum Eier.",eff:-1,why:"Wenn wenige Leute kaufen wollen (kleine Nachfrage), sinkt der Preis.",d:1},
+      {t:"Ein großes Hoffest steht an – viele Gäste wollen Eierkuchen backen.",eff:1,why:"Mehr Nachfrage bedeutet einen höheren Preis.",d:1},
+      {t:"Hilde bekommt einen neuen Lieblingsplatz im Stall.",eff:0,why:"Das ändert weder Angebot noch Nachfrage – der Preis bleibt gleich.",d:1},
+      {t:"Drei neue Höfe verkaufen jetzt auch Eier auf dem Markt.",eff:-1,why:"Mehr Anbieter (mehr Angebot und Konkurrenz) drücken den Preis nach unten.",d:2},
+      {t:"Das Hühnerfutter wird teurer.",eff:1,why:"Wenn die Kosten steigen, muss der Bauer die Eier teurer verkaufen.",d:2},
+      {t:"Eine Zeitung schreibt: Eier von diesem Hof sind besonders gesund. Alle wollen sie.",eff:1,why:"Die Eier werden beliebter – mehr Nachfrage, höherer Preis.",d:2},
+      {t:"Viele Leute essen jetzt lieber Haferbrei zum Frühstück statt Eier.",eff:-1,why:"Wenn die Nachfrage sinkt, sinkt auch der Preis.",d:2},
+      {t:"Das Wetter ist heute einfach nur schön.",eff:0,why:"Das hat nichts mit Eiern zu tun – der Preis bleibt gleich.",d:2}
+    ];
+    var OPTS=["Preis steigt ⬆️","Preis fällt ⬇️","Bleibt gleich ↔️"];
+    var st={level:(G.wLevel||1),streak:0,price:30,cur:null,answered:false,wrong:0,last:null};
+    function ci(eff){return eff===1?0:eff===-1?1:2;}
+    function pool(){return SC.filter(function(s){return st.level>=3?true:s.d<=1;});}
+    function gen(){var p=pool(),s;do{s=pick(p);}while(p.length>1&&s===st.last);st.last=s;return s;}
+    function priceH(pr){return Math.max(8,Math.min(95,(pr-5)/65*95));}
+    function next(){st.cur=gen();st.answered=false;st.wrong=0;render();}
+    function render(){
+      var s=st.cur;
+      $("mk-fill").style.height=priceH(st.price)+"%";$("mk-price").textContent=st.price+" ct";$("mk-arrow").textContent="";
+      $("mk-scn").textContent=s.t;
+      var g=$("mk-opts");g.innerHTML="";
+      OPTS.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};g.appendChild(b);});
+      $("mk-explain").textContent="";$("mk-explain").classList.remove("show");$("mk-next").style.display="none";
+      say("Was passiert mit dem Eierpreis?");
+    }
+    function applyPrice(eff){
+      var arrow=eff===1?"⬆️":eff===-1?"⬇️":"↔️";
+      if(eff===1)st.price=Math.min(70,st.price+rnd(5,15));else if(eff===-1)st.price=Math.max(8,st.price-rnd(5,15));
+      $("mk-fill").style.height=priceH(st.price)+"%";$("mk-price").textContent=st.price+" ct";$("mk-arrow").textContent=arrow;
+    }
+    function reveal(correctI){document.querySelectorAll("#mk-opts .opt").forEach(function(o,k){o.disabled=true;if(k!==correctI)o.classList.add("dim");});document.querySelectorAll("#mk-opts .opt")[correctI].classList.remove("dim");document.querySelectorAll("#mk-opts .opt")[correctI].classList.add("right");}
+    function choose(i,btn){
+      if(st.answered)return;var c=ci(st.cur.eff);
+      if(i===c){
+        st.answered=true;reveal(c);applyPrice(st.cur.eff);
+        $("mk-explain").textContent="📈 "+st.cur.why;$("mk-explain").classList.add("show");
+        addEgg(2);toast("Richtig! +2 🥚");say("Genau richtig gedacht! "+st.cur.why,true);
+        st.streak++;if(st.streak>=3&&st.level<6){st.level++;st.streak=0;G.wLevel=st.level;doSave();setTimeout(function(){toast("Kniffligere Märkte! ⭐",true);},900);}
+        $("mk-next").style.display="";
+      } else {
+        btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;
+        if(st.wrong>=2){st.answered=true;reveal(c);applyPrice(st.cur.eff);$("mk-explain").textContent="📈 "+st.cur.why;$("mk-explain").classList.add("show");addEgg(1);toast("Gut nachgedacht! +1 🥚");say("Kein Problem – so lernt man Wirtschaft! "+st.cur.why,true);$("mk-next").style.display="";}
+        else say("Hmm, überleg nochmal: Wollen plötzlich MEHR Leute Eier (Nachfrage)? Oder gibt es plötzlich MEHR oder WENIGER Eier (Angebot)?");
+      }
+    }
+    return {start:function(){next();},say0:function(){},next:next,hint:function(){say("💡 Frag dich: Wollen mehr Leute Eier kaufen (Nachfrage hoch → Preis hoch)? Oder gibt es mehr/weniger Eier (großes Angebot → Preis runter)?");}};
+  })();
+
+  /* ===================== READ (Lesen & Buchstaben) MODULE ===================== */
+  var R=(function(){
+    var WORDS=[
+      {w:"EI",e:"🥚"},{w:"HOF",e:"🚜"},{w:"HUHN",e:"🐔"},{w:"HAHN",e:"🐓"},{w:"NEST",e:"🪺"},
+      {w:"MAIS",e:"🌽"},{w:"KORB",e:"🧺"},{w:"WURM",e:"🪱"},{w:"BAUM",e:"🌳"},{w:"GRAS",e:"🌱"},
+      {w:"STALL",e:"🛖"},{w:"STROH",e:"🌾"},{w:"FEDER",e:"🪶"},{w:"SONNE",e:"☀️"},{w:"FUCHS",e:"🦊"},{w:"KÜKEN",e:"🐤"}
+    ];
+    var EXTRA="ABDEFGHIKLMNOPRSTUWZ".split("");
+    var st={level:(G.rLevel||1),streak:0,word:"",emoji:"",slots:[],rack:[],wrong:0,answered:false};
+    function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+    function pickWord(){var pool;if(st.level>=3)pool=WORDS.filter(function(o){return o.w.length>=4;});else pool=WORDS.filter(function(o){return o.w.length<=3+st.level;});if(!pool.length)pool=WORDS;return pick(pool);}
+    function build(){var o=pickWord();st.word=o.w;st.emoji=o.e;var letters=o.w.split("");var nd=st.level>=3?2:(st.level>=2?1:0),distract=[];for(var i=0;i<nd;i++){var ch=pick(EXTRA);if(letters.indexOf(ch)<0&&distract.indexOf(ch)<0)distract.push(ch);}st.rack=shuf(letters.concat(distract)).map(function(ch){return {ch:ch,used:false};});st.slots=letters.map(function(){return {ch:null,ri:null};});st.wrong=0;st.answered=false;}
+    function next(){build();render();}
+    function render(){
+      $("r-emoji").textContent=st.emoji;
+      var sl=$("r-slots");sl.className="r-slots";sl.innerHTML="";
+      st.slots.forEach(function(s,idx){var d=document.createElement("button");d.className="ltile"+(s.ch?" filled":"");d.textContent=s.ch||"";d.onclick=function(){removeSlot(idx);};sl.appendChild(d);});
+      var rk=$("r-rack");rk.innerHTML="";
+      st.rack.forEach(function(r,idx){var d=document.createElement("button");d.className="rtile"+(r.used?" used":"");d.textContent=r.ch;d.disabled=r.used;d.onclick=function(){placeChar(idx);};rk.appendChild(d);});
+      say("Bau das Wort, Vinni!");
+    }
+    function placeChar(ri){if(st.answered)return;var r=st.rack[ri];if(r.used)return;var slot=null;for(var i=0;i<st.slots.length;i++){if(!st.slots[i].ch){slot=st.slots[i];break;}}if(!slot)return;slot.ch=r.ch;slot.ri=ri;r.used=true;render();if(st.slots.every(function(s){return s.ch;}))check();}
+    function removeSlot(i){if(st.answered)return;var s=st.slots[i];if(!s.ch)return;st.rack[s.ri].used=false;s.ch=null;s.ri=null;render();}
+    function check(){
+      var built=st.slots.map(function(s){return s.ch;}).join("");
+      if(built===st.word){st.answered=true;var r=1+Math.floor((st.level-1)/2);addEgg(r);say("Richtig geschrieben: "+st.word+"! 🎉",true);toast("Richtig! +"+r+" 🥚");speak(st.word);st.streak++;if(st.streak>=3&&st.level<8){st.level++;st.streak=0;G.rLevel=st.level;doSave();setTimeout(function(){toast("Längere Wörter! ⭐",true);},900);}setTimeout(next,1300);}
+      else{st.wrong++;st.streak=0;var sl=$("r-slots");sl.classList.remove("shake");void sl.offsetWidth;sl.classList.add("shake");if(st.wrong>=2){say("Fast! Tippe oben einen Buchstaben an, um ihn zurückzulegen. Tipp: Das Wort beginnt mit dem Laut "+st.word[0]+".");pulse($("r-breathe"));}else say("Fast! Tippe oben einen Buchstaben an, um ihn zurückzulegen, und probier eine andere Reihenfolge.");}
+    }
+    function speak(w){try{window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(w);u.lang="de-DE";u.rate=0.85;window.speechSynthesis.speak(u);}catch(e){}}
+    return {start:function(){next();},say0:function(){},speak:function(){speak(st.word);},hint:function(){speak(st.word);say("💡 Hör dir das Wort an und sprich langsam mit. Es beginnt mit "+st.word[0]+". Tippe die Buchstaben der Reihe nach.");}};
+  })();
+
+  /* ===================== IQ (Denksport) MODULE ===================== */
+  var IQ=(function(){
+    var st={level:(G.iqLevel||1),max:10,streak:0,cur:null,wrong:0,answered:false};
+    var COL=["🔴","🟠","🟡","🟢","🔵","🟣"];
+    var PROD=[["🐔","🥚"],["🐄","🥛"],["🐝","🍯"],["🐑","🧶"],["🌳","🍎"]];
+    var praise=["Sehr klug! 🧠","Genau richtig kombiniert!","Stark gedacht!","Klasse Köpfchen!","Richtig – weiter so!"];
+    function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+    function rep(e,k){var s="";for(var i=0;i<k;i++)s+=e;return s;}
+    function uniq(a){var o=[];a.forEach(function(x){if(o.indexOf(x)<0)o.push(x);});return o;}
+    function norm(d){d=d%360;if(d<0)d+=360;return d;}
+    function arrowSVG(deg,col){col=col||"#3a7bd5";return '<svg width="40" height="40" viewBox="0 0 40 40"><g transform="rotate('+deg+' 20 20)"><line x1="20" y1="33" x2="20" y2="11" stroke="'+col+'" stroke-width="4" stroke-linecap="round"/><path d="M20 5 L12 16 L28 16 Z" fill="'+col+'"/></g></svg>';}
+    function circleSVG(r,col){col=col||"#e8893b";return '<svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="'+r+'" fill="'+col+'"/></svg>';}
+    function dotsSVG(n,col){col=col||"#7a4fb0";var L={1:[[22,22]],2:[[14,22],[30,22]],3:[[12,29],[22,12],[32,29]],4:[[14,14],[30,14],[14,30],[30,30]],5:[[14,14],[30,14],[22,22],[14,30],[30,30]],6:[[14,13],[30,13],[14,22],[30,22],[14,31],[30,31]]}[n]||[[22,22]];var c="";L.forEach(function(p){c+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.6" fill="'+col+'"/>';});return '<svg width="44" height="44" viewBox="0 0 44 44">'+c+'</svg>';}
+    function rotseq(){
+      var step=pick([45,90,270]),a0=pick([0,45,90,135,180,225,270,315]);
+      var seq=[a0,a0+step,a0+2*step],nx=norm(a0+3*step),opts=[nx],tries=0;
+      function far(o,c){var d=Math.abs(o-c);return Math.min(d,360-d)>=45;}
+      while(opts.length<3&&tries<60){tries++;var cand=norm(nx+pick([45,90,135,180,225,270]));if(opts.every(function(o){return far(o,cand);}))opts.push(cand);}
+      while(opts.length<3)opts.push(norm(nx+90*opts.length+45));
+      opts=shuf(opts.slice(0,3));
+      return {prompt:"Wie dreht sich der Pfeil weiter?",svgRow:seq.map(function(d){return arrowSVG(norm(d));}),options:opts.map(function(d){return arrowSVG(d);}),correct:opts.indexOf(nx),hint:"Schau, in welche Richtung sich der Pfeil jedes Mal dreht. Mach die gleiche Drehung noch einmal."};
+    }
+    function sizeseq(){
+      var r0=pick([7,8,9]),d=pick([3,4]),seq=[r0,r0+d,r0+2*d],nx=r0+3*d;
+      var opts=shuf([nx,nx-d,nx+d]);
+      return {prompt:"Welcher Kreis kommt als Nächstes?",svgRow:seq.map(function(r){return circleSVG(r);}),options:opts.map(function(r){return circleSVG(r);}),correct:opts.indexOf(nx),hint:"Wie verändert sich die Größe jedes Mal? Wird der Kreis immer größer?"};
+    }
+    function matrix3(){
+      var base=pick([0,1]),col=pick(["#7a4fb0","#3a7bd5","#e8893b"]);
+      function cnt(r,c){return r+c+1+base;}
+      var cells=[];for(var r=0;r<3;r++)for(var c=0;c<3;c++){cells.push((r===2&&c===2)?"?":dotsSVG(cnt(r,c),col));}
+      var ans=cnt(2,2),opts=uniq([ans,ans-1,ans+1]).filter(function(x){return x>=1&&x<=6;});
+      while(opts.length<3){var cand=Math.max(1,Math.min(6,ans+pick([-2,2,-1,1])));if(opts.indexOf(cand)<0)opts.push(cand);}
+      opts=shuf(opts.slice(0,3));
+      return {prompt:"Welches Bild gehört ins leere Feld?",svg3:cells,options:opts.map(function(n){return dotsSVG(n,col);}),correct:opts.indexOf(ans),hint:"Zähle die Punkte. In jeder Reihe und Spalte kommt einer dazu."};
+    }
+    function orient(){
+      var base=pick([0,90,180,270]),diff;do{diff=pick([0,90,180,270]);}while(diff===base);
+      var oddIndex=rnd(0,3),arr=[];for(var i=0;i<4;i++)arr.push(arrowSVG(i===oddIndex?diff:base,"#d24b4b"));
+      return {prompt:"Welcher Pfeil zeigt in eine andere Richtung?",options:arr,correct:oddIndex,hint:"Drei Pfeile zeigen in dieselbe Richtung. Welcher tanzt aus der Reihe?"};
+    }
+    function shapeSVG(kind,col){var inner=kind==="circle"?'<circle cx="20" cy="20" r="13" fill="'+col+'"/>':kind==="square"?'<rect x="8" y="8" width="24" height="24" rx="4" fill="'+col+'"/>':'<path d="M20 7 L33 32 L7 32 Z" fill="'+col+'"/>';return '<svg width="40" height="40" viewBox="0 0 40 40">'+inner+'</svg>';}
+    function flagSVG(dir,pos,col){col=col||"#d24b4b";var topY=pos==="top"?9:25,midY=topY+6,botY=topY+12;var tip=dir==="right"?34:6;var tri='<path d="M20 '+topY+' L'+tip+' '+midY+' L20 '+botY+' Z" fill="'+col+'"/>';return '<svg width="40" height="42" viewBox="0 0 40 42"><line x1="20" y1="5" x2="20" y2="38" stroke="#7a5a36" stroke-width="3" stroke-linecap="round"/>'+tri+'</svg>';}
+    function mirror(){
+      var pos=pick(["top","bottom"]),dir=pick(["right","left"]),opp=dir==="right"?"left":"right",oppP=pos==="top"?"bottom":"top";
+      var correct=flagSVG(opp,pos),opts=shuf([correct,flagSVG(dir,pos),flagSVG(opp,oppP)]);
+      return {prompt:"Welches Bild ist das Spiegelbild?",ref:flagSVG(dir,pos),options:opts,correct:opts.indexOf(correct),hint:"Stell dir einen Spiegel senkrecht daneben vor: Was links war, ist rechts – oben und unten bleiben gleich."};
+    }
+    function shapepat(){
+      var shapes=["circle","square","triangle"],col=pick(["#3a7bd5","#e8893b","#3f9d6b"]);
+      var clen=pick([2,3]),cyc=shuf(shapes).slice(0,clen),seq=[];for(var i=0;i<4;i++)seq.push(cyc[i%clen]);
+      var nx=cyc[4%clen],others=shapes.filter(function(k){return k!==nx;});
+      var kinds=shuf([nx,others[0],others[1]]);
+      return {prompt:"Welche Form kommt als Nächstes?",svgRow:seq.map(function(k){return shapeSVG(k,col);}),options:kinds.map(function(k){return shapeSVG(k,col);}),correct:kinds.indexOf(nx),hint:"Schau, in welcher Reihenfolge sich die Formen wiederholen."};
+    }
+    function series(){
+      var L=st.level,type=pick(L<3?["geo2","grow"]:["geo2","geo3","grow","fib"]),seq,nx;
+      if(type==="geo2"){var a=rnd(1,4);seq=[a,a*2,a*4];nx=a*8;}
+      else if(type==="geo3"){var a=rnd(1,3);seq=[a,a*3,a*9];nx=a*27;}
+      else if(type==="grow"){var a=rnd(1,5),d=rnd(1,3);seq=[a,a+d,a+3*d,a+6*d];nx=a+10*d;}
+      else{seq=[1,2,3,5];nx=8;}
+      var opts=uniq([nx,nx+rnd(1,3),Math.max(0,nx-rnd(1,3))]);while(opts.length<3){opts.push(nx+rnd(4,9));opts=uniq(opts);}
+      opts=shuf(opts).map(String);
+      return {prompt:"Welche Zahl kommt als Nächstes?",display:seq.map(String),options:opts,correct:opts.indexOf(String(nx)),hint:"Wie verändert sich die Zahl jedes Mal? Wird sie mal etwas genommen, oder kommt immer mehr dazu?"};
+    }
+    function analogy(){
+      var two=shuf(PROD).slice(0,2),a=two[0],c=two[1];
+      var dis=shuf(PROD.filter(function(p){return p!==c&&p!==a;})).map(function(p){return p[1];});
+      var opts=shuf([c[1],dis[0],dis[1]]);
+      return {prompt:a[0]+" → "+a[1]+"  ,  also  "+c[0]+" → ?",options:opts,correct:opts.indexOf(c[1]),hint:a[0]+" gibt uns "+a[1]+". Was gibt uns "+c[0]+"?"};
+    }
+    function matrix(){
+      var c1=pick(COL),c2;do{c2=pick(COL);}while(c2===c1);
+      var n=rnd(1,2),grid=[rep(c1,n),rep(c1,n+1),rep(c2,n),"?"],correct=rep(c2,n+1);
+      var opts=uniq([correct,rep(c2,n),rep(c1,n+1)]);while(opts.length<3)opts=uniq(opts.concat([rep(c1,n)]));
+      opts=shuf(opts);
+      return {prompt:"Welches Bild gehört ins leere Feld?",grid:grid,options:opts,correct:opts.indexOf(correct),hint:"Schau die Reihen an: Die Farbe bleibt in der Reihe gleich, und nach rechts wird es eins mehr."};
+    }
+    function oddnum(){
+      var L=st.level,rule=pick(["even","mult3","mult5"]),hi=10+L*5;
+      function fits(x){return rule==="even"?x%2===0:rule==="mult3"?x%3===0:x%5===0;}
+      var nums=[];while(nums.length<3){var x=rnd(2,hi);if(fits(x)&&nums.indexOf(x)<0)nums.push(x);}
+      var odd;do{odd=rnd(2,hi);}while(fits(odd)||nums.indexOf(odd)>=0);
+      var arr=shuf(nums.concat([odd]));
+      return {prompt:"Welche Zahl passt nicht zu den anderen?",options:arr.map(String),correct:arr.indexOf(odd),hint:"Drei Zahlen haben etwas gemeinsam (z. B. alle gerade oder alle in einer Reihe). Welche fällt heraus?"};
+    }
+    function gen(){
+      var pools={1:["series","analogy","rotseq","sizeseq","shapepat"],2:["series","analogy","rotseq","sizeseq","oddnum","matrix","orient","shapepat","mirror"],3:["series","analogy","rotseq","sizeseq","oddnum","matrix","orient","matrix3","shapepat","mirror"]};
+      var key=st.level<2?1:(st.level<3?2:3),t=pick(pools[key]);
+      return t==="series"?series():t==="analogy"?analogy():t==="oddnum"?oddnum():t==="matrix"?matrix():t==="rotseq"?rotseq():t==="sizeseq"?sizeseq():t==="orient"?orient():t==="matrix3"?matrix3():t==="mirror"?mirror():t==="shapepat"?shapepat():matrix3();
+    }
+    function next(){st.cur=gen();st.wrong=0;st.answered=false;render();}
+    function render(){
+      var c=st.cur,html='<div class="iq-prompt">'+c.prompt+'</div>';
+      if(c.ref){html+='<div class="iq-ref">'+c.ref+'</div>';}
+      if(c.svg3){html+='<div class="iq-matrix3">';c.svg3.forEach(function(g){html+='<div class="iq-cell3'+(g==="?"?" q":"")+'">'+(g==="?"?"?":g)+'</div>';});html+='</div>';}
+      else if(c.svgRow){html+='<div class="iq-display">';c.svgRow.forEach(function(t){html+='<span class="iq-tok-svg">'+t+'</span>';});html+='<span class="iq-tok-svg q">?</span></div>';}
+      else if(c.grid){html+='<div class="iq-matrix">';c.grid.forEach(function(g){html+='<div class="iq-cell'+(g==="?"?" q":"")+'">'+g+'</div>';});html+='</div>';}
+      else if(c.display){html+='<div class="iq-display">';c.display.forEach(function(t){html+='<span class="iq-tok">'+t+'</span>';});html+='<span class="iq-tok q">?</span></div>';}
+      html+='<div class="iq-opts" id="iq-opts"></div>';
+      $("iq-card").innerHTML=html;
+      var g=$("iq-opts");
+      c.options.forEach(function(o,i){var b=document.createElement("button");b.className="iqopt"+((""+o).indexOf("<svg")===0?" iqopt-svg":"");b.innerHTML=o;b.onclick=function(){choose(i,b);};g.appendChild(b);});
+      say("Knobel mit, Vinni!");
+    }
+    function choose(i,btn){
+      if(st.answered)return;
+      if(i===st.cur.correct){st.answered=true;btn.classList.add("right");document.querySelectorAll("#iq-opts .iqopt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});st.streak++;var r=1+Math.floor((st.level-1)/2);addEgg(r);say(pick(praise),true);toast("Richtig! +"+r+" 🥚");if(st.streak>=3&&st.level<st.max){st.level++;st.streak=0;G.iqLevel=st.level;doSave();setTimeout(function(){toast("Noch kniffliger! ⭐",true);},900);}setTimeout(next,1100);}
+      else{btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;if(st.wrong>=2){if(st.level>1){st.level--;G.iqLevel=st.level;doSave();}say("Das ist wirklich knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡.");pulse($("iq-breathe"));}else say("Fast! "+st.cur.hint);}
+    }
+    return {start:function(){next();},say0:function(){},hint:function(){if(st.cur)say("💡 "+st.cur.hint);}};
+  })();
+
+  /* ===================== TRACTOR MODULE ===================== */
+  var TR=(function(){
+    var STEPS=[
+      {k:"rahmen",n:"Rahmen",l:"Der Rahmen ist das stabile Grundgerüst. Darauf wird alles andere aufgebaut."},
+      {k:"motor",n:"Motor",l:"Der Motor ist das Herz des Traktors – hier entsteht die Kraft, die ihn bewegt.",engine:true},
+      {k:"raeder",n:"Räder",l:"Die Räder: hinten groß für viel Kraft und Halt, vorne klein zum Lenken."},
+      {k:"tank",n:"Tank",l:"In den Tank kommt der Treibstoff (Diesel). Er gibt dem Motor Energie."},
+      {k:"auspuff",n:"Auspuff",l:"Durch den Auspuff entweichen die Abgase, die im Motor entstehen."},
+      {k:"kabine",n:"Kabine",l:"In der Kabine sitzt der Fahrer am Lenkrad und steuert den Traktor."}
+    ];
+    var EXTRA=["Hupe","Anhänger","Schaufel","Sitz","Dach","Leiter"];
+    var st={phase:"build",step:0,level:(G.tLevel||1),streak:0,cur:null,answered:false,wrong:0,built:!!G.tBuilt};
+    function showPart(k){var el=$("trp-"+k);if(el)el.classList.add("show");}
+    function hideAll(){STEPS.forEach(function(s){var e=$("trp-"+s.k);if(e)e.classList.remove("show");});var f=$("trp-fahrer");if(f)f.classList.remove("show");}
+    function allParts(){STEPS.forEach(function(s){showPart(s.k);});showPart("fahrer");}
+    function start(){if(st.built){allParts();drivePhase();}else{st.phase="build";st.step=0;hideAll();$("tr-engine").style.display="none";buildStep();}}
+    function buildStep(){
+      $("tr-engine").style.display="none";var s=STEPS[st.step];
+      var pool=EXTRA.concat(STEPS.map(function(x){return x.n;}).filter(function(nm){return nm!==s.n;}));
+      var opts=[s.n];while(opts.length<3){var c=pick(pool);if(opts.indexOf(c)<0)opts.push(c);}opts=shuf(opts);
+      $("tr-panel").innerHTML='<div class="tr-progress">Teil '+(st.step+1)+' von '+STEPS.length+'</div><div class="tr-opts" id="tr-opts"></div>';
+      var g=$("tr-opts");opts.forEach(function(o){var b=document.createElement("button");b.className="tr-part-btn";b.textContent=o;b.onclick=function(){pickPart(o,b,s);};g.appendChild(b);});
+      say("Schritt "+(st.step+1)+": Welches Teil bauen wir als Nächstes ein? Tippe es an.");
+    }
+    function pickPart(name,btn,s){
+      if(name===s.n){showPart(s.k);pulse($("tr-vehicle"));say("Super! "+s.l,true);if(s.engine){showEngine();return;}advance();}
+      else{btn.classList.add("wrong");btn.disabled=true;say("Das ist "+name+" – das brauchen wir hier nicht. Welches Teil kommt als Nächstes?");}
+    }
+    function advance(){st.step++;if(st.step>=STEPS.length)finishBuild();else buildStep();}
+    function showEngine(){
+      $("tr-panel").innerHTML="";var eng=$("tr-engine");eng.style.display="block";
+      eng.innerHTML='<div style="font-weight:900;margin-bottom:6px">So funktioniert der Motor 🔧</div><div class="eng"><div class="eng-cyl"><div class="eng-piston"></div></div><div class="eng-spark">⚡</div><div class="eng-crank"><div class="eng-pin"></div></div></div><div class="tr-strokes">1) Luft &amp; Diesel strömen rein 💨<br>2) Der Kolben drückt alles zusammen<br>3) Ein Zündfunke – Bumm! 💥<br>4) Die Abgase strömen raus</div><div class="tr-strokes" style="margin-top:6px">Der Kolben fährt auf und ab und dreht das Rad. Genau so fährt der Traktor!</div><button class="hbtn next" id="tr-eng-next" style="margin:10px auto 0">Weiter bauen ▶</button>';
+      say("Schau, wie der Motor arbeitet: Ein Kolben bewegt sich auf und ab und treibt das Rad an.",true);
+      $("tr-eng-next").onclick=function(){eng.style.display="none";advance();};
+    }
+    function finishBuild(){showPart("fahrer");st.built=true;G.tBuilt=true;doSave();say("Der Traktor ist fertig! 🎉 Jetzt darfst du ihn mit Zahlen steuern.",true);addEgg(3);drivePhase();}
+    function drivePhase(){st.phase="drive";allParts();$("tr-engine").style.display="none";newRound();}
+    function newRound(){
+      st.answered=false;st.wrong=0;resetVehicle();
+      var L=st.level,count=L<2?3:4,max=L<2?20:(L<3?50:100),rule=L<2?"max":pick(["max","max","min"]);
+      var nums=[];while(nums.length<count){var x=rnd(2,max);if(nums.indexOf(x)<0)nums.push(x);}
+      var target=rule==="max"?Math.max.apply(null,nums):Math.min.apply(null,nums);
+      st.cur={nums:nums,rule:rule,target:target,max:max};
+      $("tr-panel").innerHTML='<div class="tr-progress">'+(rule==="max"?"Welche Zahl gibt am meisten Gas?":"Ganz sachte – welche ist am kleinsten?")+'</div><div class="tr-opts" id="tr-nums"></div><button class="hbtn" id="tr-rebuild" style="margin:12px auto 0;background:#e8d6b0">🔧 Nochmal zusammenbauen</button>';
+      var g=$("tr-nums");nums.forEach(function(v){var b=document.createElement("button");b.className="tr-num";b.textContent=v;b.onclick=function(){pickNum(v,b);};g.appendChild(b);});
+      $("tr-rebuild").onclick=function(){st.built=false;G.tBuilt=false;doSave();start();};
+      say(rule==="max"?"Tippe die HÖCHSTE Zahl – sie lässt den Traktor am weitesten fahren! 🚜":"Tippe die NIEDRIGSTE Zahl – dann fährt er ganz langsam.");
+    }
+    function pickNum(v,btn){
+      if(st.answered)return;
+      if(v===st.cur.target){
+        st.answered=true;btn.classList.add("right");document.querySelectorAll("#tr-nums .tr-num").forEach(function(o){o.disabled=true;});
+        drive(v);var r=1+Math.floor(st.level/2);addEgg(r);toast("Losgefahren! +"+r+" 🥚");
+        say("Brumm brumm! 🚜 "+(st.cur.rule==="max"?"Die höchste Zahl gibt am meisten Gas.":"Schön langsam mit der kleinsten Zahl."),true);
+        st.streak++;if(st.streak>=3&&st.level<6){st.level++;st.streak=0;G.tLevel=st.level;doSave();setTimeout(function(){toast("Längere Strecke! ⭐",true);},900);}
+        setTimeout(newRound,1700);
+      }else{btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;
+        if(st.wrong>=2)say("Tipp: Vergleiche die Zahlen Stelle für Stelle. Die "+(st.cur.rule==="max"?"größte":"kleinste")+" ist "+st.cur.target+". Tippe sie an!");
+        else say(st.cur.rule==="max"?"Noch nicht die höchste. Welche Zahl ist am größten?":"Das ist nicht die kleinste. Welche Zahl ist am niedrigsten?");}
+    }
+    function resetVehicle(){var v=$("tr-vehicle");if(!v)return;v.style.transition="none";v.style.transform="translateX(0)";void v.offsetWidth;v.style.transition="";}
+    function drive(v){var stage=$("tr-stage"),veh=$("tr-vehicle");if(!stage||!veh)return;var maxX=Math.max(20,stage.clientWidth-veh.clientWidth-10);var frac=Math.min(1,v/st.cur.max);veh.style.transform="translateX("+Math.round((0.25+0.75*frac)*maxX)+"px)";puff();}
+    function puff(){var stage=$("tr-stage");if(!stage)return;for(var i=0;i<4;i++){var d=document.createElement("span");d.className="tr-dust";d.textContent="💨";d.style.bottom=(4+Math.random()*12)+"px";stage.appendChild(d);(function(el){try{var a=el.animate([{opacity:.8,transform:"translateX(0) scale(.6)"},{opacity:0,transform:"translateX(46px) scale(1.2)"}],{duration:700,easing:"ease-out"});a.onfinish=function(){el.remove();};}catch(e){el.remove();}setTimeout(function(){if(el.parentNode)el.remove();},900);})(d);}}
+    function hint(){if(st.phase==="build"){var s=STEPS[st.step];say("💡 Wir bauen gerade Teil "+(st.step+1)+": "+s.n+". "+s.l);}else say("💡 Vergleiche die Zahlen: Welche ist am "+(st.cur&&st.cur.rule==="min"?"kleinsten":"größten")+"? Tippe sie an.");}
+    return {start:start,say0:function(){},hint:hint};
+  })();
+
+  /* ===================== SHOP MODULE ===================== */
+  var SHOP=(function(){
+    var HATCH=8;
+    function mkCard(iconHTML,label,badge,owned,cant){
+      var c=document.createElement("button");c.className="shopitem"+(owned?" owned":"")+(cant?" cant":"");
+      c.innerHTML='<div class="si-icon">'+iconHTML+'</div><div class="si-label">'+label+'</div><div class="si-badge">'+badge+'</div>';
+      return c;
+    }
+    function notEnough(){say("Dafür brauchst du noch ein paar Eier mehr. Sammle welche in den Spielen – das schaffst du! 🥚");}
+    function hatch(){
+      if(G.eggs<HATCH){notEnough();return;}
+      spend(HATCH);
+      var pool=G.unlocked.slice();var breed=pool[Math.floor(Math.random()*pool.length)];
+      var name=randName();
+      try{var inp=window.prompt("Wie soll dein neues Küken heißen?",name);if(inp&&inp.trim())name=inp.trim().slice(0,16);}catch(e){}
+      addChicken(breed,name);
+      toast("🐣 "+name+" ist geschlüpft!",true);
+      say("Willkommen, "+name+"! Schau auf dem Hof vorbei. 🐔",true);
+    }
+    function buildBreeds(){
+      var g=$("shop-breeds");g.innerHTML="";
+      Object.keys(BREEDS).forEach(function(k){
+        var b=BREEDS[k];if(!b.cost)return;
+        var owned=G.unlocked.indexOf(k)>=0, cant=(!owned&&G.eggs<b.cost);
+        var card=mkCard(chick(b.v,b.rooster),b.label,owned?"✓ frei":(b.cost+" 🥚"),owned,cant);
+        if(!owned)card.onclick=function(){if(spend(b.cost)){G.unlocked.push(k);doSave();addChicken(k,randName());toast("Neue Rasse: "+b.label+"! 🎉",true);buildBreeds();}else notEnough();};
+        g.appendChild(card);
+      });
+    }
+    function buildDecos(){
+      var g=$("shop-decos");g.innerHTML="";
+      Object.keys(DECOS).forEach(function(k){
+        var d=DECOS[k];var owned=G.decos.indexOf(k)>=0, cant=(!owned&&G.eggs<d.cost);
+        var card=mkCard('<div class="si-emoji">'+d.emoji+'</div>',d.label,owned?"✓ im Hof":(d.cost+" 🥚"),owned,cant);
+        if(!owned)card.onclick=function(){if(spend(d.cost)){G.decos.push(k);doSave();renderDecos();toast(d.label+" steht jetzt im Hof! 🎉",true);buildDecos();}else notEnough();};
+        g.appendChild(card);
+      });
+    }
+    return {open:function(){$("hatchBtn").innerHTML='🐣 Neues Küken ausbrüten <span class="price">'+HATCH+' 🥚</span>';buildBreeds();buildDecos();say("Hier machst du mit Eiern den Hof größer!");},hatch:hatch};
+  })();
+
+  /* ---------- wire up ---------- */
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  $("breathC").innerHTML=chick(VAR.weiss,false);
+  document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
+  $("homebtn").onclick=function(){show("home");};
+  var homeCoop=document.querySelector("#home .coop");if(homeCoop){homeCoop.style.cursor="pointer";homeCoop.onclick=function(){show("barn");};}
+  $("m-tip").onclick=function(){M.hint();};$("m-breathe").onclick=openBreathe;
+  $("c-tip").onclick=function(){C.hint();};
+  $("e-tip").onclick=function(){E.hint();};$("e-breathe").onclick=openBreathe;
+  $("p-tip").onclick=function(){P.hint();};$("p-breathe").onclick=openBreathe;
+  $("iq-tip").onclick=function(){IQ.hint();};$("iq-breathe").onclick=openBreathe;
+  $("tr-tip").onclick=function(){TR.hint();};$("tr-breathe").onclick=openBreathe;
+  $("lab-breathe").onclick=openBreathe;$("lab-next").onclick=function(){LAB.next();};
+  $("u-tip").onclick=function(){U.hint();};$("u-breathe").onclick=openBreathe;
+  $("st-tip").onclick=function(){KL.hint();};$("st-breathe").onclick=openBreathe;$("st-pay").onclick=function(){KL.pay();};$("st-clear").onclick=function(){KL.clear();};
+  $("mk-tip").onclick=function(){W.hint();};$("mk-breathe").onclick=openBreathe;$("mk-next").onclick=function(){W.next();};
+  $("r-tip").onclick=function(){R.hint();};$("r-breathe").onclick=openBreathe;$("r-say").onclick=function(){R.speak();};
+  $("hatchBtn").onclick=function(){SHOP.hatch();};
+  $("breathDone").onclick=closeBreathe;
+  $("gear").onclick=function(){
+    if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
+      try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];renderDecos();renderFlock();refresh();}
+    }
+  };
+
+  // Hof aus dem Speicher aufbauen
+  renderDecos();renderFlock();refresh();doSave();
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+</script>
+</body>
+</html>
