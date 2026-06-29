@@ -117,6 +117,15 @@
   .g-opt:active{transform:translateY(3px)}
   .g-opt.right{background:var(--good);color:#fff}.g-opt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}
   .g-opt:disabled{cursor:default}
+  .header .stat{padding:6px 9px;font-size:15px;gap:3px}
+  .header .stat small{font-size:10px}
+  .g-modes{display:flex;gap:8px;padding:8px 14px 0}
+  .g-mode{flex:1;font-family:inherit;border:2px solid #fff;background:linear-gradient(#fffefb,#fff5e4);border-radius:14px;padding:9px 6px;font-weight:900;font-size:14px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink-soft)}
+  .g-mode.on{background:linear-gradient(var(--yolk),var(--yolk-deep));color:#fff}
+  .g-mode:active{transform:translateY(2px)}
+  .g-timebar{height:13px;background:#fde8be;border:1px solid #f0d089;border-radius:8px;overflow:hidden;margin-bottom:12px;display:none}
+  .g-timebar.on{display:block}
+  .g-timefill{height:100%;width:100%;background:linear-gradient(90deg,#e3735f,#ffd66e 55%,#7ec8a2);border-radius:8px}
 
   /* shop */
   .shopscroll{flex:1;overflow-y:auto;padding:8px 14px 8px}
@@ -451,6 +460,7 @@
     <div class="spacer"></div>
     <div class="stat">🥚 <span id="eggs">0</span> <small>Eier</small></div>
     <div class="stat">🐔 <span id="flock">0</span> <small>Hühner</small></div>
+    <div class="stat">🪙 <span id="coins">0</span> <small>Münzen</small></div>
     <button class="gear" id="gear" title="Für Erwachsene: Fortschritt zurücksetzen">⚙️</button>
   </div>
 
@@ -695,6 +705,10 @@
     <!-- GAME / Challenge -->
     <div class="screen" id="game">
       <div class="hilde-row"><div class="hilde" id="game-hilde"></div><div class="bubble" id="game-bubble">Bereit für die große Hühner-Challenge?</div></div>
+      <div class="g-modes">
+        <button class="g-mode on" id="g-mode-relax">🧘 Entspannt</button>
+        <button class="g-mode" id="g-mode-time">⏱️ Zeit · Münzen</button>
+      </div>
       <div class="g-bar">
         <div class="g-stat">⭐ <span id="g-score">0</span></div>
         <div class="g-stat">🔥 <span id="g-streak">0</span></div>
@@ -702,6 +716,7 @@
       </div>
       <div class="stagepad">
         <div class="card">
+          <div class="g-timebar" id="g-timebar"><div class="g-timefill" id="g-timefill"></div></div>
           <div class="g-badge" id="g-badge">🎮 Challenge</div>
           <div class="g-prompt" id="g-prompt"></div>
           <div class="g-opts" id="g-opts"></div>
@@ -721,6 +736,8 @@
         <div class="shopgrid" id="shop-breeds"></div>
         <div class="section-label">Schmuck für den Hof</div>
         <div class="shopgrid" id="shop-decos"></div>
+        <div class="section-label">🪙 Hühner-Laden – Futter (mit Münzen aus dem Zeitmodus)</div>
+        <div class="shopgrid" id="shop-futter"></div>
         <div style="height:14px"></div>
       </div>
     </div>
@@ -793,15 +810,15 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:12,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:13,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
-  function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;}
+  function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
   function birdEl(ch,isNew){
     var d=document.createElement("div");d.className="bird"+(isNew?" new":"");
@@ -817,6 +834,8 @@
   function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();if(Story)Story.progress("hatch",1);}
   function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();if(Story)Story.progress("egg",n);}
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
+  function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();}
+  function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
   function renderStats(){
     var rows=[
       {i:"🥚",n:"Rechnen",s:"Zahlen & Rechnen",lvl:G.mLevel},
@@ -1631,7 +1650,21 @@
         g.appendChild(card);
       });
     }
-    return {open:function(){$("hatchBtn").innerHTML='🐣 Neues Küken ausbrüten <span class="price">'+HATCH+' 🥚</span>';buildBreeds();buildDecos();say("Hier machst du mit Eiern den Hof größer!");},hatch:hatch};
+    var FUTTER=[
+      {emoji:"🌾",label:"Körnersack",cost:5,eggs:6,say:"Mampf, mampf! Die Hühner picken glücklich. 🐔"},
+      {emoji:"🥬",label:"Frisches Grün",cost:7,eggs:9,say:"Knack, knack – schmeckt den Hühnern! 🥬"},
+      {emoji:"🐛",label:"Mehlwürmer",cost:10,eggs:14,say:"Lieblingssnack! Die Hühner sind überglücklich. 🎉"}
+    ];
+    function buildFutter(){
+      var g=$("shop-futter");g.innerHTML="";
+      FUTTER.forEach(function(f){
+        var cant=(G.coins||0)<f.cost;
+        var card=mkCard('<div class="si-emoji">'+f.emoji+'</div>',f.label,f.cost+" 🪙",false,cant);
+        card.onclick=function(){if(spendCoin(f.cost)){addEgg(f.eggs);buildFutter();toast("Gefüttert! +"+f.eggs+" 🥚",true);say(f.say,true);}else say("Dafür brauchst du mehr Münzen 🪙. Spiel den ⏱️ Zeitmodus in der 🎮 Challenge – schnelle Antworten geben Münzen!");};
+        g.appendChild(card);
+      });
+    }
+    return {open:function(){$("hatchBtn").innerHTML='🐣 Neues Küken ausbrüten <span class="price">'+HATCH+' 🥚</span>';buildBreeds();buildDecos();buildFutter();say("Hier machst du mit Eiern den Hof größer – und mit Münzen kaufst du Futter!");},hatch:hatch};
   })();
 
   /* ===================== STORY: Das verlorene Goldhuhn ===================== */
@@ -1718,8 +1751,15 @@
 
   /* ===================== GAME / Hühner-Challenge ===================== */
   var GAME=(function(){
-    var run={score:0,streak:0,best:(G.gameBest||0),answered:false,cur:null};
+    var run={score:0,streak:0,best:(G.gameBest||0),answered:false,cur:null,timed:false,timer:null,qStart:0};
+    var TIME_MS=12000;
     var PRAISE=["Stark!","Genau richtig!","Super gemacht!","Dein Gehirn glüht! 💪","Weiter so!","Klasse überlegt!"];
+    function stopTimer(){if(run.timer){clearTimeout(run.timer);run.timer=null;}}
+    function resetBar(){var f=$("g-timefill");if(f){f.style.transition="none";f.style.width="100%";}}
+    function startTimer(){var f=$("g-timefill");if(!f)return;stopTimer();run.qStart=Date.now();f.style.transition="none";f.style.width="100%";void f.offsetWidth;f.style.transition="width "+TIME_MS+"ms linear";f.style.width="0%";run.timer=setTimeout(timeUp,TIME_MS);}
+    function freezeTimer(){var f=$("g-timefill");if(f){var w=getComputedStyle(f).width;f.style.transition="none";f.style.width=w;}}
+    function timeUp(){if(current!=="game"||run.answered)return;run.answered=true;stopTimer();var t=run.cur;document.querySelectorAll("#g-opts .g-opt").forEach(function(o,idx){o.disabled=true;if(idx===t.correct)o.classList.add("right");});run.streak=0;refreshBar();say("⏰ Zeit um! Schau: "+(t.explain||"")+" Beim nächsten Mal bist du schneller!");$("g-next").style.display="";}
+    function setMode(timed){run.timed=timed;$("g-mode-relax").classList.toggle("on",!timed);$("g-mode-time").classList.toggle("on",timed);$("g-timebar").classList.toggle("on",timed);start();}
     function gEsc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
     function level(){return Math.min(6,1+Math.floor(run.streak/4));}
     function task(badge,promptHTML,correctStr,distract,explain){var opts=shuf([correctStr].concat(distract));return {badge:badge,prompt:promptHTML,options:opts,correct:opts.indexOf(correctStr),explain:explain};}
@@ -1752,14 +1792,17 @@
     function drawCat(){if(!bag.length)bag=shuf(CATS.slice());return bag.pop();}
     var SPIN='<div class="loading"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#ef9f1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde denkt sich etwas aus …</div></div>';
     function refreshBar(){$("g-score").textContent=run.score;$("g-streak").textContent=run.streak;$("g-best").textContent=run.best;}
-    function render(t){$("g-badge").textContent=t.badge;$("g-prompt").innerHTML=t.prompt;var box=$("g-opts");box.innerHTML="";t.options.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b,t);};box.appendChild(b);});$("g-next").style.display="none";say("Was meinst du, Vinni?");}
-    function answer(i,b,t){if(run.answered)return;run.answered=true;var ok=(i===t.correct);
+    function render(t){$("g-badge").textContent=t.badge;$("g-prompt").innerHTML=t.prompt;var box=$("g-opts");box.innerHTML="";t.options.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b,t);};box.appendChild(b);});$("g-next").style.display="none";say("Was meinst du, Vinni?");if(run.timed)startTimer();else resetBar();}
+    function answer(i,b,t){if(run.answered)return;run.answered=true;stopTimer();freezeTimer();var ok=(i===t.correct);
       document.querySelectorAll("#g-opts .g-opt").forEach(function(o,idx){o.disabled=true;if(idx===t.correct)o.classList.add("right");});
-      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast("Richtig! ⭐ +"+(10*level()));setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
+      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);
+        var msg="Richtig! ⭐ +"+(10*level());
+        if(run.timed){var el=Date.now()-run.qStart,c=el<4000?3:el<8000?2:1;addCoin(c);msg="⚡ Schnell! +"+c+" 🪙  ⭐ +"+(10*level());}
+        refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast(msg);setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
       else{b.classList.add("wrong");run.streak=0;refreshBar();say("Knapp daneben! "+(t.explain||"")+" Macht nichts – weiter geht's!");$("g-next").style.display="";}}
-    function next(){run.answered=false;var c=drawCat(),L=level();$("g-opts").innerHTML="";if(c.know){$("g-badge").textContent="🦉 Wissen";$("g-prompt").innerHTML=SPIN;}Promise.resolve().then(function(){return c.g(L);}).then(function(t){if(current!=="game")return;run.cur=t;render(t);}).catch(function(){var t=gMath(1);run.cur=t;render(t);});}
-    function start(){run.score=0;run.streak=0;run.best=(G.gameBest||0);run.answered=false;refreshBar();say("Bereit? Ich mische alle Spiele – pass gut auf! 🎮",true);next();}
-    return {start:start,next:next};
+    function next(){run.answered=false;stopTimer();resetBar();var c=drawCat(),L=level();$("g-opts").innerHTML="";if(c.know){$("g-badge").textContent="🦉 Wissen";$("g-prompt").innerHTML=SPIN;}Promise.resolve().then(function(){return c.g(L);}).then(function(t){if(current!=="game")return;run.cur=t;render(t);}).catch(function(){var t=gMath(1);run.cur=t;render(t);});}
+    function start(){stopTimer();run.score=0;run.streak=0;run.best=(G.gameBest||0);run.answered=false;$("g-timebar").classList.toggle("on",run.timed);resetBar();refreshBar();say(run.timed?"Zeitmodus! Schnell antworten gibt Münzen 🪙 – los!":"Bereit? Ich mische alle Spiele – pass gut auf! 🎮",true);next();}
+    return {start:start,next:next,setMode:setMode};
   })();
 
   /* ---------- wire up ---------- */
@@ -1781,11 +1824,12 @@
   $("r-tip").onclick=function(){R.hint();};$("r-breathe").onclick=openBreathe;$("r-say").onclick=function(){R.speak();};
   $("hatchBtn").onclick=function(){SHOP.hatch();};
   $("g-breathe").onclick=openBreathe;$("g-restart").onclick=function(){GAME.start();};$("g-next").onclick=function(){GAME.next();};
+  $("g-mode-relax").onclick=function(){GAME.setMode(false);};$("g-mode-time").onclick=function(){GAME.setMode(true);};
   $("breathDone").onclick=closeBreathe;
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
