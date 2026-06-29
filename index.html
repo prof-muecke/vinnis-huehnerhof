@@ -384,7 +384,10 @@
   .hbtn{font-family:inherit;border:none;cursor:pointer;font-weight:800;font-size:15px;background:var(--paper);
     border:2px solid #fff;border-radius:16px;padding:10px 16px;box-shadow:var(--shadow);color:var(--ink);display:flex;align-items:center;gap:7px}
   .hbtn:active{transform:translateY(3px)}
-  .hbtn.tip{background:var(--yolk)}.hbtn.breathe{background:#d8ecf6}.hbtn.next{background:var(--good);color:#fff}
+  .hbtn.tip{background:var(--yolk)}.hbtn.breathe{background:#d8ecf6}.hbtn.next{background:var(--good);color:#fff}.hbtn.deeper{background:#ece4fb;color:#5a3a9c}
+  .e-deep{margin-top:12px;background:#f6f1ff;border:2px solid #d9c9f5;border-radius:14px;padding:11px 13px;text-align:left}
+  .e-deep-txt{font-weight:800;font-size:15px;line-height:1.4;color:#3f2e6e}
+  .e-deep-txt small{font-weight:700;color:#8a7bb0}
 
   /* EXPLORE */
   .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
@@ -608,6 +611,7 @@
       <div class="helpers">
         <button class="hbtn tip" id="e-tip">💡 Tipp</button>
         <button class="hbtn breathe" id="e-breathe">🌬️ Durchatmen</button>
+        <button class="hbtn deeper" id="e-deeper" style="display:none">🔍 Tiefer graben</button>
         <button class="hbtn next" id="e-next" style="display:none">Nächste Frage ➜</button>
       </div>
       <div style="height:12px"></div>
@@ -985,18 +989,38 @@
 
   /* ===================== MATH MODULE ===================== */
   var M=(function(){
-    var st={level:(G.mLevel||1),max:12,streak:0,cur:null,input:"",hints:0,wrong:0};
+    var st={level:(G.mLevel||1),max:30,streak:0,cur:null,input:"",hints:0,wrong:0};
     var praise=["Stark, dass du drangeblieben bist!","Super – Schritt für Schritt!","Dein Gehirn wird stärker. 💪","Klasse Weg!","Geschafft – ein Ei mehr!","Du wirst immer schneller."];
     var facts=["Hühner stammen vom Bankivahuhn aus Südostasien ab.","Vögel sind die heutigen Verwandten der Dinosaurier!","Hühner erkennen über 100 Gesichter.","Ein Ei trägt viel, weil seine runde Form die Kraft verteilt.","Hühner sehen mehr Farben als Menschen."];
-    function cap(){var c=[0,5,10,20,30,50,80,120,200,300,500,800,1000];return c[Math.min(st.level,12)];}
-    function allowed(){var L=st.level;if(L<=1)return["count","add"];if(L===2)return["count","add","sub"];if(L===3)return["add","sub"];if(L===4)return["add","sub","mul"];if(L===5)return["mul","add","sub","div"];return["mul","div","add","sub","missing"];}
+    function cap(){var c=[0,5,10,20,30,50,80,120,200,300,500,800,1000];if(st.level<=12)return c[st.level];return 1000+(st.level-12)*500;}
+    function allowed(){var L=st.level;if(L<=1)return["count","add"];if(L===2)return["count","add","sub"];if(L===3)return["add","sub"];if(L===4)return["add","sub","mul"];if(L===5)return["mul","add","sub","div"];if(L<=7)return["mul","div","add","sub","missing"];if(L<=9)return["mul","div","add","sub","missing","two","word"];return["mul","div","two","word","eq","missing"];}
     function gen(){var t=pick(allowed()),p={type:t,hints:[]},c=cap();
       if(t==="count"){var n=rnd(1,Math.min(12,Math.max(4,c)));p.answer=n;p.prompt="Wie viele Eier liegen im Nest?";p.eggs="🥚".repeat(n);p.hints=["Tippe jedes Ei einmal an.","Zähl langsam: eins, zwei, drei …","Zähl noch einmal nach."];}
       else if(t==="add"){var a=rnd(1,c),b=rnd(1,c);p.answer=a+b;p.eq=a+" + "+b+" = ";p.prompt="Wie viele Eier zusammen?";var hi=Math.max(a,b),lo=Math.min(a,b);p.hints=["Fang bei der größeren Zahl an.","Starte bei "+hi+" und zähl "+lo+" weiter.","Erst zur nächsten Zehnerzahl auffüllen."];}
       else if(t==="sub"){var x=rnd(2,c),y=rnd(1,x);p.answer=x-y;p.eq=x+" − "+y+" = ";p.prompt="Der Fuchs nahm Eier mit. Wie viele bleiben?";p.hints=["Beginne bei "+x+" und zähl "+y+" rückwärts.","Wie weit ist "+y+" von "+x+"?","Zähl von "+y+" hoch bis "+x+"."];}
       else if(t==="mul"){var f1,f2;if(st.level<=4){f1=pick([2,5,10]);f2=rnd(2,9);}else{f1=rnd(2,Math.min(12,st.level));f2=rnd(2,Math.min(12,st.level));}p.answer=f1*f2;p.eq=f1+" × "+f2+" = ";p.prompt=f1+" Körbe mit je "+f2+" Eiern. Wie viele?";p.hints=["Das sind "+f1+"-mal die "+f2+".","Zähl in "+f2+"er-Schritten.","Nutze eine Reihe, die du kennst."];}
       else if(t==="div"){var dv=rnd(2,Math.min(10,Math.max(2,st.level))),q=rnd(2,Math.min(10,Math.max(2,st.level))),tot=dv*q;p.answer=q;p.eq=tot+" ÷ "+dv+" = ";p.prompt=tot+" Eier auf "+dv+" Hühner. Wie viele je Huhn?";p.hints=["Jedes Huhn gleich viel.","Welche Zahl mal "+dv+" ergibt "+tot+"?","Zähl in "+dv+"er-Schritten bis "+tot+"."];}
-      else{var base=rnd(1,c),miss=rnd(1,c),sum=base+miss;p.answer=miss;p.eq=base+" + ▢ = "+sum;p.prompt="Wie viele Eier fehlen noch?";p.hints=["Was fehlt von "+base+" bis "+sum+"?","Zähl von "+base+" hoch bis "+sum+".","Oder rechne "+sum+" − "+base+"."];}
+      else if(t==="missing"){var base=rnd(1,c),miss=rnd(1,c),sum=base+miss;p.answer=miss;p.eq=base+" + ▢ = "+sum;p.prompt="Wie viele Eier fehlen noch?";p.hints=["Was fehlt von "+base+" bis "+sum+"?","Zähl von "+base+" hoch bis "+sum+".","Oder rechne "+sum+" − "+base+"."];}
+      else if(t==="two"){var m=Math.min(12,Math.max(3,st.level)),mode=pick(["mul-add","mul-sub","add-add","sub-sub"]),A,B,C,ans,eq;
+        if(mode==="mul-add"){A=rnd(2,m);B=rnd(2,m);C=rnd(1,20);ans=A*B+C;eq=A+" × "+B+" + "+C+" = ";p.hints=["Punkt vor Strich: erst "+A+" × "+B+".","Das sind "+(A*B)+", dann + "+C+".","Von "+(A*B)+" um "+C+" weiterzählen."];}
+        else if(mode==="mul-sub"){A=rnd(2,m);B=rnd(2,m);var pr=A*B;C=rnd(1,Math.max(1,pr-1));ans=pr-C;eq=A+" × "+B+" − "+C+" = ";p.hints=["Erst "+A+" × "+B+" = "+pr+".","Dann "+pr+" − "+C+".","Rückwärts zählen."];}
+        else if(mode==="add-add"){A=rnd(5,c);B=rnd(1,c);C=rnd(1,c);ans=A+B+C;eq=A+" + "+B+" + "+C+" = ";p.hints=["Von links: erst "+A+" + "+B+".","Dann + "+C+".","Schritt für Schritt."];}
+        else{A=rnd(20,Math.max(40,c));B=rnd(1,Math.floor(A/2));C=rnd(1,Math.max(1,A-B));ans=Math.max(0,A-B-C);eq=A+" − "+B+" − "+C+" = ";p.hints=["Von links: erst "+A+" − "+B+".","Dann minus "+C+".","Rückwärts."];}
+        p.answer=ans;p.eq=eq;p.prompt="Rechne aus – denk an Punkt vor Strich:";}
+      else if(t==="word"){var m2=Math.min(12,Math.max(3,st.level)),w=pick([
+          function(){var n=rnd(3,m2),e=rnd(3,m2);return {a:n*e,t:n+" Nester mit je "+e+" Eiern – wie viele Eier insgesamt?",h:["Das ist "+n+" × "+e+".","Zähl in "+e+"er-Schritten."]};},
+          function(){var d=rnd(3,m2),e=rnd(2,m2);return {a:d*e,t:"Vinni sammelt jeden Tag "+e+" Eier. Wie viele in "+d+" Tagen?",h:["Das ist "+d+" × "+e+".","Pro Tag "+e+"."]};},
+          function(){var k=rnd(3,m2),e=rnd(3,m2),f=rnd(1,Math.max(1,k*e-1));return {a:k*e-f,t:"In "+k+" Körben sind je "+e+" Eier. Der Fuchs stiehlt "+f+". Wie viele bleiben?",h:["Erst "+k+" × "+e+" = "+(k*e)+".","Dann − "+f+"."]};},
+          function(){var g=rnd(2,m2),e=rnd(2,m2),tot=g*e;return {a:e,t:tot+" Eier gleichmäßig auf "+g+" Körbe. Wie viele pro Korb?",h:["Das ist "+tot+" ÷ "+g+".","Welche Zahl × "+g+" = "+tot+"?"]};},
+          function(){var x=rnd(10,Math.max(20,c)),y=rnd(5,x);return {a:x-y,t:"Auf dem Hof waren "+x+" Eier. "+y+" wurden verkauft. Wie viele sind noch da?",h:[x+" − "+y+".","Rückwärts zählen."]};}
+        ])();p.answer=w.a;p.prompt=w.t;p.eq="";p.hints=w.h;}
+      else if(t==="eq"){var m3=Math.min(12,Math.max(3,st.level)),mo=pick(["mul-r","mul-l","add-l","sub-l","div"]),X,Y,P2,ans2,eq2;
+        if(mo==="mul-r"){X=rnd(2,m3);ans2=rnd(2,m3);P2=X*ans2;eq2=X+" × ▢ = "+P2;p.hints=["Welche Zahl × "+X+" gibt "+P2+"?","Rechne "+P2+" ÷ "+X+"."];}
+        else if(mo==="mul-l"){Y=rnd(2,m3);ans2=rnd(2,m3);P2=ans2*Y;eq2="▢ × "+Y+" = "+P2;p.hints=["Welche Zahl × "+Y+" gibt "+P2+"?","Rechne "+P2+" ÷ "+Y+"."];}
+        else if(mo==="add-l"){var s2=rnd(10,c);ans2=rnd(1,s2);Y=s2-ans2;eq2="▢ + "+Y+" = "+s2;p.hints=["Was fehlt bis "+s2+"?","Rechne "+s2+" − "+Y+"."];}
+        else if(mo==="sub-l"){Y=rnd(2,Math.max(3,Math.floor(c/2)));var d2=rnd(1,c);ans2=d2+Y;eq2="▢ − "+Y+" = "+d2;p.hints=["Welche Zahl − "+Y+" gibt "+d2+"?","Rechne "+d2+" + "+Y+"."];}
+        else{var dv2=rnd(2,m3),quot=rnd(2,m3);ans2=dv2*quot;eq2="▢ ÷ "+dv2+" = "+quot;p.hints=["Welche Zahl ÷ "+dv2+" gibt "+quot+"?","Rechne "+quot+" × "+dv2+"."];}
+        p.answer=ans2;p.eq=eq2;p.prompt="Welche Zahl gehört ins ▢?";}
       return p;}
     function next(){st.cur=gen();st.input="";st.hints=0;st.wrong=0;$("m-prompt").textContent=st.cur.prompt||"";$("m-eggrow").textContent=st.cur.eggs||"";$("m-eq").textContent=st.cur.eq||"";render();}
     function render(){var box=$("m-ans");if(st.input===""){box.textContent="?";box.classList.add("empty");}else{box.textContent=st.input;box.classList.remove("empty");}$("m-go").disabled=(st.input==="");}
@@ -1166,6 +1190,11 @@
       if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}renderKiStatus();toast("KI aktiviert ✨");load();}
     }
     function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function aiText(prompt){var key=aiKey(),headers={"Content-Type":"application/json"};if(key){headers["x-api-key"]=key;headers["anthropic-version"]="2023-06-01";headers["anthropic-dangerous-direct-browser-access"]="true";}return fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:headers,body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:400,messages:[{role:"user",content:prompt}]})}).then(function(r){return r.json();}).then(function(d){var tx=(d.content||[]).map(function(b){return b.text||"";}).join("").trim();if(!tx)throw new Error("empty");return tx;});}
+    function deepPrompt(){var q=st.cur,correct=(q&&q.options)?q.options[q.correct]:"";var lvl=(st.deepLevel||0)+1;return "Du bist Hilde, ein warmherziges, kluges Huhn. Vinni (7 Jahre, hochbegabt) hat gerade gelernt: Frage „"+(q.question||"")+"“, richtige Antwort „"+correct+"“. Erkläre dieses Thema EINE Stufe TIEFER (Vertiefung Nr. "+lvl+"): nenne eine Ursache ODER eine überraschende Verbindung zu einem ANDEREN Wissensgebiet ODER ein faszinierendes Detail, das Vinni noch nicht kennt. 2 bis 3 kurze, begeisternde, sachlich korrekte Sätze für ein kluges Kind. Schließe mit EINER kleinen Denkfrage (ohne sie zu beantworten). Antworte nur mit Fließtext, ohne Aufzählung, ohne JSON.";}
+    function ensureDeepPanel(){var p=$("e-deep");if(!p){p=document.createElement("div");p.id="e-deep";p.className="e-deep";var card=$("e-card");if(card)card.appendChild(p);}return p;}
+    function deepen(){if(st.deepBusy||!st.cur)return;st.deepBusy=true;var panel=ensureDeepPanel();panel.innerHTML='<div class="loading" style="padding:8px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#9b6fd4" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde gräbt tiefer …</div></div>';
+      aiText(deepPrompt()).then(function(txt){panel.innerHTML='<div class="e-deep-txt">🔍 '+esc(txt)+'</div>';st.deepLevel=(st.deepLevel||0)+1;st.deepBusy=false;var db=$("e-deeper");if(db){if(st.deepLevel>=3)db.style.display="none";else db.textContent="🔍 Noch tiefer";}}).catch(function(){var qs=["Warum ist das wohl so?","Wo könntest du das noch entdecken?","Was hängt wohl damit zusammen?","Was wäre, wenn es anders wäre?"];panel.innerHTML='<div class="e-deep-txt">🔍 '+esc(st.cur.explain||"")+' <b>'+pick(qs)+'</b><br><small>Mit eigenem KI-Schlüssel erzählt dir Hilde dazu noch viel mehr.</small></div>';st.deepBusy=false;var db=$("e-deeper");if(db)db.style.display="none";});}
     function loading(){$("e-next").style.display="none";$("e-card").innerHTML='<div class="loading"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#ef9f1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde denkt sich etwas aus …</div></div>';}
     function load(){if(st.busy)return;st.busy=true;st.answered=false;st.wrong=0;st.firstTry=true;st.tick++;loading();
       var rev=G.eRevisit||[],mas=G.eMastered||[];
@@ -1174,7 +1203,7 @@
       else{st.mode="new";st.target=null;}
       var fallback=(st.mode==="revisit"&&st.target)?function(){return st.target;}:bankPick;
       askAI().catch(fallback).then(function(q){st.cur=q;seenAdd(q.question);renderQ(q);st.busy=false;}).catch(function(){st.cur=(st.mode==="revisit"&&st.target)?st.target:bankPick();renderQ(st.cur);st.busy=false;});}
-    function renderQ(q){$("e-card").innerHTML='<div class="qtopic">'+esc(q.topic||st.topic)+'</div><div class="question">'+esc(q.question)+'</div><div class="options" id="e-opts"></div>';var opts=$("e-opts");q.options.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};opts.appendChild(b);});say("Was meinst du, Vinni?");$("e-next").style.display="none";}
+    function renderQ(q){$("e-card").innerHTML='<div class="qtopic">'+esc(q.topic||st.topic)+'</div><div class="question">'+esc(q.question)+'</div><div class="options" id="e-opts"></div>';var opts=$("e-opts");q.options.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};opts.appendChild(b);});say("Was meinst du, Vinni?");$("e-next").style.display="none";var dd=$("e-deeper");if(dd)dd.style.display="none";}
     function choose(i,btn){if(st.answered)return;
       if(i===st.cur.correct){
         st.answered=true;btn.classList.add("right");document.querySelectorAll("#e-opts .opt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});
@@ -1187,7 +1216,7 @@
         }else{
           if(st.mode!=="revisit")revisitAdd(st.cur);
         }
-        doSave();$("e-next").style.display="";
+        doSave();$("e-next").style.display="";st.deepLevel=0;var dd=$("e-deeper");if(dd){dd.textContent="🔍 Tiefer graben";dd.style.display="";}
       }else{
         btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.firstTry=false;st.streak=0;
         if(st.mode!=="revisit")revisitAdd(st.cur);
@@ -1197,7 +1226,7 @@
       }}
     function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
     function draw(){st.mode="new";st.target=null;return askAI().catch(function(){return bankPick();}).then(function(qq){if(qq&&qq.question)seenAdd(qq.question);return qq;});}
-    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw};
+    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen};
   })();
 
   /* ===================== PATTERN / LOGIC MODULE ===================== */
@@ -1900,7 +1929,7 @@
   var homeCoop=document.querySelector("#home .coop");if(homeCoop){homeCoop.style.cursor="pointer";homeCoop.onclick=function(){show("barn");};}
   $("m-tip").onclick=function(){M.hint();};$("m-breathe").onclick=openBreathe;
   $("c-tip").onclick=function(){C.hint();};
-  $("e-tip").onclick=function(){E.hint();};$("e-breathe").onclick=openBreathe;
+  $("e-tip").onclick=function(){E.hint();};$("e-breathe").onclick=openBreathe;$("e-deeper").onclick=function(){E.deeper();};
   $("p-tip").onclick=function(){P.hint();};$("p-breathe").onclick=openBreathe;
   $("iq-tip").onclick=function(){IQ.hint();};$("iq-breathe").onclick=openBreathe;
   $("tr-tip").onclick=function(){TR.hint();};$("tr-breathe").onclick=openBreathe;
