@@ -102,6 +102,22 @@
   .sc-gold{text-align:center;margin:2px 0}.sc-gold svg{width:64px;height:58px}
   @media (prefers-reduced-motion:reduce){.sc-next{animation:none}}
 
+  /* gaming mode */
+  .mc-game .modicon{background:linear-gradient(135deg,#ffe0b0,#ffd0e0)}
+  .g-bar{display:flex;gap:8px;padding:8px 14px 0}
+  .g-stat{flex:1;background:linear-gradient(#fffefb,#fff5e4);border:2px solid #fff;border-radius:14px;padding:8px 6px;text-align:center;font-weight:900;font-size:16px;box-shadow:var(--shadow)}
+  .g-badge{display:inline-block;font-weight:900;font-size:13px;color:var(--barn-deep);background:var(--cream);border:2px solid #fff;border-radius:12px;padding:5px 12px;margin-bottom:10px}
+  .g-prompt{font-size:21px;font-weight:900;line-height:1.3;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+  .g-prompt-t{font-size:20px;font-weight:900;line-height:1.3}
+  .g-eq{font-size:34px;font-weight:900;color:var(--barn-deep)}
+  .g-seq{font-size:24px;font-weight:900;color:var(--barn-deep);letter-spacing:1px}
+  .g-clock svg{width:128px;height:128px}
+  .g-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+  .g-opt{font-family:inherit;border:3px solid #fff;background:var(--cream);background-image:linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,0));border-radius:16px;padding:15px 8px;font-weight:900;font-size:20px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink)}
+  .g-opt:active{transform:translateY(3px)}
+  .g-opt.right{background:var(--good);color:#fff}.g-opt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}
+  .g-opt:disabled{cursor:default}
+
   /* shop */
   .shopscroll{flex:1;overflow-y:auto;padding:8px 14px 8px}
   .hatchbtn{width:100%;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:19px;color:#fff;
@@ -479,6 +495,7 @@
       </div>
       <div class="storycard" id="story-card"></div>
       <div class="modcards">
+        <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
         <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
         <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
@@ -675,6 +692,26 @@
       <div style="height:12px"></div>
     </div>
 
+    <!-- GAME / Challenge -->
+    <div class="screen" id="game">
+      <div class="hilde-row"><div class="hilde" id="game-hilde"></div><div class="bubble" id="game-bubble">Bereit für die große Hühner-Challenge?</div></div>
+      <div class="g-bar">
+        <div class="g-stat">⭐ <span id="g-score">0</span></div>
+        <div class="g-stat">🔥 <span id="g-streak">0</span></div>
+        <div class="g-stat">🏆 <span id="g-best">0</span></div>
+      </div>
+      <div class="stagepad">
+        <div class="card">
+          <div class="g-badge" id="g-badge">🎮 Challenge</div>
+          <div class="g-prompt" id="g-prompt"></div>
+          <div class="g-opts" id="g-opts"></div>
+          <button class="hbtn next" id="g-next" style="display:none;margin:14px auto 0">Weiter ▶</button>
+        </div>
+      </div>
+      <div class="helpers"><button class="hbtn breathe" id="g-breathe">🌬️ Durchatmen</button><button class="hbtn" id="g-restart">🔄 Neu starten</button></div>
+      <div style="height:12px"></div>
+    </div>
+
     <!-- SHOP -->
     <div class="screen" id="shop">
       <div class="hilde-row"><div class="hilde" id="shop-hilde"></div><div class="bubble" id="shop-bubble">Hier kannst du mit deinen Eiern den Hof größer machen!</div></div>
@@ -756,13 +793,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:11,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:12,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[]};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;}
 
@@ -805,7 +842,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -830,7 +867,7 @@
   function closeBreathe(){$("overlay").classList.remove("show");clearInterval(bt);say("Schön durchgeatmet. Probier es ruhig nochmal. 🐔",true);}
 
   /* ---------- router ---------- */
-  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false};
+  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false};
   function show(name){
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
@@ -846,6 +883,7 @@
     if(name==="market"&&!inited.market){inited.market=true;W.start();}
     if(name==="read"&&!inited.read){inited.read=true;R.start();}
     if(name==="tractor"&&!inited.tractor){inited.tractor=true;TR.start();}
+    if(name==="game"&&!inited.game){inited.game=true;GAME.start();}
     if(name==="math")M.say0();
     if(name==="code")C.say0();
     if(name==="explore")E.say0();
@@ -1077,7 +1115,8 @@
         doSave();
       }}
     function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
-    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));}};
+    function draw(){st.mode="new";st.target=null;return askAI().catch(function(){return bankPick();}).then(function(qq){if(qq&&qq.question)seenAdd(qq.question);return qq;});}
+    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw};
   })();
 
   /* ===================== PATTERN / LOGIC MODULE ===================== */
@@ -1677,8 +1716,54 @@
     return {init:init,progress:progress,render:render};
   })();
 
+  /* ===================== GAME / Hühner-Challenge ===================== */
+  var GAME=(function(){
+    var run={score:0,streak:0,best:(G.gameBest||0),answered:false,cur:null};
+    var PRAISE=["Stark!","Genau richtig!","Super gemacht!","Dein Gehirn glüht! 💪","Weiter so!","Klasse überlegt!"];
+    function gEsc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function level(){return Math.min(6,1+Math.floor(run.streak/4));}
+    function task(badge,promptHTML,correctStr,distract,explain){var opts=shuf([correctStr].concat(distract));return {badge:badge,prompt:promptHTML,options:opts,correct:opts.indexOf(correctStr),explain:explain};}
+    function numOpts(ans){var set={},out=[];set[ans]=1;var spread=ans>30?[-10,10,-1,1,5,-5,11,9,-11]:[-1,1,-2,2,3,-3,4,-4];var tr=0;while(out.length<2&&tr<60){tr++;var v=ans+pick(spread);if(v<0||set[v])continue;set[v]=1;out.push(String(v));}var k=1;while(out.length<2){var w=ans+k;if(!set[w]){set[w]=1;out.push(String(w));}k++;}return out;}
+    // --- generators ---
+    function gMath(L){var ops=L<2?["+"]:L<3?["+","-"]:L<5?["+","-","×"]:["+","-","×","÷"];var op=pick(ops),cap=[10,20,50,100,100,100][Math.min(L-1,5)]||100,a,b,ans,q;
+      if(op==="+"){a=rnd(1,cap);b=rnd(1,cap);ans=a+b;q=a+" + "+b;}
+      else if(op==="-"){a=rnd(2,cap);b=rnd(1,a);ans=a-b;q=a+" − "+b;}
+      else if(op==="×"){a=rnd(2,Math.min(12,3+L));b=rnd(2,Math.min(12,3+L));ans=a*b;q=a+" × "+b;}
+      else{b=rnd(2,Math.min(12,3+L));ans=rnd(2,Math.min(12,3+L));a=b*ans;q=a+" : "+b;}
+      return task("🥚 Rechnen",'<div class="g-eq">'+q+" = ?</div>",String(ans),numOpts(ans),q+" = "+ans);}
+    function gPattern(L){var start=rnd(1,9),step=pick([1,2,2,3,(L>2?5:2),(L>3?10:3)]),ans=start+4*step;var shown=[start,start+step,start+2*step,start+3*step].join("  ·  ")+"  ·  ?";return task("🧩 Muster",'<div class="g-seq">'+shown+"</div>",String(ans),numOpts(ans),"Immer +"+step+" → "+ans);}
+    function gCompare(L){var n=L>3?4:3,max=[20,50,99,200,500,999][Math.min(L-1,5)]||99,nums=[];while(nums.length<n){var x=rnd(2,max);if(nums.indexOf(x)<0)nums.push(x);}var askMax=Math.random()<0.5,ans=askMax?Math.max.apply(null,nums):Math.min.apply(null,nums),opts=shuf(nums.map(String));return {badge:"🚜 Vergleichen",prompt:'<div class="g-prompt-t">Welche Zahl ist am '+(askMax?"größten":"kleinsten")+"?</div>",options:opts,correct:opts.indexOf(String(ans)),explain:ans+" ist am "+(askMax?"größten":"kleinsten")+"."};}
+    var ODD=[{set:["🐕","🐈","🐎","🚗"],odd:"🚗",why:"Das Auto ist kein Tier."},{set:["🍎","🍌","🍇","⚽"],odd:"⚽",why:"Der Ball ist kein Obst."},{set:["🌧️","☀️","❄️","📚"],odd:"📚",why:"Das Buch ist kein Wetter."},{set:["🚗","🚌","🚲","🍕"],odd:"🍕",why:"Die Pizza ist kein Fahrzeug."},{set:["🔴","🟢","🔵","🐘"],odd:"🐘",why:"Der Elefant ist keine Farbe."},{set:["2","4","6","5"],odd:"5",why:"5 ist ungerade, die anderen gerade."}];
+    function gLogic(L){var o=pick(ODD),opts=shuf(o.set.slice());return {badge:"🧠 Logik",prompt:'<div class="g-prompt-t">Was passt NICHT dazu?</div>',options:opts,correct:opts.indexOf(o.odd),explain:o.why};}
+    function clockSVG(h,m){var ha=((h%12)+m/60)*30-90,ma=m*6-90,R=Math.PI/180;function pt(a,r){return [64+r*Math.cos(a*R),64+r*Math.sin(a*R)];}var hh=pt(ha,30),mm=pt(ma,44),s='<svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="60" fill="#fffdf6" stroke="#c79a5e" stroke-width="5"/>';for(var i=0;i<12;i++){var a=i*30-90,p1=pt(a,52),p2=pt(a,58);s+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="#9c6f3e" stroke-width="3"/>';}s+='<line x1="64" y1="64" x2="'+hh[0].toFixed(1)+'" y2="'+hh[1].toFixed(1)+'" stroke="#36291f" stroke-width="6" stroke-linecap="round"/>';s+='<line x1="64" y1="64" x2="'+mm[0].toFixed(1)+'" y2="'+mm[1].toFixed(1)+'" stroke="#c75f40" stroke-width="4" stroke-linecap="round"/><circle cx="64" cy="64" r="4.5" fill="#36291f"/></svg>';return s;}
+    function gClock(L){var h=rnd(1,12),m=pick(L<3?[0,30]:[0,15,30,45]);function f(hh,mm){return hh+":"+(mm<10?"0"+mm:mm);}var correct=f(h,m),set={},out=[];set[correct]=1;while(out.length<2){var s=f(rnd(1,12),pick([0,15,30,45]));if(!set[s]){set[s]=1;out.push(s);}}var opts=shuf([correct].concat(out));return {badge:"⏰ Uhr",prompt:'<div class="g-clock">'+clockSVG(h,m)+'</div><div class="g-prompt-t">Wie viel Uhr ist es?</div>',options:opts,correct:opts.indexOf(correct),explain:"Es ist "+correct+" Uhr."};}
+    var MONEY=[function(){return {q:"Wie viele Cent sind 1 Euro?",a:"100 ct",d:["10 ct","50 ct"]};},function(){return {q:"Wie viel sind 50 ct + 50 ct?",a:"1 €",d:["2 €","50 ct"]};},function(){var n=rnd(2,5),p=rnd(1,3);return {q:n+" Äpfel kosten je "+p+" €. Zusammen?",a:(n*p)+" €",d:[(n*p+1)+" €",(n*p-1>0?n*p-1:n*p+2)+" €"]};},function(){var have=rnd(5,9),cost=rnd(1,4);return {q:"Du hast "+have+" €, ein Brot kostet "+cost+" €. Wie viel bleibt?",a:(have-cost)+" €",d:[(have+cost)+" €",cost+" €"]};},function(){return {q:"Wie viele 50-ct-Stücke sind 1 €?",a:"2",d:["5","10"]};}];
+    function gMoney(L){var t=pick(MONEY)();return task("🏪 Geld",'<div class="g-prompt-t">'+t.q+"</div>",t.a,t.d,t.a);}
+    var MARKET=[{q:"Viele wollen Eier kaufen, aber es gibt nur wenige. Der Preis…",a:"steigt"},{q:"Es gibt sehr viele Eier, kaum jemand will sie. Der Preis…",a:"fällt"},{q:"Genug Eier für alle, alle zahlen gern denselben Preis. Der Preis…",a:"bleibt gleich"},{q:"Ein Sturm – plötzlich gibt es kaum noch Eier. Der Preis…",a:"steigt"}];
+    function gMarket(L){var t=pick(MARKET),opts=shuf(["steigt","fällt","bleibt gleich"]);return {badge:"📈 Markt",prompt:'<div class="g-prompt-t">'+t.q+"</div>",options:opts,correct:opts.indexOf(t.a),explain:"Wenig Ware + viele Käufer → teurer. Viel Ware + wenig Käufer → billiger."};}
+    var RHYME=[{w:"Haus",r:"Maus",d:["Tisch","Ball"]},{w:"Baum",r:"Traum",d:["Hund","Stein"]},{w:"Katze",r:"Tatze",d:["Vogel","Blume"]},{w:"Hose",r:"Rose",d:["Schuh","Jacke"]},{w:"Licht",r:"Gedicht",d:["Lampe","Dunkel"]}];
+    var MISS=[{w:"H_US",full:"HAUS",a:"A",d:["O","E"]},{w:"B_UM",full:"BAUM",a:"A",d:["I","U"]},{w:"S_NNE",full:"SONNE",a:"O",d:["A","U"]},{w:"M_ND",full:"MOND",a:"O",d:["A","E"]},{w:"T_SCH",full:"TISCH",a:"I",d:["A","O"]}];
+    function gRead(L){if(Math.random()<0.5){var t=pick(RHYME);return task("🔤 Lesen",'<div class="g-prompt-t">Was reimt sich auf „'+t.w+'“?</div>',t.r,t.d,t.w+" – "+t.r);}var m=pick(MISS);return task("🔤 Lesen",'<div class="g-prompt-t">Welcher Buchstabe fehlt?<br><b style="font-size:30px;letter-spacing:3px">'+m.w+"</b></div>",m.a,m.d,m.full);}
+    var CODE=[{q:"Welcher Baustein wiederholt etwas mehrmals?",a:"Schleife",d:["Vor","Wenn"]},{q:"Womit prüft der Roboter „ist der Weg frei?“",a:"Wenn-Dann",d:["Schleife","Rückwärts"]},{q:"Der Roboter schaut nach rechts ▶ und geht „Vor“. Wohin?",a:"nach rechts",d:["nach links","nach oben"]},{q:"Was macht der Befehl „↻ Rechts“?",a:"dreht den Roboter",d:["geht vor","sammelt ein Ei"]}];
+    function gCode(L){var t=pick(CODE);return task("🤖 Roboter",'<div class="g-prompt-t">'+t.q+"</div>",t.a,t.d,t.a);}
+    function gKnow(L){return E.draw().then(function(qq){return {badge:"🦉 Wissen",prompt:'<div class="g-prompt-t">'+gEsc(qq.question)+"</div>",options:qq.options.slice(),correct:qq.correct,explain:qq.explain||""};});}
+    var CATS=[{g:gMath},{g:gKnow,know:true},{g:gPattern},{g:gLogic},{g:gClock},{g:gMoney},{g:gMarket},{g:gCompare},{g:gRead},{g:gCode}];
+    var bag=[];
+    function drawCat(){if(!bag.length)bag=shuf(CATS.slice());return bag.pop();}
+    var SPIN='<div class="loading"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#ef9f1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde denkt sich etwas aus …</div></div>';
+    function refreshBar(){$("g-score").textContent=run.score;$("g-streak").textContent=run.streak;$("g-best").textContent=run.best;}
+    function render(t){$("g-badge").textContent=t.badge;$("g-prompt").innerHTML=t.prompt;var box=$("g-opts");box.innerHTML="";t.options.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b,t);};box.appendChild(b);});$("g-next").style.display="none";say("Was meinst du, Vinni?");}
+    function answer(i,b,t){if(run.answered)return;run.answered=true;var ok=(i===t.correct);
+      document.querySelectorAll("#g-opts .g-opt").forEach(function(o,idx){o.disabled=true;if(idx===t.correct)o.classList.add("right");});
+      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast("Richtig! ⭐ +"+(10*level()));setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
+      else{b.classList.add("wrong");run.streak=0;refreshBar();say("Knapp daneben! "+(t.explain||"")+" Macht nichts – weiter geht's!");$("g-next").style.display="";}}
+    function next(){run.answered=false;var c=drawCat(),L=level();$("g-opts").innerHTML="";if(c.know){$("g-badge").textContent="🦉 Wissen";$("g-prompt").innerHTML=SPIN;}Promise.resolve().then(function(){return c.g(L);}).then(function(t){if(current!=="game")return;run.cur=t;render(t);}).catch(function(){var t=gMath(1);run.cur=t;render(t);});}
+    function start(){run.score=0;run.streak=0;run.best=(G.gameBest||0);run.answered=false;refreshBar();say("Bereit? Ich mische alle Spiele – pass gut auf! 🎮",true);next();}
+    return {start:start,next:next};
+  })();
+
   /* ---------- wire up ---------- */
-  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
   $("homebtn").onclick=function(){show("home");};
@@ -1695,11 +1780,12 @@
   $("mk-tip").onclick=function(){W.hint();};$("mk-breathe").onclick=openBreathe;$("mk-next").onclick=function(){W.next();};
   $("r-tip").onclick=function(){R.hint();};$("r-breathe").onclick=openBreathe;$("r-say").onclick=function(){R.speak();};
   $("hatchBtn").onclick=function(){SHOP.hatch();};
+  $("g-breathe").onclick=openBreathe;$("g-restart").onclick=function(){GAME.start();};$("g-next").onclick=function(){GAME.next();};
   $("breathDone").onclick=closeBreathe;
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
