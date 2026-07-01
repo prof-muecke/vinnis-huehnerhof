@@ -441,6 +441,21 @@
   .foc-collect:active{transform:translateY(3px)}
   .foc-collect.go{background:linear-gradient(var(--good),var(--good-deep));animation:scpulse 1s ease-in-out infinite}
 
+  /* körner-jagd */
+  .mc-corn .modicon{background:#fbf2da}
+  .kj-hud{display:flex;gap:10px;justify-content:center;padding:6px 14px 0}
+  .kj-hud span{background:linear-gradient(#fffefb,#fff5e4);border:2px solid #fff;border-radius:14px;padding:6px 14px;font-weight:900;font-size:16px;box-shadow:var(--shadow)}
+  .kj-board{display:grid;gap:4px;background:#7fbf5c;border:3px solid #7a5a36;border-radius:14px;padding:6px;margin:6px auto;max-width:330px;box-shadow:var(--shadow)}
+  .kj-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;background:#a5d97f;border-radius:8px}
+  .kj-cell.alt{background:#9ad073}
+  .kj-q{font-weight:900;font-size:24px;text-align:center;margin:10px 0 8px;min-height:30px}
+  .kj-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+  .kj-opt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:14px;padding:13px 6px;font-weight:900;font-size:20px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
+  .kj-opt:active{transform:translateY(2px)}.kj-opt.right{background:var(--good);color:#fff}.kj-opt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}.kj-opt:disabled{opacity:.55}
+  .kj-dirs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .kj-dir{font-family:inherit;border:3px solid #fff;background:linear-gradient(#fffefb,#eef7ea);border-radius:16px;padding:11px 18px;font-size:26px;cursor:pointer;box-shadow:var(--shadow)}
+  .kj-dir:active{transform:translateY(2px)}.kj-dir:disabled{opacity:.4}
+
   /* EXPLORE */
   .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
   .topic{flex:0 0 auto;border:2px solid #fff;background:var(--paper);border-radius:30px;padding:7px 13px;
@@ -608,6 +623,7 @@
         <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
         <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
         <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus &amp; Cool bleiben</div><div class="modsub">Konzentration &amp; Impuls-Bremse trainieren – deine Superkraft</div></div></button>
+        <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus – jeder Schritt eine Rechenaufgabe</div></div></button>
         <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
         <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
@@ -830,6 +846,19 @@
       <div style="height:12px"></div>
     </div>
 
+    <!-- KÖRNER-JAGD -->
+    <div class="screen" id="corn">
+      <div class="hilde-row"><div class="hilde" id="corn-hilde"></div><div class="bubble" id="corn-bubble">Sammle Körner – und pass auf den Fuchs auf!</div></div>
+      <div class="kj-hud"><span>🌽 <b id="kj-score">0</b></span><span>🏆 <b id="kj-best">0</b></span></div>
+      <div class="stagepad">
+        <div class="kj-board" id="kj-board"></div>
+        <div class="kj-q" id="kj-q"></div>
+        <div class="kj-opts" id="kj-opts"></div>
+        <div class="kj-dirs" id="kj-dirs"></div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+
     <!-- FOKUS & COOL BLEIBEN -->
     <div class="screen" id="focus">
       <div class="hilde-row"><div class="hilde" id="focus-hilde"></div><div class="bubble" id="focus-bubble">Trainiere deine Superkraft: dranbleiben & cool bleiben!</div></div>
@@ -956,13 +985,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:16,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1007,7 +1036,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1032,7 +1061,7 @@
   function closeBreathe(){$("overlay").classList.remove("show");clearInterval(bt);say("Schön durchgeatmet. Probier es ruhig nochmal. 🐔",true);}
 
   /* ---------- router ---------- */
-  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false,ask:false,focus:false};
+  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false,ask:false,focus:false,corn:false};
   function show(name){
     try{if(typeof ASK!=="undefined"&&ASK&&ASK.stop)ASK.stop();}catch(_s){}
     try{if(typeof FOCUS!=="undefined"&&FOCUS&&FOCUS.stop)FOCUS.stop();}catch(_f){}
@@ -1054,6 +1083,7 @@
     if(name==="boerse"&&!inited.boerse){inited.boerse=true;BOERSE.start();}
     if(name==="ask"&&!inited.ask){inited.ask=true;ASK.start();}
     if(name==="focus"&&!inited.focus){inited.focus=true;FOCUS.start();}
+    if(name==="corn"&&!inited.corn){inited.corn=true;CORN.start();}
     if(name==="math")M.say0();
     if(name==="code")C.say0();
     if(name==="explore")E.say0();
@@ -2006,6 +2036,54 @@
     return {start:start,buy:buy,sell:sell,next:nextDay};
   })();
 
+  /* ===================== KÖRNER-JAGD ===================== */
+  var CORN=(function(){
+    var COLS=6,ROWS=6,st=null;
+    function foxEvery(){return st.score<20?2:1;}
+    function mathQ(L){
+      var ops=L<2?["+"]:L<3?["+","-"]:["+","-","×"],op=pick(ops),cap=[10,15,20,30,40,50][Math.min(L-1,5)]||20,a,b,ans,eq;
+      if(op==="+"){a=rnd(1,cap);b=rnd(1,cap);ans=a+b;eq=a+" + "+b;}
+      else if(op==="-"){a=rnd(2,cap);b=rnd(1,a);ans=a-b;eq=a+" − "+b;}
+      else{a=rnd(2,Math.min(10,2+L));b=rnd(2,Math.min(10,2+L));ans=a*b;eq=a+" × "+b;}
+      var set={},opts=[String(ans)];set[ans]=1;var tr=0;while(opts.length<3&&tr<40){tr++;var d=ans+pick([-2,-1,1,2,3,-3,5,-5,4]);if(d<0||set[d])continue;set[d]=1;opts.push(String(d));}var k=1;while(opts.length<3){if(!set[ans+k]){set[ans+k]=1;opts.push(String(ans+k));}k++;}
+      return {eq:eq+" = ?",ans:ans,opts:shuf(opts)};
+    }
+    function newBoard(){var b=[];for(var y=0;y<ROWS;y++){b.push([]);for(var x=0;x<COLS;x++)b[y].push(Math.random()<0.55?"c":0);}return b;}
+    function randEmpty(){var t=0;while(t++<40){var x=rnd(0,COLS-1),y=rnd(0,ROWS-1);if((x===st.cx&&y===st.cy)||(x===st.fx&&y===st.fy))continue;if(!st.board[y][x])return {x:x,y:y};}return null;}
+    function renderBoard(){var el=$("kj-board");if(!el)return;el.style.gridTemplateColumns="repeat("+COLS+",1fr)";var h="";
+      for(var y=0;y<ROWS;y++)for(var x=0;x<COLS;x++){var cls=(x+y)%2?"kj-cell alt":"kj-cell",t="";
+        if(x===st.cx&&y===st.cy)t="🐔";else if(x===st.fx&&y===st.fy)t="🦊";else{var v=st.board[y][x];t=v==="c"?"🌽":v==="b"?"🐛":v==="g"?"🌟":"";}
+        h+='<div class="'+cls+'">'+t+"</div>";}
+      el.innerHTML=h;}
+    function renderDirs(){var d=$("kj-dirs");if(!d)return;d.innerHTML="";[["⬆️",0,-1],["⬅️",-1,0],["➡️",1,0],["⬇️",0,1]].forEach(function(a){var b=document.createElement("button");b.className="kj-dir";b.textContent=a[0];b.disabled=!st.await||st.over;b.onclick=function(){move(a[1],a[2]);};d.appendChild(b);});}
+    function renderQ(){$("kj-q").textContent=st.cur.eq;var o=$("kj-opts");o.innerHTML="";st.cur.opts.forEach(function(v){var b=document.createElement("button");b.className="kj-opt";b.textContent=v;b.onclick=function(){answer(v,b);};o.appendChild(b);});renderDirs();}
+    function nextQ(){st.await=false;st.cur=mathQ(1+Math.floor(st.score/10));renderQ();}
+    function answer(v,b){if(st.await||st.over)return;
+      if(parseInt(v,10)===st.cur.ans){b.classList.add("right");st.await=true;$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
+      else{b.classList.add("wrong");b.disabled=true;say("Fast! Probier eine andere Antwort – dann darfst du laufen.");}}
+    function foxStep(){var dx=st.cx-st.fx,dy=st.cy-st.fy;if(dx===0&&dy===0)return;if(Math.abs(dx)>=Math.abs(dy))st.fx+=dx>0?1:-1;else st.fy+=dy>0?1:-1;}
+    function maybeSpawn(){if(Math.random()<0.6){var c=randEmpty();if(c)st.board[c.y][c.x]="c";}if(Math.random()<0.12){var c2=randEmpty();if(c2)st.board[c2.y][c2.x]=(Math.random()<0.5?"b":"g");}}
+    function move(dx,dy){if(!st.await||st.over)return;var nx=st.cx+dx,ny=st.cy+dy;
+      if(nx<0||ny<0||nx>=COLS||ny>=ROWS){say("Da ist der Zaun! Wähl eine andere Richtung.");return;}
+      st.cx=nx;st.cy=ny;var v=st.board[ny][nx],gain=v==="c"?1:v==="b"?3:v==="g"?5:0;
+      if(gain){st.score+=gain;st.board[ny][nx]=0;if(gain>1)toast("Lecker! +"+gain+" 🌽",true);}
+      $("kj-score").textContent=st.score;
+      if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver();}
+      st.turns++;if(st.turns%foxEvery()===0)foxStep();
+      if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver();}
+      maybeSpawn();renderBoard();nextQ();}
+    function gameOver(){st.over=true;var best=G.cornBest||0,rec=false;if(st.score>best){G.cornBest=st.score;doSave();rec=true;}
+      var rew=Math.max(1,Math.round(st.score/5));addEgg(rew);
+      $("kj-q").innerHTML="🦊 Erwischt! Du hast <b>"+st.score+"</b> 🌽 gesammelt. +"+rew+" 🥚"+(rec?" 🏆 Rekord!":"");
+      $("kj-opts").innerHTML="";var d=$("kj-dirs");d.innerHTML='<button class="hbtn next" id="kj-again">Nochmal 🐔</button>';$("kj-again").onclick=start;
+      $("kj-best").textContent=G.cornBest||0;
+      say(rec?"WOW – neuer Körner-Rekord! 🏆":"Guter Lauf! Beim nächsten Mal entkommst du dem Fuchs bestimmt.",true);}
+    function start(){st={board:newBoard(),cx:0,cy:ROWS-1,fx:COLS-1,fy:0,score:0,turns:0,await:false,cur:null,over:false};st.board[st.cy][st.cx]=0;st.board[st.fy][st.fx]=0;
+      $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();nextQ();
+      say("Sammle so viele Körner wie möglich – und weiche dem Fuchs 🦊 aus! Löse eine Rechenaufgabe, dann darfst du einen Schritt gehen. Raupen 🐛 und Gold-Körner 🌟 geben mehr!");}
+    return {start:start};
+  })();
+
   /* ===================== FOKUS & COOL BLEIBEN ===================== */
   var FOCUS=(function(){
     var halt=null;
@@ -2227,7 +2305,7 @@
   })();
 
   /* ---------- wire up ---------- */
-  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde","corn-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
   $("homebtn").onclick=function(){show("home");};
@@ -2252,7 +2330,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
