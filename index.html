@@ -407,6 +407,31 @@
   @keyframes micpulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(227,115,95,.5)}50%{transform:scale(1.08);box-shadow:0 0 0 16px rgba(227,115,95,0)}}
   @media (prefers-reduced-motion:reduce){.ask-mic.listening{animation:none}}
 
+  /* fokus & cool bleiben */
+  .mc-focus .modicon{background:#e3eefb}
+  .foc-menu{display:flex;flex-direction:column;gap:10px;padding:10px 14px}
+  .foc-card{font-family:inherit;text-align:left;border:3px solid #fff;background:linear-gradient(#fffefb,#eef3fb);border-radius:18px;padding:15px;font-weight:900;font-size:18px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink);display:flex;flex-direction:column;gap:3px}
+  .foc-card small{font-weight:700;font-size:13px;color:var(--ink-soft)}
+  .foc-card:active{transform:translateY(2px)}
+  .foc-stage{flex:1;overflow-y:auto;padding:0 14px}
+  .foc-head{display:flex;align-items:center;gap:10px;padding:8px 0}
+  .foc-score{font-weight:900;color:var(--ink-soft);font-size:14px}
+  .foc-play{height:220px;border-radius:20px;border:3px solid #fff;box-shadow:var(--shadow);background:linear-gradient(#eafaf0,#dff0c8);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none}
+  .foc-play.ok{background:linear-gradient(#c9f0d6,#a7e6bd)}
+  .foc-play.bad{background:linear-gradient(#f6c9bd,#eaa08c);animation:nudge .35s}
+  .foc-sym{font-size:96px;line-height:1;pointer-events:none}
+  .foc-timebar{height:12px;background:#dfeafc;border:1px solid #c7d8ef;border-radius:8px;overflow:hidden;margin:8px 0}
+  .foc-timefill{height:100%;width:0%;background:linear-gradient(90deg,#7ec8a2,#5a9fd4);border-radius:8px}
+  .foc-scn{font-weight:900;font-size:18px;line-height:1.35;background:linear-gradient(#fffefb,#fff5e4);border:3px solid #fff;border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
+  .foc-opts{display:flex;flex-direction:column;gap:10px}
+  .foc-opt{font-family:inherit;text-align:left;border:3px solid #fff;background:var(--cream);border-radius:14px;padding:13px;font-weight:800;font-size:16px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink)}
+  .foc-opt:active{transform:translateY(2px)}
+  .foc-opt.good{background:var(--good);color:#fff}.foc-opt.meh{background:#f0d9a0}
+  .foc-opt:disabled{cursor:default}
+  .foc-fb{margin-top:12px;font-weight:800;font-size:15px;background:#eef7ef;border-radius:14px;padding:11px;line-height:1.38}
+  .foc-sum{text-align:center;font-weight:900;font-size:17px;line-height:1.6;padding:16px;background:linear-gradient(#fffefb,#fff5e4);border:3px solid #fff;border-radius:18px;box-shadow:var(--shadow);margin-top:10px}
+  .foc-btns{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+
   /* EXPLORE */
   .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
   .topic{flex:0 0 auto;border:2px solid #fff;background:var(--paper);border-radius:30px;padding:7px 13px;
@@ -573,6 +598,7 @@
         <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
         <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
         <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
+        <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus &amp; Cool bleiben</div><div class="modsub">Konzentration &amp; Impuls-Bremse trainieren – deine Superkraft</div></div></button>
         <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
         <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
@@ -795,6 +821,18 @@
       <div style="height:12px"></div>
     </div>
 
+    <!-- FOKUS & COOL BLEIBEN -->
+    <div class="screen" id="focus">
+      <div class="hilde-row"><div class="hilde" id="focus-hilde"></div><div class="bubble" id="focus-bubble">Trainiere deine Superkraft: dranbleiben & cool bleiben!</div></div>
+      <div class="foc-menu" id="foc-menu">
+        <button class="foc-card" data-foc="cool">🧊 Cool bleiben<small>Was tun, wenn andere dich ablenken wollen?</small></button>
+        <button class="foc-card" data-foc="stop">🦊 Fuchs-Stopp<small>Tippe schnell auf 🐔 – aber STOPP beim Fuchs!</small></button>
+        <button class="foc-card" data-foc="sprint">🎯 Fokus-Sprint<small>Bleib dran und schlag deinen Konzentrations-Rekord!</small></button>
+      </div>
+      <div class="foc-stage" id="foc-stage"></div>
+      <div style="height:12px"></div>
+    </div>
+
     <!-- FRAG HILDE (Sprache) -->
     <div class="screen" id="ask">
       <div class="hilde-row"><div class="hilde" id="ask-hilde"></div><div class="bubble" id="ask-bubble">Frag mich alles! Tippe auf 🎤 und sprich.</div></div>
@@ -907,13 +945,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:14,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:15,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -958,7 +996,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -983,9 +1021,10 @@
   function closeBreathe(){$("overlay").classList.remove("show");clearInterval(bt);say("Schön durchgeatmet. Probier es ruhig nochmal. 🐔",true);}
 
   /* ---------- router ---------- */
-  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false,ask:false};
+  var inited={math:false,code:false,explore:false,pattern:false,iq:false,lab:false,clock:false,store:false,market:false,read:false,tractor:false,game:false,boerse:false,ask:false,focus:false};
   function show(name){
     try{if(typeof ASK!=="undefined"&&ASK&&ASK.stop)ASK.stop();}catch(_s){}
+    try{if(typeof FOCUS!=="undefined"&&FOCUS&&FOCUS.stop)FOCUS.stop();}catch(_f){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
     try{
@@ -1003,6 +1042,7 @@
     if(name==="game"&&!inited.game){inited.game=true;GAME.start();}
     if(name==="boerse"&&!inited.boerse){inited.boerse=true;BOERSE.start();}
     if(name==="ask"&&!inited.ask){inited.ask=true;ASK.start();}
+    if(name==="focus"&&!inited.focus){inited.focus=true;FOCUS.start();}
     if(name==="math")M.say0();
     if(name==="code")C.say0();
     if(name==="explore")E.say0();
@@ -1955,6 +1995,108 @@
     return {start:start,buy:buy,sell:sell,next:nextDay};
   })();
 
+  /* ===================== FOKUS & COOL BLEIBEN ===================== */
+  var FOCUS=(function(){
+    var halt=null;
+    var SCN=[
+      {q:"In der Schule sollst du eine Aufgabe machen. Neben dir albert ein Kind herum und will, dass du mitmachst. Was tust du?",
+       o:["Ich mache meine Aufgabe weiter und lächle nur kurz.","Ich mache noch lauter mit als das andere Kind.","Ich mache ein kleines bisschen mit."],ok:0,
+       good:"Stark! DU entscheidest, woran du arbeitest – nicht die anderen. Das ist echte Selbst-Steuerung. 💪",
+       meh:"Wenn du mitmachst oder sogar übertreibst, gibt es oft Ärger – und deine Aufgabe bleibt liegen. Die starke Wahl: dranbleiben."},
+      {q:"Ein jüngeres Kind schneidet Grimassen, damit du lachst. Alle sollen leise arbeiten. Was tust du?",
+       o:["Ich schaue weg und arbeite weiter.","Ich schneide noch viel lustigere Grimassen.","Ich kichere kurz und mache weiter."],ok:0,
+       good:"Genau! Weggucken ist keine Schwäche – es ist deine Superkraft, dich nicht ablenken zu lassen.",
+       meh:"Wenn du es noch doller machst, wirst du der, der stört – dabei wolltest du das gar nicht. Cooler: kurz weggucken."},
+      {q:"Du findest die Aufgabe langweilig, weil du sie schon kannst. Was tust du?",
+       o:["Ich mache sie schnell und ordentlich und denke mir dann selbst eine kniffligere Frage aus.","Ich mache Quatsch, weil mir langweilig ist.","Ich träume und mache gar nichts."],ok:0,
+       good:"Super! Langeweile heißt: dein Kopf will MEHR. Sag es der Lehrerin oder gib dir selbst eine Extra-Herausforderung.",
+       meh:"Quatsch vertreibt die Langeweile nur kurz – und bringt Ärger. Besser: dir selbst etwas Schwierigeres ausdenken."},
+      {q:"Jemand sagt: „Trau dich, mach was Verrücktes!“ Was tust du?",
+       o:["Ich muss niemandem etwas beweisen und bleibe cool.","Ich mache es – und noch krasser.","Ich mache es ein bisschen."],ok:0,
+       good:"Richtig stark! Wer sich nicht anstacheln lässt, ist der Chef über sich selbst.",
+       meh:"„Noch krasser“ endet meistens im Ärger. Die mutigste Wahl ist manchmal: Nein danke."},
+      {q:"Du merkst, dass du gleich wieder den Clown machen willst. Was hilft ZUERST?",
+       o:["Kurz stoppen und einmal tief durchatmen.","Sofort loslegen.","Jemanden anstupsen."],ok:0,
+       good:"Perfekt: Stopp – Atmen – dann entscheiden. Diese kleine Pause ist dein stärkster Trick. 🌬️",
+       meh:"Ohne Pause macht der Impuls, was er will. Ein tiefer Atemzug gibt dir die Kontrolle zurück."},
+      {q:"Die Lehrerin erklärt etwas, das du schon weißt. Was ist klug?",
+       o:["Trotzdem zuhören – vielleicht kommt ein neuer Trick; sonst denke ich mir eine eigene Frage dazu aus.","Laut reinrufen, dass ich das schon kann.","Die anderen ablenken."],ok:0,
+       good:"Klasse! Zuhör-Profis finden fast immer noch ein neues Detail – und stören niemanden.",
+       meh:"Reinrufen oder ablenken bringt Unruhe. Cooler: für dich mitdenken und eine knifflige Frage sammeln."},
+      {q:"Dein Spaß kommt gut an und du willst immer weiter übertreiben. Was tust du?",
+       o:["Einmal lachen ist schön – dann höre ich auf und mache weiter.","Immer weiter, bis etwas passiert.","Noch eine Nummer draufsetzen."],ok:0,
+       good:"Genau das ist die Bremse, die dich stark macht: Spaß haben UND rechtzeitig aufhören.",
+       meh:"Immer weiter endet fast immer im Ärger. Die Kunst ist, im richtigen Moment zu stoppen."},
+      {q:"Zuhause sollst du 10 Minuten an einer Sache bleiben. Nach 1 Minute wird's langweilig. Was tust du?",
+       o:["Ich sage mir: „Ich bleib dran!“ und mache bis zum Ziel weiter.","Ich springe zu etwas anderem.","Ich höre einfach auf."],ok:0,
+       good:"Top! Der Satz „Ich bleib dran“ ist ein echter Konzentrations-Trick. Jedes Mal wird es leichter.",
+       meh:"Wegspringen fühlt sich kurz gut an, aber nichts wird fertig. Sag dir: „Nur noch bis zum Ziel.“"}
+    ];
+    function menu(){var m=$("foc-menu");if(m)m.style.display="";var s=$("foc-stage");if(s)s.innerHTML="";}
+    function back(){if(halt){halt();halt=null;}menu();say("Wähl eine Übung, Konzentrations-Held! 🦸");}
+    function coolGame(){
+      $("foc-menu").style.display="none";var order=shuf(SCN.slice()),i=0,stage=$("foc-stage");
+      function render(){
+        if(i>=order.length){stage.innerHTML='<div class="foc-sum">Toll gemacht, Konzentrations-Held! 🦸<br>Du hast alle Situationen gemeistert.</div><div class="foc-btns"><button class="hbtn next" id="foc-again">Nochmal</button><button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';$("foc-again").onclick=coolGame;$("foc-menu2").onclick=back;addEgg(2);say("Klasse! Du weißt jetzt, wie ein starker Kopf reagiert. 💪",true);return;}
+        var s=order[i];
+        stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score">Situation '+(i+1)+'/'+order.length+'</span></div><div class="foc-scn">'+s.q+'</div><div class="foc-opts" id="foc-o"></div><div class="foc-fb" id="foc-fb" style="display:none"></div>';
+        $("foc-back").onclick=back;
+        var o=$("foc-o");shuf(s.o.map(function(t,idx){return {t:t,idx:idx};})).forEach(function(it){var b=document.createElement("button");b.className="foc-opt";b.textContent=it.t;b.onclick=function(){choose(it.idx,b,s);};o.appendChild(b);});
+        say("Was ist die starke Wahl?");
+      }
+      function choose(idx,b,s){
+        var all=$("foc-o").querySelectorAll(".foc-opt");all.forEach(function(x){x.disabled=true;});
+        var fb=$("foc-fb");fb.style.display="";
+        if(idx===s.ok){b.classList.add("good");fb.innerHTML="✅ "+s.good;say("Stark! 💪",true);addEgg(1);}
+        else{b.classList.add("meh");all.forEach(function(x){if(x.textContent===s.o[s.ok])x.classList.add("good");});fb.innerHTML="💡 "+s.meh;say("Schau mal …");}
+        var nb=document.createElement("button");nb.className="hbtn next";nb.textContent="Weiter ➜";nb.style.cssText="margin:12px auto 0;display:block";nb.onclick=function(){i++;render();};fb.appendChild(nb);
+      }
+      render();
+    }
+    function stopGame(){
+      $("foc-menu").style.display="none";
+      var S={i:0,total:18,hits:0,stops:0,fa:0,miss:0,cur:null,tapped:false,t1:null,t2:null,run:true},stage=$("foc-stage");
+      halt=function(){S.run=false;clearTimeout(S.t1);clearTimeout(S.t2);};
+      stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score" id="foc-info">Tippe 🐔 – STOPP beim 🦊!</span></div><div class="foc-play" id="foc-play"><div class="foc-sym" id="foc-sym">Bereit … 🐔</div></div>';
+      $("foc-back").onclick=back;$("foc-play").onclick=onTap;
+      say("Tippe schnell auf das Huhn – aber halt die Hand still, wenn der Fuchs kommt!");
+      function flash(cls){var p=$("foc-play");if(!p)return;p.classList.add(cls);setTimeout(function(){var q=$("foc-play");if(q)q.classList.remove(cls);},260);}
+      function onTap(){if(!S.run||!S.cur||S.tapped)return;S.tapped=true;if(S.cur==="go"){S.hits++;flash("ok");}else{S.fa++;flash("bad");var sy=$("foc-sym");if(sy)sy.textContent="🚫";}clearTimeout(S.t1);endStim();}
+      function showStim(){if(!S.run)return;if(S.i>=S.total){finish();return;}S.i++;S.cur=(Math.random()<0.72)?"go":"nogo";S.tapped=false;var sy=$("foc-sym");if(sy)sy.textContent=S.cur==="go"?"🐔":"🦊";var win=Math.max(700,1300-S.i*20);S.t1=setTimeout(endStim,win);}
+      function endStim(){if(!S.run)return;if(!S.tapped){if(S.cur==="go")S.miss++;else S.stops++;}S.cur=null;var sy=$("foc-sym");if(sy)sy.textContent="·";S.t2=setTimeout(showStim,340);}
+      function finish(){S.run=false;var rew=Math.max(1,Math.round((S.hits+S.stops)/4));addEgg(rew);
+        stage.innerHTML='<div class="foc-sum">🦊 Fuchs-Stopp geschafft!<br>🐔 Getroffen: '+S.hits+'<br>✋ Richtig gestoppt: '+S.stops+'<br>🙈 Verpasst: '+S.miss+' · 🚫 Zu schnell: '+S.fa+'<br>+'+rew+' 🥚</div><div class="foc-btns"><button class="hbtn next" id="foc-again">Nochmal</button><button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';
+        $("foc-again").onclick=stopGame;$("foc-menu2").onclick=back;halt=null;
+        say(S.fa<=1?"Super Impuls-Bremse! Beim Fuchs die Hand stillhalten – top! 💪":"Gut geübt! Beim Fuchs stoppen wird immer leichter.",true);}
+      S.t2=setTimeout(showStim,700);
+    }
+    function sprintGame(){runSprint(30);}
+    function runSprint(D){
+      $("foc-menu").style.display="none";
+      var DIST=["🌽","🐛","🌸","⭐","🍎","🍀","🎈"],S={run:true,end:false,hits:0,miss:0,fa:0,cur:null,tapped:false,t1:null,t2:null,master:null,tick:null},stage=$("foc-stage");
+      halt=function(){S.run=false;clearTimeout(S.t1);clearTimeout(S.t2);clearTimeout(S.master);clearInterval(S.tick);};
+      stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score" id="foc-info">Tippe nur das 🥚 – bleib dran!</span></div><div class="foc-timebar"><div class="foc-timefill" id="foc-fill"></div></div><div class="foc-play" id="foc-play"><div class="foc-sym" id="foc-sym">Bereit …</div></div><div class="foc-score" id="foc-rec" style="text-align:center;margin-top:8px">🏆 Rekord: '+(G.focusBest||0)+'s</div>';
+      $("foc-back").onclick=back;$("foc-play").onclick=onTap;
+      say("Fokus-Sprint! Tippe jedes 🥚 – und lass dich "+D+" Sekunden lang nicht ablenken.");
+      var fill=$("foc-fill");if(fill){fill.style.transition="none";fill.style.width="100%";void fill.offsetWidth;fill.style.transition="width "+D+"s linear";fill.style.width="0%";}
+      var t0=Date.now();S.tick=setInterval(function(){if(!S.run)return;var lft=Math.max(0,Math.ceil(D-(Date.now()-t0)/1000));var inf=$("foc-info");if(inf)inf.textContent="Bleib dran! Noch "+lft+"s";},400);
+      S.master=setTimeout(finish,D*1000+60);
+      function flash(cls){var p=$("foc-play");if(!p)return;p.classList.add(cls);setTimeout(function(){var q=$("foc-play");if(q)q.classList.remove(cls);},220);}
+      function showStim(){if(!S.run)return;S.cur=(Math.random()<0.45)?"egg":"dist";S.tapped=false;var sy=$("foc-sym");if(sy)sy.textContent=S.cur==="egg"?"🥚":pick(DIST);S.t1=setTimeout(function(){if(!S.run)return;if(!S.tapped&&S.cur==="egg")S.miss++;S.cur=null;var s2=$("foc-sym");if(s2)s2.textContent="·";S.t2=setTimeout(showStim,300);},1050);}
+      function onTap(){if(!S.run||!S.cur||S.tapped)return;S.tapped=true;if(S.cur==="egg"){S.hits++;flash("ok");}else{S.fa++;flash("bad");}}
+      function finish(){if(S.end)return;S.end=true;S.run=false;clearInterval(S.tick);clearTimeout(S.t1);clearTimeout(S.t2);
+        var acc=S.hits/Math.max(1,S.hits+S.miss),success=acc>=0.6,rew=Math.max(1,S.hits),rec=false;
+        addEgg(rew);if(success&&D>(G.focusBest||0)){G.focusBest=D;doSave();rec=true;}
+        stage.innerHTML='<div class="foc-sum">🎯 '+D+'-Sekunden-Sprint '+(success?'geschafft! 🎉':'– gut geübt!')+'<br>🥚 Getroffen: '+S.hits+' · verpasst: '+S.miss+'<br>'+(rec?'🏆 Neuer Fokus-Rekord: '+D+'s!':'🏆 Rekord: '+(G.focusBest||0)+'s')+'<br>+'+rew+' 🥚</div><div class="foc-btns">'+(success?'<button class="hbtn next" id="foc-longer">Länger: '+(D+15)+'s</button>':'<button class="hbtn next" id="foc-again">Nochmal</button>')+'<button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';
+        var lg=$("foc-longer");if(lg)lg.onclick=function(){runSprint(D+15);};var ag=$("foc-again");if(ag)ag.onclick=function(){runSprint(D);};$("foc-menu2").onclick=back;halt=null;
+        say(success?"Mega Konzentration! Du hast durchgehalten. 💪":"Dranbleiben wird jedes Mal leichter – super geübt!",true);}
+      S.t2=setTimeout(showStim,700);
+    }
+    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else sprintGame();}
+    function start(){menu();var cards=document.querySelectorAll("#foc-menu .foc-card");cards.forEach(function(c){c.onclick=function(){run(c.getAttribute("data-foc"));};});say("Wähl eine Übung, Konzentrations-Held! 🦸 Hier trainierst du deine Superkraft: dranbleiben und cool bleiben.");}
+    return {start:start,stop:function(){if(halt){halt();halt=null;}}};
+  })();
+
   /* ===================== FRAG HILDE (Sprache, sokratisch) ===================== */
   var ASK=(function(){
     var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -2000,7 +2142,7 @@
   })();
 
   /* ---------- wire up ---------- */
-  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
   $("homebtn").onclick=function(){show("home");};
@@ -2025,7 +2167,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
