@@ -824,6 +824,7 @@
     <!-- GAME / Challenge -->
     <div class="screen" id="game">
       <div class="hilde-row"><div class="hilde" id="game-hilde"></div><div class="bubble" id="game-bubble">Bereit für die große Hühner-Challenge?</div></div>
+      <div class="ki-row"><span id="g-ki-status" class="ki-status"></span><button id="g-ki-btn" class="ki-btn">⚙️ KI</button></div>
       <div class="g-modes">
         <button class="g-mode on" id="g-mode-relax">🧘 Entspannt</button>
         <button class="g-mode" id="g-mode-time">⏱️ Zeit · Münzen</button>
@@ -1967,6 +1968,13 @@
     function timeUp(){if(current!=="game"||run.answered)return;run.answered=true;stopTimer();var t=run.cur;document.querySelectorAll("#g-opts .g-opt").forEach(function(o,idx){o.disabled=true;if(idx===t.correct)o.classList.add("right");});run.streak=0;refreshBar();say("⏰ Zeit um! Schau: "+(t.explain||"")+" Beim nächsten Mal bist du schneller!");$("g-next").style.display="";}
     function setMode(timed){run.timed=timed;$("g-mode-relax").classList.toggle("on",!timed);$("g-mode-time").classList.toggle("on",timed);$("g-timebar").classList.toggle("on",timed);start();}
     function gEsc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function kiStatus(){var s=$("g-ki-status");if(!s)return;s.textContent=aiKey()?"🔌 KI aktiv – unendliche Wissensfragen":"💡 Offline-Wissen · ⚙️ KI für unendliche Fragen";}
+    function setupKi(){
+      if(aiKey()){if(window.confirm("KI-Schlüssel entfernen? Danach kommen die Wissensfragen aus der Offline-Bank.")){try{window.localStorage.removeItem("vinni_ai_key");}catch(e){}kiStatus();toast("KI-Schlüssel entfernt");}return;}
+      var v=null;try{v=window.prompt("Für Erwachsene:\n\nAnthropic API-Schlüssel einfügen, damit die Wissensfragen in der Challenge unendlich neu von der KI kommen.\n\nWird NUR lokal auf diesem Gerät gespeichert.\n\nLeer lassen zum Abbrechen.");}catch(e){v=null;}
+      if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}kiStatus();toast("KI aktiviert ✨");}
+    }
     function level(){return Math.min(6,1+Math.floor(run.streak/4));}
     function task(badge,promptHTML,correctStr,distract,explain){var opts=shuf([correctStr].concat(distract));return {badge:badge,prompt:promptHTML,options:opts,correct:opts.indexOf(correctStr),explain:explain};}
     function numOpts(ans){var set={},out=[];set[ans]=1;var spread=ans>30?[-10,10,-1,1,5,-5,11,9,-11]:[-1,1,-2,2,3,-3,4,-4];var tr=0;while(out.length<2&&tr<60){tr++;var v=ans+pick(spread);if(v<0||set[v])continue;set[v]=1;out.push(String(v));}var k=1;while(out.length<2){var w=ans+k;if(!set[w]){set[w]=1;out.push(String(w));}k++;}return out;}
@@ -1995,7 +2003,7 @@
     function gKnow(L){return E.draw().then(function(qq){return {badge:"🦉 Wissen",prompt:'<div class="g-prompt-t">'+gEsc(qq.question)+"</div>",options:qq.options.slice(),correct:qq.correct,explain:qq.explain||""};});}
     var CATS=[{g:gMath},{g:gKnow,know:true},{g:gPattern},{g:gLogic},{g:gClock},{g:gMoney},{g:gMarket},{g:gCompare},{g:gRead},{g:gCode}];
     var bag=[];
-    function drawCat(){if(!bag.length)bag=shuf(CATS.slice());return bag.pop();}
+    function drawCat(){if(!bag.length)bag=shuf(CATS.concat(aiKey()?[{g:gKnow,know:true}]:[]));return bag.pop();}
     var SPIN='<div class="loading"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#ef9f1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde denkt sich etwas aus …</div></div>';
     function refreshBar(){$("g-score").textContent=run.score;$("g-streak").textContent=run.streak;$("g-best").textContent=run.best;}
     function render(t){$("g-badge").textContent=t.badge;$("g-prompt").innerHTML=t.prompt;var box=$("g-opts");box.innerHTML="";t.options.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b,t);};box.appendChild(b);});$("g-next").style.display="none";say("Was meinst du, Vinni?");if(run.timed)startTimer();else resetBar();}
@@ -2007,7 +2015,7 @@
         refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast(msg);setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
       else{b.classList.add("wrong");run.streak=0;refreshBar();say("Knapp daneben! "+(t.explain||"")+" Macht nichts – weiter geht's!");$("g-next").style.display="";}}
     function next(){run.answered=false;stopTimer();resetBar();var c=drawCat(),L=level();$("g-opts").innerHTML="";if(c.know){$("g-badge").textContent="🦉 Wissen";$("g-prompt").innerHTML=SPIN;}Promise.resolve().then(function(){return c.g(L);}).then(function(t){if(current!=="game")return;run.cur=t;render(t);}).catch(function(){var t=gMath(1);run.cur=t;render(t);});}
-    function start(){stopTimer();run.score=0;run.streak=0;run.best=(G.gameBest||0);run.answered=false;$("g-timebar").classList.toggle("on",run.timed);resetBar();refreshBar();say(run.timed?"Zeitmodus! Schnell antworten gibt Münzen 🪙 – los!":"Bereit? Ich mische alle Spiele – pass gut auf! 🎮",true);next();}
+    function start(){stopTimer();kiStatus();var kb=$("g-ki-btn");if(kb)kb.onclick=setupKi;run.score=0;run.streak=0;run.best=(G.gameBest||0);run.answered=false;$("g-timebar").classList.toggle("on",run.timed);resetBar();refreshBar();say(run.timed?"Zeitmodus! Schnell antworten gibt Münzen 🪙 – los!":"Bereit? Ich mische alle Spiele – pass gut auf! 🎮",true);next();}
     return {start:start,next:next,setMode:setMode};
   })();
 
