@@ -455,6 +455,14 @@
   .kj-dirs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .kj-dir{font-family:inherit;border:3px solid #fff;background:linear-gradient(#fffefb,#eef7ea);border-radius:16px;padding:11px 18px;font-size:26px;cursor:pointer;box-shadow:var(--shadow)}
   .kj-dir:active{transform:translateY(2px)}.kj-dir:disabled{opacity:.4}
+  .kj-tools{display:flex;justify-content:center;margin:2px 0 4px;min-height:0}
+  .kj-tool{font-family:inherit;border:3px solid #fff;background:linear-gradient(#fff3cf,#ffd66e);border-radius:14px;padding:9px 16px;font-weight:900;font-size:15px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
+  .kj-tool.off{opacity:.5}
+  .kj-tool.fire{background:linear-gradient(var(--barn),var(--barn-deep));color:#fff;animation:scpulse 1s ease-in-out infinite}
+  .kj-tool:active{transform:translateY(2px)}
+  .kj-boom{position:absolute;transform:translate(-50%,-50%);background:#fff;border:3px solid var(--barn-deep);border-radius:14px;padding:6px 12px;font-weight:900;font-size:20px;color:var(--barn-deep);box-shadow:var(--soft);z-index:5;pointer-events:none;animation:boompop .55s cubic-bezier(.2,1.7,.4,1)}
+  @keyframes boompop{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}60%{transform:translate(-50%,-50%) scale(1.25);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  .kj-cell.kj-pop{animation:pop .5s ease}
 
   /* EXPLORE */
   .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
@@ -853,6 +861,7 @@
       <div class="kj-hud"><span>🌽 <b id="kj-score">0</b></span><span>🏆 <b id="kj-best">0</b></span></div>
       <div class="stagepad">
         <div class="kj-board" id="kj-board"></div>
+        <div class="kj-tools" id="kj-tools"></div>
         <div class="kj-q" id="kj-q"></div>
         <div class="kj-opts" id="kj-opts"></div>
         <div class="kj-dirs" id="kj-dirs"></div>
@@ -2065,6 +2074,12 @@
       el.innerHTML=h;}
     function renderDirs(){var d=$("kj-dirs");if(!d)return;d.innerHTML="";[["⬆️",0,-1],["⬅️",-1,0],["➡️",1,0],["⬇️",0,1]].forEach(function(a){var b=document.createElement("button");b.className="kj-dir";b.textContent=a[0];b.disabled=!st.await||st.over;b.onclick=function(){move(a[1],a[2]);};d.appendChild(b);});}
     function renderQ(){$("kj-q").textContent=st.cur.eq;var o=$("kj-opts");o.innerHTML="";st.cur.opts.forEach(function(v){var b=document.createElement("button");b.className="kj-opt";b.textContent=v;b.onclick=function(){answer(v,b);};o.appendChild(b);});renderDirs();}
+    function renderTools(){var el=$("kj-tools");if(!el)return;if(st.over){el.innerHTML="";return;}
+      if(st.gun){el.innerHTML='<button class="kj-tool fire" id="kj-fire">💥 Schießen!</button>';$("kj-fire").onclick=fire;}
+      else{var can=st.score>=30;el.innerHTML='<button class="kj-tool'+(can?"":" off")+'" id="kj-buy">🔫 Gewehr einlösen (30 🌽)</button>';$("kj-buy").onclick=buyGun;}}
+    function buyGun(){if(st.gun||st.over)return;if(st.score<30){say("Du brauchst 30 Körner für ein Gewehr. Sammle weiter! 🌽");return;}st.score-=30;$("kj-score").textContent=st.score;st.gun=true;renderTools();toast("🔫 Gewehr geladen!",true);say("Gewehr geladen! 🔫 Wenn der Fuchs zu nah kommt: Schießen! 💥",true);}
+    function boomAt(x,y){var board=$("kj-board");if(!board)return;board.style.position="relative";var s=document.createElement("div");s.className="kj-boom";s.textContent="BOOOM!";s.style.left=((x+0.5)/COLS*100)+"%";s.style.top=((y+0.5)/ROWS*100)+"%";board.appendChild(s);setTimeout(function(){if(s.parentNode)s.remove();},1100);}
+    function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);st.gun=false;st.fy=ROWS-1;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx>0?0:COLS-1);renderBoard();var idx=st.fy*COLS+st.fx,cell=$("kj-board").children[idx];if(cell)cell.classList.add("kj-pop");renderTools();toast("💥 BOOOM!",true);say("BOOOM! 💥 Der Fuchs fliegt an den unteren Rand!",true);}
     function nextQ(){st.await=false;st.cur=mathQ(1+Math.floor(st.score/10));renderQ();}
     function answer(v,b){if(st.await||st.over)return;
       if(parseInt(v,10)===st.cur.ans){b.classList.add("right");st.await=true;$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
@@ -2079,15 +2094,15 @@
       if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver();}
       st.turns++;if(st.turns%foxEvery()===0)foxStep();
       if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver();}
-      maybeSpawn();renderBoard();nextQ();}
+      maybeSpawn();renderBoard();renderTools();nextQ();}
     function gameOver(){st.over=true;var best=G.cornBest||0,rec=false;if(st.score>best){G.cornBest=st.score;doSave();rec=true;}
       var rew=Math.max(1,Math.round(st.score/5));addEgg(rew);
       $("kj-q").innerHTML="🦊 Erwischt! Du hast <b>"+st.score+"</b> 🌽 gesammelt. +"+rew+" 🥚"+(rec?" 🏆 Rekord!":"");
-      $("kj-opts").innerHTML="";var d=$("kj-dirs");d.innerHTML='<button class="hbtn next" id="kj-again">Nochmal 🐔</button>';$("kj-again").onclick=start;
+      $("kj-opts").innerHTML="";var tl=$("kj-tools");if(tl)tl.innerHTML="";var d=$("kj-dirs");d.innerHTML='<button class="hbtn next" id="kj-again">Nochmal 🐔</button>';$("kj-again").onclick=start;
       $("kj-best").textContent=G.cornBest||0;
       say(rec?"WOW – neuer Körner-Rekord! 🏆":"Guter Lauf! Beim nächsten Mal entkommst du dem Fuchs bestimmt.",true);}
-    function start(){st={board:newBoard(),cx:0,cy:ROWS-1,fx:COLS-1,fy:0,score:0,turns:0,await:false,cur:null,over:false};st.board[st.cy][st.cx]=0;st.board[st.fy][st.fx]=0;
-      $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();nextQ();
+    function start(){st={board:newBoard(),cx:0,cy:ROWS-1,fx:COLS-1,fy:0,score:0,turns:0,await:false,cur:null,over:false,gun:false};st.board[st.cy][st.cx]=0;st.board[st.fy][st.fx]=0;
+      $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();renderTools();nextQ();
       say("Sammle so viele Körner wie möglich – und weiche dem Fuchs 🦊 aus! Löse eine Rechenaufgabe, dann darfst du einen Schritt gehen. Raupen 🐛 und Gold-Körner 🌟 geben mehr!");}
     return {start:start};
   })();
