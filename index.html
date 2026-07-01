@@ -2041,12 +2041,40 @@
       {q:"Zuhause sollst du 10 Minuten an einer Sache bleiben. Nach 1 Minute wird's langweilig. Was tust du?",
        o:["Ich sage mir: „Ich bleib dran!“ und mache bis zum Ziel weiter.","Ich springe zu etwas anderem.","Ich höre einfach auf."],ok:0,
        good:"Top! Der Satz „Ich bleib dran“ ist ein echter Konzentrations-Trick. Jedes Mal wird es leichter.",
-       meh:"Wegspringen fühlt sich kurz gut an, aber nichts wird fertig. Sag dir: „Nur noch bis zum Ziel.“"}
+       meh:"Wegspringen fühlt sich kurz gut an, aber nichts wird fertig. Sag dir: „Nur noch bis zum Ziel.“"},
+      {q:"Du bist mit deinen Freunden zusammen und alle werden immer wilder und lauter. Du merkst: Du kannst kaum noch aufhören. Was tust du?",
+       o:["Ich merke „Stopp!“, mache eine kurze Pause und atme einmal durch.","Ich mache noch wilder mit als alle anderen.","Ich mache einfach weiter, es ist ja lustig."],ok:0,
+       good:"Genau! Das Wichtigste ist, den Moment zu MERKEN, in dem es kippt – und kurz zu bremsen. Diese Bremse macht dich stark. 💪",
+       meh:"In der Gruppe reißt es einen schnell mit. Der Trick: bemerken, dass du zu wild wirst – und einmal kurz stoppen. Dann bist DU der Chef, nicht die Aufregung."},
+      {q:"Ein Kind in deiner Gruppe ist laut, macht andere runter und ist manchmal gemein. Es wirkt irgendwie „cool“. Willst du sein wie es?",
+       o:["Nein – gemein sein ist nicht cool. Ich bleibe ich selbst.","Ja, ich mache es nach, damit ich auch cool bin.","Ein bisschen, damit ich dazugehöre."],ok:0,
+       good:"Stark! Echte Coolness ist, freundlich UND du selbst zu bleiben. Wer andere runtermacht, ist nicht der Stärkste – nur der Lauteste.",
+       meh:"Jemand, der gemein ist, ist kein gutes Vorbild – auch wenn er laut wirkt. Am mutigsten ist, du selbst zu bleiben. Und wenn jemand richtig gemein wird: einem Erwachsenen sagen."},
+      {q:"Das wilde Kind sagt: „Trau dich, ärgere den da – oder bist du ein Baby?“ Was tust du?",
+       o:["Ich mache nicht mit. Niemandem wehtun ist die starke Wahl.","Ich mache es, damit ich kein Baby bin.","Ich mache es ein kleines bisschen."],ok:0,
+       good:"Richtig stark! Sich NICHT anstacheln zu lassen ist das Gegenteil von „Baby“ – das ist der Chef über sich selbst. Anderen wehtun ist nie cool.",
+       meh:"„Bist du ein Baby?“ ist nur ein Trick, damit du mitmachst. Nein zu sagen ist das Mutigste. Niemandem wehtun – dabei bleibst du."},
+      {q:"Dein 5-jähriger Bruder ärgert dich und will dich aus der Ruhe bringen. Du spürst, wie du gleich ausrastest. Was tust du?",
+       o:["Ich atme einmal durch und bleibe der große, ruhige Vinni.","Ich schreie zurück und ärgere ihn noch mehr.","Ich mache mit und benehme mich auch wie ein Kleinkind."],ok:0,
+       good:"Top! Kleine Geschwister testen gern – wer ruhig bleibt, gewinnt. Du bist der Große: du zeigst, wie man cool bleibt. 💪",
+       meh:"Wenn du mitärgerst, hat dein Bruder genau das erreicht, was er wollte. Der Große zu sein heißt: ruhig bleiben, auch wenn er stichelt."},
+      {q:"Mit deinem kleinen Bruder fängst du an, wie ein Kleinkind zu reden und Quatsch zu machen. Was ist die klügere Wahl?",
+       o:["Ich rede und spiele so wie der große Vinni, der ich alleine auch bin.","Ich mache alles noch babyhafter.","Ich mache einfach mit, ist ja egal."],ok:0,
+       good:"Genau! Du bist ein cleverer, großer Junge – bleib dieser Vinni, egal mit wem du zusammen bist. Das ist deine echte Stärke.",
+       meh:"Es ist okay, mit dem Bruder zu spielen – aber du musst dich nicht kleiner machen, als du bist. Bleib der schlaue, große Vinni."},
+      {q:"Allein bist du klug, ruhig und richtig stark. Wie kannst du dieser Vinni auch bei den anderen sein?",
+       o:["Ich erinnere mich: „Ich bin dieser starke Vinni – auch jetzt.“","Ich bin nur allein so, in der Gruppe muss ich anders sein.","Das geht nicht, in der Gruppe bin ich immer wild."],ok:0,
+       good:"Wunderbar! Der starke, kluge Vinni bist IMMER du – an ihn kannst du dich überall erinnern. Das ist ein toller Trick.",
+       meh:"Der tolle Vinni, der du alleine bist, steckt immer in dir – auch in der Gruppe. Erinnere dich: „Das bin ich, auch jetzt.“"},
+      {q:"Ihr lacht über deinen Spaß und du willst immer noch einen draufsetzen. Woran merkst du, dass es genug ist?",
+       o:["Wenn ich merke, dass ich fast nicht mehr aufhören kann – dann ist der Moment zu stoppen.","Wenn ein Erwachsener schimpft.","Gar nicht – ich höre erst auf, wenn etwas passiert."],ok:0,
+       good:"Genau dieses Merken ist die Superkraft! Bevor es zu viel wird, einmal kurz stoppen. Spaß haben UND rechtzeitig aufhören – das ist stark.",
+       meh:"Wenn erst ein Erwachsener schimpft, ist es schon zu spät. Der Trick: früh merken „gleich kippt's“ und selbst bremsen."}
     ];
     function menu(){var m=$("foc-menu");if(m)m.style.display="";var s=$("foc-stage");if(s)s.innerHTML="";}
     function back(){if(halt){halt();halt=null;}menu();say("Wähl eine Übung, Konzentrations-Held! 🦸");}
     function coolGame(){
-      $("foc-menu").style.display="none";var order=shuf(SCN.slice()),i=0,stage=$("foc-stage");
+      $("foc-menu").style.display="none";var order=shuf(SCN.slice()).slice(0,6),i=0,stage=$("foc-stage");
       function render(){
         if(i>=order.length){stage.innerHTML='<div class="foc-sum">Toll gemacht, Konzentrations-Held! 🦸<br>Du hast alle Situationen gemeistert.</div><div class="foc-btns"><button class="hbtn next" id="foc-again">Nochmal</button><button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';$("foc-again").onclick=coolGame;$("foc-menu2").onclick=back;addEgg(2);say("Klasse! Du weißt jetzt, wie ein starker Kopf reagiert. 💪",true);return;}
         var s=order[i];
