@@ -431,6 +431,15 @@
   .foc-fb{margin-top:12px;font-weight:800;font-size:15px;background:#eef7ef;border-radius:14px;padding:11px;line-height:1.38}
   .foc-sum{text-align:center;font-weight:900;font-size:17px;line-height:1.6;padding:16px;background:linear-gradient(#fffefb,#fff5e4);border:3px solid #fff;border-radius:18px;box-shadow:var(--shadow);margin-top:10px}
   .foc-btns{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .foc-amp{font-size:74px;text-align:center;line-height:1;margin:8px 0}
+  .foc-step{font-weight:900;font-size:19px;text-align:center;line-height:1.4;margin:6px 4px}
+  .foc-breathdot{width:74px;height:74px;border-radius:50%;margin:14px auto;background:radial-gradient(circle at 40% 40%,#bfe6fa,#7ec8a2);animation:focbreathe 4s ease-in-out infinite}
+  @keyframes focbreathe{0%,100%{transform:scale(.7)}50%{transform:scale(1.15)}}
+  @media (prefers-reduced-motion:reduce){.foc-breathdot{animation:none}}
+  .foc-reward{font-size:34px;text-align:center;margin:10px 0;min-height:44px;line-height:1.2}
+  .foc-collect{font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:19px;color:#fff;background:linear-gradient(var(--yolk),var(--yolk-deep));border-radius:16px;padding:15px 24px;box-shadow:var(--shadow);display:block;margin:8px auto 0}
+  .foc-collect:active{transform:translateY(3px)}
+  .foc-collect.go{background:linear-gradient(var(--good),var(--good-deep));animation:scpulse 1s ease-in-out infinite}
 
   /* EXPLORE */
   .topics{display:flex;gap:7px;overflow-x:auto;padding:8px 14px 2px}
@@ -828,6 +837,8 @@
         <button class="foc-card" data-foc="cool">🧊 Cool bleiben<small>Was tun, wenn andere dich ablenken wollen?</small></button>
         <button class="foc-card" data-foc="stop">🦊 Fuchs-Stopp<small>Tippe schnell auf 🐔 – aber STOPP beim Fuchs!</small></button>
         <button class="foc-card" data-foc="sprint">🎯 Fokus-Sprint<small>Bleib dran und schlag deinen Konzentrations-Rekord!</small></button>
+        <button class="foc-card" data-foc="ampel">🚦 Ampel: Stopp–Denk–Los<small>Der Trick für den Moment vor dem Ausrasten</small></button>
+        <button class="foc-card" data-foc="wait">⏳ Warte-Spiel<small>Wer warten kann, bekommt mehr – übe die Pause</small></button>
       </div>
       <div class="foc-stage" id="foc-stage"></div>
       <div style="height:12px"></div>
@@ -945,13 +956,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:15,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:16,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -2092,7 +2103,53 @@
         say(success?"Mega Konzentration! Du hast durchgehalten. 💪":"Dranbleiben wird jedes Mal leichter – super geübt!",true);}
       S.t2=setTimeout(showStim,700);
     }
-    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else sprintGame();}
+    function ampelGame(){
+      $("foc-menu").style.display="none";var stage=$("foc-stage"),to=null;
+      halt=function(){if(to){clearTimeout(to);to=null;}};
+      function red(){
+        stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score">Ampel · Schritt 1</span></div><div class="foc-amp">🔴</div><div class="foc-step">STOPP! Halt kurz an.</div><div class="foc-breathdot"></div><div class="foc-step">Atme tief ein … und wieder aus …</div><div class="foc-btns"><button class="hbtn next" id="foc-w1" disabled>Weiter ➜</button></div>';
+        $("foc-back").onclick=back;say("🔴 Zuerst: Stopp. Einmal tief durchatmen. 🌬️");
+        to=setTimeout(function(){var w=$("foc-w1");if(w){w.disabled=false;}},2600);
+        var w=$("foc-w1");if(w)w.onclick=yellow;
+      }
+      function yellow(){
+        stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score">Ampel · Schritt 2</span></div><div class="foc-amp">🟡</div><div class="foc-step">DENK nach: Was willst du gerade wirklich?</div><div class="foc-opts" id="foc-o"></div><div class="foc-fb" id="foc-fb" style="display:none"></div>';
+        $("foc-back").onclick=back;say("🟡 Jetzt denk kurz nach.");
+        var opts=[{t:"Meine Sache schaffen und ruhig bleiben.",ok:true},{t:"Andere zum Lachen bringen.",ok:false},{t:"Sofort loslegen, egal was.",ok:false}];
+        var o=$("foc-o");shuf(opts).forEach(function(it){var b=document.createElement("button");b.className="foc-opt";b.textContent=it.t;b.onclick=function(){pick2(it,b);};o.appendChild(b);});
+        function pick2(it,b){$("foc-o").querySelectorAll(".foc-opt").forEach(function(x){x.disabled=true;});var fb=$("foc-fb");fb.style.display="";
+          if(it.ok){b.classList.add("good");fb.innerHTML="✅ Genau! Wenn du dein Ziel kennst, triffst du die starke Wahl.";say("Stark gedacht! 💪",true);}
+          else{b.classList.add("meh");$("foc-o").querySelectorAll(".foc-opt").forEach(function(x){if(/Meine Sache/.test(x.textContent))x.classList.add("good");});fb.innerHTML="💡 Überleg: Was bringt DICH weiter? Meistens: deine Sache ruhig schaffen.";say("Denk nochmal …");}
+          var nb=document.createElement("button");nb.className="hbtn next";nb.textContent="Weiter ➜";nb.style.cssText="margin:12px auto 0;display:block";nb.onclick=green;fb.appendChild(nb);}
+      }
+      function green(){
+        stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score">Ampel · Schritt 3</span></div><div class="foc-amp">🟢</div><div class="foc-step">LOS! Triff jetzt die starke Wahl und mach weiter. Du schaffst das! 💪</div><div class="foc-btns"><button class="hbtn next" id="foc-again">Nochmal üben</button><button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';
+        $("foc-back").onclick=back;$("foc-again").onclick=ampelGame;$("foc-menu2").onclick=back;addEgg(1);
+        say("🟢 Stopp – Denk – Los. Genau das hilft dir auch in echt! 🌟",true);
+      }
+      red();
+    }
+    function waitGame(){
+      $("foc-menu").style.display="none";var stage=$("foc-stage");
+      var target=rnd(5,12),grown=0,jetzt=false,done=false,iv=null;
+      halt=function(){done=true;if(iv){clearInterval(iv);iv=null;}};
+      stage.innerHTML='<div class="foc-head"><button class="hbtn" id="foc-back">⬅ Zurück</button><span class="foc-score" id="foc-info">Warte, dann wächst die Belohnung!</span></div><div class="foc-wait"><div class="foc-reward" id="foc-rw">🥚 0</div><div class="foc-timebar"><div class="foc-timefill" id="foc-fill"></div></div><button class="foc-collect" id="foc-collect">Einsammeln</button><div class="foc-score" id="foc-best" style="text-align:center;margin-top:10px">🏆 Längste Wartezeit: '+(G.waitBest||0)+'s</div></div>';
+      $("foc-back").onclick=back;
+      say("Wenn du wartest und NICHT tippst, wächst die Belohnung. Tippe erst „Einsammeln“, wenn Hilde „Jetzt!“ sagt. ⏳");
+      var fill=$("foc-fill");if(fill){fill.style.transition="width "+target+"s linear";void fill.offsetWidth;fill.style.width="100%";}
+      iv=setInterval(function(){if(done)return;grown++;var rw=$("foc-rw");if(rw)rw.textContent="🥚 "+grown;if(grown>=target){jetzt=true;clearInterval(iv);iv=null;var inf=$("foc-info");if(inf)inf.textContent="JETZT! 🟢 Sammle die große Belohnung!";var cb=$("foc-collect");if(cb)cb.classList.add("go");say("Jetzt! 🟢 Tippe „Einsammeln“ – du hast super gewartet!",true);}},1000);
+      $("foc-collect").onclick=function(){
+        if(done)return;done=true;if(iv){clearInterval(iv);iv=null;}
+        if(jetzt){var bonus=3;addEgg(grown);addCoin(bonus);var rec=false;if(target>(G.waitBest||0)){G.waitBest=target;doSave();rec=true;}
+          stage.innerHTML='<div class="foc-sum">🎉 Super gewartet – '+target+' Sekunden!<br>+'+grown+' 🥚 und +'+bonus+' 🪙 Geduld-Bonus'+(rec?'<br>🏆 Neue Bestzeit: '+target+'s!':'')+'</div><div class="foc-btns"><button class="hbtn next" id="foc-again">Nochmal</button><button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';
+          say("Warten kann sich lohnen! Das war starke Selbst-Steuerung. 💪",true);}
+        else{addEgg(Math.max(1,grown));
+          stage.innerHTML='<div class="foc-sum">Eingesammelt nach '+grown+'s: +'+Math.max(1,grown)+' 🥚<br>Fast! Beim nächsten Mal noch ein kleines bisschen länger warten – dann gibt es mehr. ⏳</div><div class="foc-btns"><button class="hbtn next" id="foc-again">Nochmal</button><button class="hbtn" id="foc-menu2">⬅ Zurück</button></div>';
+          say("Gut probiert! Jedes Mal fällt das Warten leichter.");}
+        halt=null;$("foc-again").onclick=waitGame;$("foc-menu2").onclick=back;
+      };
+    }
+    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else if(k==="ampel")ampelGame();else if(k==="wait")waitGame();else sprintGame();}
     function start(){menu();var cards=document.querySelectorAll("#foc-menu .foc-card");cards.forEach(function(c){c.onclick=function(){run(c.getAttribute("data-foc"));};});say("Wähl eine Übung, Konzentrations-Held! 🦸 Hier trainierst du deine Superkraft: dranbleiben und cool bleiben.");}
     return {start:start,stop:function(){if(halt){halt();halt=null;}}};
   })();
@@ -2167,7 +2224,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
