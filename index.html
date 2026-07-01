@@ -448,9 +448,9 @@
   .kj-board{display:grid;gap:4px;background:#7fbf5c;border:3px solid #7a5a36;border-radius:14px;padding:6px;margin:6px auto;max-width:330px;box-shadow:var(--shadow)}
   .kj-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;background:#a5d97f;border-radius:8px}
   .kj-cell.alt{background:#9ad073}
-  .kj-q{font-weight:900;font-size:24px;text-align:center;margin:10px 0 8px;min-height:30px}
+  .kj-q{font-weight:900;font-size:21px;text-align:center;margin:10px 0 8px;min-height:30px;line-height:1.28}
   .kj-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
-  .kj-opt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:14px;padding:13px 6px;font-weight:900;font-size:20px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
+  .kj-opt{font-family:inherit;border:3px solid #fff;background:var(--cream);border-radius:14px;padding:12px 6px;font-weight:900;font-size:16px;line-height:1.2;white-space:normal;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep);min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center}
   .kj-opt:active{transform:translateY(2px)}.kj-opt.right{background:var(--good);color:#fff}.kj-opt.wrong{background:var(--wrong);color:#fff;animation:nudge .35s}.kj-opt:disabled{opacity:.55}
   .kj-dirs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .kj-dir{font-family:inherit;border:3px solid #fff;background:linear-gradient(#fffefb,#eef7ea);border-radius:16px;padding:11px 18px;font-size:26px;cursor:pointer;box-shadow:var(--shadow)}
@@ -594,6 +594,7 @@
         <div class="hilde" id="home-hilde"></div>
         <div class="bubble" id="home-bubble">Willkommen auf deinem Hof, Vinni! Was möchtest du heute machen?</div>
       </div>
+      <div class="ki-row" style="padding:0 14px 4px"><span id="home-ki-status" class="ki-status"></span><button id="home-ki-btn" class="ki-btn">⚙️ KI-Modus</button></div>
       <div class="farm">
         <div class="sun"></div>
         <div class="cloud" style="left:-40px">☁️</div>
@@ -1108,7 +1109,7 @@
     if(name==="barn"){renderBarn();say("Willkommen in der Scheune! Tippe ein Huhn an, um seinen Namen zu hören. 🐔");}
     if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();Story.render();say("Willkommen zurück! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();Story.render();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
   }
 
@@ -2053,6 +2054,31 @@
     return {start:start,buy:buy,sell:sell,next:nextDay};
   })();
 
+  /* ===================== GLOBALER KI-HELFER ===================== */
+  var AI=(function(){
+    function key(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function active(){return !!key();}
+    function status(el){if(!el)return;el.textContent=active()?"🔌 KI-Modus AN – gilt für alle Spiele":"💡 KI-Modus AUS · ⚙️ aktivieren für unendliche Fragen";}
+    function setup(cb){
+      if(active()){if(window.confirm("KI-Modus für ALLE Module ausschalten? (Schlüssel entfernen)")){try{window.localStorage.removeItem("vinni_ai_key");}catch(e){}toast("KI-Modus aus");}if(cb)cb();return;}
+      var v=null;try{v=window.prompt("Für Erwachsene:\n\nAnthropic API-Schlüssel einfügen – der KI-Modus gilt dann für ALLE Module (Wissen, Challenge, Körner-Jagd, Frag Hilde …).\n\nWird NUR lokal auf diesem Gerät gespeichert.\n\nLeer lassen zum Abbrechen.");}catch(e){v=null;}
+      if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}toast("KI-Modus AN ✨ – für alle Spiele");}
+      if(cb)cb();
+    }
+    function callAPI(body){var k=key(),h={"Content-Type":"application/json"};if(k){h["x-api-key"]=k;h["anthropic-version"]="2023-06-01";h["anthropic-dangerous-direct-browser-access"]="true";}return fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:h,body:JSON.stringify(body)}).then(function(r){return r.json();});}
+    var recent=[];
+    function quiz(L){
+      var p="Du bist Hilde, ein kluges Huhn. Erstelle GENAU EINE kurze Multiple-Choice-Frage für Vinni (7 Jahre, hochbegabt, deutschsprachig). Wähle ZUFÄLLIG genau ein Thema: Rechnen, geometrische Formen, Naturwissenschaft, Tiere, Weltall, Körper, Logik oder Allgemeinwissen. Schwierigkeit Stufe "+L+" von 6 – passe Wortschatz und Tiefe an ein begabtes Kind an. Genau 3 kurze Antwortmöglichkeiten (1 bis 3 Wörter), nur EINE richtig, die falschen plausibel. Kindgerecht und faktisch korrekt. Vermeide diese zuletzt gestellten Fragen: "+JSON.stringify(recent.slice(-8))+". Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown: {\"question\":\"die Frage\",\"options\":[\"A\",\"B\",\"C\"],\"correct\":0}";
+      return callAPI({model:"claude-sonnet-4-6",max_tokens:300,messages:[{role:"user",content:p}]}).then(function(d){
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim();t=t.replace(/```json/gi,"").replace(/```/g,"").trim();var f=t.indexOf("{"),l=t.lastIndexOf("}");if(f>=0&&l>f)t=t.slice(f,l+1);var o=JSON.parse(t);
+        if(!o||typeof o.question!=="string"||!Array.isArray(o.options)||o.options.length!==3||typeof o.correct!=="number"||o.correct<0||o.correct>2)throw new Error("bad");
+        recent.push(o.question);if(recent.length>16)recent.shift();
+        return {q:String(o.question),opts:o.options.map(String),correct:o.correct};
+      });
+    }
+    return {active:active,status:status,setup:setup,quiz:quiz};
+  })();
+
   /* ===================== KÖRNER-JAGD ===================== */
   var CORN=(function(){
     var COLS=6,ROWS=6,st=null;
@@ -2063,8 +2089,21 @@
       else if(op==="-"){a=rnd(2,cap);b=rnd(1,a);ans=a-b;eq=a+" − "+b;}
       else{a=rnd(2,Math.min(10,2+L));b=rnd(2,Math.min(10,2+L));ans=a*b;eq=a+" × "+b;}
       var set={},opts=[String(ans)];set[ans]=1;var tr=0;while(opts.length<3&&tr<40){tr++;var d=ans+pick([-2,-1,1,2,3,-3,5,-5,4]);if(d<0||set[d])continue;set[d]=1;opts.push(String(d));}var k=1;while(opts.length<3){if(!set[ans+k]){set[ans+k]=1;opts.push(String(ans+k));}k++;}
-      return {eq:eq+" = ?",ans:ans,opts:shuf(opts)};
+      var oo=shuf(opts);return {q:eq+" = ?",opts:oo,correct:oo.indexOf(String(ans))};
     }
+    var SHAPES=[
+      {q:"Welche Form hat 3 Ecken?",o:["Dreieck","Viereck","Kreis"],c:0},
+      {q:"Welche Form hat 4 gleich lange Seiten?",o:["Quadrat","Dreieck","Kreis"],c:0},
+      {q:"Welche Form ist ganz rund?",o:["Kreis","Dreieck","Rechteck"],c:0},
+      {q:"Wie viele Ecken hat ein Würfel?",o:["8","6","4"],c:0},
+      {q:"Wie viele Seiten hat ein Sechseck?",o:["6","5","8"],c:0},
+      {q:"Welche Form hat ein Ball?",o:["Kugel","Würfel","Dreieck"],c:0},
+      {q:"Wie viele Seiten hat ein Dreieck?",o:["3","4","5"],c:0},
+      {q:"Welche Form hat ein Ei ungefähr?",o:["Oval","Quadrat","Dreieck"],c:0}
+    ];
+    var qToken=0;
+    function shapeQ(){var s=pick(SHAPES),idx=shuf(s.o.map(function(t,i){return {t:t,i:i};})),opts=idx.map(function(x){return x.t;}),correct=0;idx.forEach(function(x,j){if(x.i===s.c)correct=j;});return {q:s.q,opts:opts,correct:correct};}
+    function localQ(L){return Math.random()<0.6?mathQ(L):shapeQ();}
     function newBoard(){var b=[];for(var y=0;y<ROWS;y++){b.push([]);for(var x=0;x<COLS;x++)b[y].push(Math.random()<0.55?"c":0);}return b;}
     function randEmpty(){var t=0;while(t++<40){var x=rnd(0,COLS-1),y=rnd(0,ROWS-1);if((x===st.cx&&y===st.cy)||(x===st.fx&&y===st.fy))continue;if(!st.board[y][x])return {x:x,y:y};}return null;}
     function renderBoard(){var el=$("kj-board");if(!el)return;el.style.gridTemplateColumns="repeat("+COLS+",1fr)";var h="";
@@ -2073,16 +2112,19 @@
         h+='<div class="'+cls+'">'+t+"</div>";}
       el.innerHTML=h;}
     function renderDirs(){var d=$("kj-dirs");if(!d)return;d.innerHTML="";[["⬆️",0,-1],["⬅️",-1,0],["➡️",1,0],["⬇️",0,1]].forEach(function(a){var b=document.createElement("button");b.className="kj-dir";b.textContent=a[0];b.disabled=!st.await||st.over;b.onclick=function(){move(a[1],a[2]);};d.appendChild(b);});}
-    function renderQ(){$("kj-q").textContent=st.cur.eq;var o=$("kj-opts");o.innerHTML="";st.cur.opts.forEach(function(v){var b=document.createElement("button");b.className="kj-opt";b.textContent=v;b.onclick=function(){answer(v,b);};o.appendChild(b);});renderDirs();}
+    function renderQ(){$("kj-q").textContent=st.cur.q;var o=$("kj-opts");o.innerHTML="";st.cur.opts.forEach(function(v,i){var b=document.createElement("button");b.className="kj-opt";b.textContent=v;b.onclick=function(){answer(i,b);};o.appendChild(b);});renderDirs();}
     function renderTools(){var el=$("kj-tools");if(!el)return;if(st.over){el.innerHTML="";return;}
       if(st.gun){el.innerHTML='<button class="kj-tool fire" id="kj-fire">💥 Schießen!</button>';$("kj-fire").onclick=fire;}
       else{var can=st.score>=30;el.innerHTML='<button class="kj-tool'+(can?"":" off")+'" id="kj-buy">🔫 Gewehr einlösen (30 🌽)</button>';$("kj-buy").onclick=buyGun;}}
     function buyGun(){if(st.gun||st.over)return;if(st.score<30){say("Du brauchst 30 Körner für ein Gewehr. Sammle weiter! 🌽");return;}st.score-=30;$("kj-score").textContent=st.score;st.gun=true;renderTools();toast("🔫 Gewehr geladen!",true);say("Gewehr geladen! 🔫 Wenn der Fuchs zu nah kommt: Schießen! 💥",true);}
     function boomAt(x,y){var board=$("kj-board");if(!board)return;board.style.position="relative";var s=document.createElement("div");s.className="kj-boom";s.textContent="BOOOM!";s.style.left=((x+0.5)/COLS*100)+"%";s.style.top=((y+0.5)/ROWS*100)+"%";board.appendChild(s);setTimeout(function(){if(s.parentNode)s.remove();},1100);}
     function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);st.gun=false;st.fy=ROWS-1;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx>0?0:COLS-1);renderBoard();var idx=st.fy*COLS+st.fx,cell=$("kj-board").children[idx];if(cell)cell.classList.add("kj-pop");renderTools();toast("💥 BOOOM!",true);say("BOOOM! 💥 Der Fuchs fliegt an den unteren Rand!",true);}
-    function nextQ(){st.await=false;st.cur=mathQ(1+Math.floor(st.score/10));renderQ();}
-    function answer(v,b){if(st.await||st.over)return;
-      if(parseInt(v,10)===st.cur.ans){b.classList.add("right");st.await=true;$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
+    function nextQ(){st.await=false;var L=1+Math.floor(st.score/10),g=++qToken;
+      if(AI.active()&&Math.random()<0.6){$("kj-q").textContent="Hilde überlegt sich etwas … 🤔";$("kj-opts").innerHTML="";renderDirs();
+        AI.quiz(L).then(function(qq){if(st.over||g!==qToken)return;st.cur=qq;renderQ();}).catch(function(){if(st.over||g!==qToken)return;st.cur=localQ(L);renderQ();});}
+      else{st.cur=localQ(L);renderQ();}}
+    function answer(i,b){if(st.await||st.over)return;
+      if(i===st.cur.correct){b.classList.add("right");st.await=true;$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
       else{b.classList.add("wrong");b.disabled=true;say("Fast! Probier eine andere Antwort – dann darfst du laufen.");}}
     function foxStep(){var dx=st.cx-st.fx,dy=st.cy-st.fy;if(dx===0&&dy===0)return;if(Math.abs(dx)>=Math.abs(dy))st.fx+=dx>0?1:-1;else st.fy+=dy>0?1:-1;}
     function maybeSpawn(){if(Math.random()<0.6){var c=randEmpty();if(c)st.board[c.y][c.x]="c";}if(Math.random()<0.12){var c2=randEmpty();if(c2)st.board[c2.y][c2.x]=(Math.random()<0.5?"b":"g");}}
@@ -2331,6 +2373,7 @@
   ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde","corn-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
+  var homeKi=$("home-ki-btn");if(homeKi)homeKi.onclick=function(){AI.setup(function(){AI.status($("home-ki-status"));});};
   $("homebtn").onclick=function(){show("home");};
   var homeCoop=document.querySelector("#home .coop");if(homeCoop){homeCoop.style.cursor="pointer";homeCoop.onclick=function(){show("barn");};}
   $("m-tip").onclick=function(){M.hint();};$("m-breathe").onclick=openBreathe;
@@ -2358,7 +2401,7 @@
   };
 
   // Hof aus dem Speicher aufbauen
-  renderDecos();renderFlock();refresh();Story.init();Story.render();doSave();
+  renderDecos();renderFlock();refresh();Story.init();Story.render();AI.status($("home-ki-status"));doSave();
 })();
 </script>
 <script>
