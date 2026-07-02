@@ -650,6 +650,27 @@
   .qok{width:18px;font-weight:900;font-size:16px;color:var(--good-deep);text-align:center}
   .qc-hint,.qc-done{font-weight:800;font-size:12px;color:var(--ink-soft);text-align:center;margin-top:2px;line-height:1.35}
   .qc-done{color:var(--good-deep);font-size:13px}
+  /* Wochen-Boss */
+  .bosscard{margin:10px 12px 0;background:linear-gradient(150deg,#fff0e8,#ffe3d6);border:3px solid #fff;border-radius:20px;box-shadow:var(--soft);padding:12px 14px}
+  .bc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .bc-title{font-weight:900;font-size:17px;color:var(--roof-dark)}
+  .bc-chip{font-weight:900;font-size:13px;color:var(--roof-dark);background:#fff;border:1px solid #f0c1a8;border-radius:10px;padding:3px 9px}
+  .bc-txt{font-weight:800;font-size:13px;color:var(--ink-soft);line-height:1.35;margin-bottom:8px}
+  .bc-bar{height:12px;background:#ffe9de;border:1px solid #f0c1a8;border-radius:8px;overflow:hidden}
+  .bc-fill{height:100%;background:linear-gradient(90deg,#ffb35c,#e3735f);border-radius:8px;transition:width .5s ease}
+  .bc-cnt{font-weight:900;font-size:12px;color:var(--roof-dark);text-align:right;margin-top:4px}
+  .bc-fight{width:100%;font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:17px;color:#fff;background:linear-gradient(var(--barn),var(--barn-deep));border-radius:16px;padding:12px;box-shadow:var(--shadow);animation:scpulse 1.3s ease-in-out infinite}
+  .bc-fight:active{transform:translateY(3px)}
+  .boss-arena{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:10px}
+  .boss-face{font-size:64px;filter:drop-shadow(0 6px 5px rgba(0,0,0,.22));animation:foesway 1.4s ease-in-out infinite;display:inline-block;transform-origin:50% 85%}
+  .boss-face.hit{animation:bosshit .5s ease}
+  @keyframes bosshit{0%{transform:scale(1) rotate(0)}30%{transform:scale(.82) rotate(-14deg)}60%{transform:scale(1.1) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+  .boss-bars{text-align:left}
+  .boss-lbl{font-weight:900;font-size:12px;color:var(--ink-soft)}
+  .boss-hp,.boss-lives{font-size:16px;letter-spacing:1px;min-height:20px}
+  .boss-q{font-weight:900;font-size:20px;line-height:1.3;min-height:30px;margin:8px 0 4px}
+  .boss-end{font-size:56px;margin:8px 0}
+  .boss-endtxt{font-weight:900;font-size:17px;line-height:1.4;margin-bottom:12px}
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
 </head>
@@ -711,6 +732,7 @@
       </div>
       <div class="storycard" id="story-card"></div>
       <div class="questcard" id="questcard"></div>
+      <div class="bosscard" id="bosscard"></div>
       <div class="modcards">
         <div class="modsec" data-sec="action">
           <button class="sec-h"><span class="sec-i">🎮</span> Spiele &amp; Action <span class="chev">▾</span></button>
@@ -752,6 +774,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- WOCHEN-BOSS -->
+    <div class="screen" id="boss">
+      <div class="hilde-row"><div class="hilde" id="boss-hilde"></div><div class="bubble" id="boss-bubble">Der Boss ist da!</div></div>
+      <div class="stagepad"><div class="card" id="boss-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- MATH -->
@@ -1133,13 +1162,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[]};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1221,7 +1250,9 @@
   function questInit(){var t=dayKey(0);
     if(!G.daily||G.daily.d!==t){var carry=(G.daily&&G.daily.claimed&&G.daily.d===dayKey(-1))?(G.daily.streak||0):0;
       G.daily={d:t,q:questPick(),p:{},claimed:false,streak:carry};doSave();}}
-  function questTick(){try{questInit();var k=current,d=G.daily;if(!QMETA[k]||d.q.indexOf(k)<0)return;
+  function questTick(){try{questInit();
+    if(current!=="boss")G.bossStars=(G.bossStars||0)+1;
+    var k=current,d=G.daily;if(!QMETA[k]||d.q.indexOf(k)<0){doSave();return;}
     d.p[k]=Math.min(3,(d.p[k]||0)+1);
     var all=d.q.every(function(m){return (d.p[m]||0)>=3;});
     if(all&&!d.claimed){d.claimed=true;d.streak=(d.streak||0)+1;G.eggs+=5;G.coins=(G.coins||0)+3;refresh();
@@ -1281,7 +1312,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1342,8 +1373,9 @@
     if(name==="tractor")TR.say0();
     if(name==="barn"){renderBarn();say("Willkommen in der Scheune! Tippe ein Huhn an, um seinen Namen zu hören. 🐔");}
     if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
+    if(name==="boss")BOSS.open();
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
   }
 
@@ -2403,6 +2435,71 @@
     return {start:start};
   })();
 
+  /* ===================== WOCHEN-BOSS ===================== */
+  var BOSS=(function(){
+    var NEED=25,st=null;
+    function bossName(){return (G.bossWins||0)%2?"Der flinke Marder":"Der freche Fuchs";}
+    function bossEmoji(){return (G.bossWins||0)%2?"🦡":"🦊";}
+    function ready(){return (G.bossStars||0)>=NEED;}
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function normalize(o){if(!o)return null;
+      if(o.q)return o; if(!o.question)return null;
+      return {q:o.question,opts:(o.options||[]).slice(),correct:o.correct,cat:catFor(o.topic||o.question),revisit:o.question,explain:o.explain||""};}
+    function nextQ(){
+      var rev=G.eRevisit||[];
+      if(rev.length&&Math.random()<0.4){var it=rev[Math.floor(Math.random()*rev.length)];render(normalize(it));return;}
+      if(AI.active()&&Math.random()<0.8){
+        $("boss-q").innerHTML='<div class="loading" style="padding:6px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#c75f40" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>'+esc(bossName())+' denkt sich etwas Fieses aus …</div></div>';
+        $("boss-opts").innerHTML="";
+        AI.quiz(AI.level()).then(function(qq){if(!st||st.over)return;render(qq);}).catch(function(){if(!st||st.over)return;render(E.localQ()||null);});
+        return;}
+      render(E.localQ());
+    }
+    function hearts(n,e){var h="";for(var i=0;i<n;i++)h+=e;return h;}
+    function bar(){$("boss-hp").textContent=hearts(st.hp,"❤️");$("boss-lives").textContent=hearts(st.lives,"💛");
+      var f=$("boss-face");if(f)f.textContent=bossEmoji();}
+    function render(t){if(!t){t={q:"3 + 4 = ?",opts:["7","6","8"],correct:0,cat:"mathe"};}
+      st.cur=t;$("boss-q").textContent=t.q;var box=$("boss-opts");box.innerHTML="";
+      t.opts.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b);};box.appendChild(b);});}
+    function answer(i,b){if(st.over||st.await)return;var t=st.cur,ok=(i===t.correct);st.await=true;
+      var btns=$("boss-opts").querySelectorAll(".g-opt");btns.forEach(function(x,idx){x.disabled=true;if(idx===t.correct)x.classList.add("right");});
+      if(ok){st.hp--;bumpBrain(t.cat);
+        if(t.revisit){G.eRevisit=(G.eRevisit||[]).filter(function(x){return x.question!==t.revisit;});
+          if(!G.eMastered)G.eMastered=[];if(G.eMastered.indexOf(t.revisit)<0){G.eMastered.push(t.revisit);if(G.eMastered.length>40)G.eMastered.shift();}doSave();}
+        var f=$("boss-face");if(f){f.classList.remove("hit");void f.offsetWidth;f.classList.add("hit");}
+        bar();
+        if(st.hp<=0)return win();
+        say("Treffer! 💥 "+bossName()+" wankt – weiter so!",true);}
+      else{b.classList.add("wrong");st.lives--;bar();
+        if(st.lives<=0)return lose();
+        say("Autsch! "+bossName()+" ist ausgewichen. "+(t.explain||"")+" Nicht aufgeben!");}
+      setTimeout(function(){if(current!=="boss"||!st||st.over)return;st.await=false;nextQ();},900);}
+    function win(){st.over=true;var beatenAkk=(G.bossWins||0)%2?"den flinken Marder":"den frechen Fuchs";
+      G.bossWins=(G.bossWins||0)+1;G.bossStars=0;doSave();
+      addEgg(10);addCoin(5);SFX.fanfare();
+      $("boss-q").textContent="";$("boss-opts").innerHTML="";
+      $("boss-stage").innerHTML='<div class="boss-end">🏆</div><div class="boss-endtxt">Du hast '+beatenAkk+' besiegt!<br>+10 🥚 +5 🪙</div><button class="hbtn next" id="boss-home">🏡 Zurück zum Hof</button>';
+      $("boss-home").onclick=function(){show("home");};
+      say("SIEG! 🏆 Du bist der Held des Hofes, Vinni! Sammle wieder Sterne – dann traut sich der nächste Boss her.",true);}
+    function lose(){st.over=true;
+      $("boss-q").textContent="";$("boss-opts").innerHTML="";
+      $("boss-stage").innerHTML='<div class="boss-end">😮‍💨</div><div class="boss-endtxt">'+esc(bossName())+' ist diesmal entkommen.<br>Deine Sterne bleiben – versuch es gleich nochmal!</div><button class="hbtn next" id="boss-retry">⚔️ Nochmal kämpfen!</button>';
+      $("boss-retry").onclick=function(){open();};
+      say("Fast! Jeder Fehler macht dich schlauer. Gleich nochmal – du schaffst das! 💪");}
+    function open(){
+      if(!ready()){show("home");return;}
+      st={hp:8,lives:3,cur:null,over:false,await:false};
+      $("boss-stage").innerHTML='<div class="boss-arena"><span id="boss-face" class="boss-face">'+bossEmoji()+'</span><div class="boss-bars"><div class="boss-lbl">'+esc(bossName())+'</div><div id="boss-hp" class="boss-hp"></div><div class="boss-lbl" style="margin-top:6px">Deine Herzen</div><div id="boss-lives" class="boss-lives"></div></div></div><div id="boss-q" class="boss-q"></div><div id="boss-opts" class="g-opts"></div>';
+      bar();nextQ();
+      say("Da ist er – "+bossName()+" "+bossEmoji()+"! Er stellt dir Fragen von dieser Woche. 8 Treffer und er gibt auf. Los, zeig ihm dein Wissen! ⚔️",true);}
+    function renderCard(){var el=$("bosscard");if(!el)return;var s=Math.min(NEED,G.bossStars||0),pct=Math.round(s/NEED*100);
+      var h='<div class="bc-top"><span class="bc-title">'+bossEmoji()+' Wochen-Boss</span><span class="bc-chip">'+(G.bossWins||0)+' 🏆</span></div>';
+      if(ready()){h+='<div class="bc-txt">'+bossName()+' ist da und will dein Wissen testen!</div><button class="bc-fight" id="bc-fight">⚔️ Zum Kampf!</button>';}
+      else{h+='<div class="bc-txt">Sammle Sterne in allen Spielen – bei '+NEED+' ⭐ kommt der Boss!</div><div class="bc-bar"><div class="bc-fill" style="width:'+pct+'%"></div></div><div class="bc-cnt">'+s+' / '+NEED+' ⭐</div>';}
+      el.innerHTML=h;var f=$("bc-fight");if(f)f.onclick=function(){show("boss");};}
+    return {open:open,renderCard:renderCard,ready:ready};
+  })();
+
   /* ===================== FOKUS & COOL BLEIBEN ===================== */
   var FOCUS=(function(){
     var halt=null;
@@ -2632,6 +2729,7 @@
       if(st[id]===0)sec.classList.add("closed");
       var h=sec.querySelector(".sec-h");if(h)h.onclick=function(){sec.classList.toggle("closed");st[id]=sec.classList.contains("closed")?0:1;try{window.localStorage.setItem("vinni_secs",JSON.stringify(st));}catch(e){}};});})();
   renderQuests();
+  BOSS.renderCard();
   (function(){var sb=$("sndbtn");if(!sb)return;sb.textContent=SFX.isOn()?"🔊":"🔇";
     sb.onclick=function(){var o=SFX.toggle();sb.textContent=o?"🔊":"🔇";if(o)SFX.right();toast(o?"🔊 Töne an":"🔇 Töne aus");};})();
   document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("button"):null;if(!b)return;
@@ -2660,7 +2758,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
