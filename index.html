@@ -870,6 +870,7 @@
     <!-- KÖRNER-JAGD -->
     <div class="screen" id="corn">
       <div class="hilde-row"><div class="hilde" id="corn-hilde"></div><div class="bubble" id="corn-bubble">Sammle Körner – und pass auf den Fuchs auf!</div></div>
+      <div class="ki-row"><span id="kj-ki-status" class="ki-status"></span><button id="kj-ki-btn" class="ki-btn">⚙️ KI</button></div>
       <div class="kj-hud"><span>🌽 <b id="kj-score">0</b></span><span>🏆 <b id="kj-best">0</b></span><span id="kj-pred">🦊 6❤</span></div>
       <div class="stagepad">
         <div class="kj-arena">
@@ -1010,13 +1011,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1036,6 +1037,7 @@
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
   function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();}
   function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
+  function bumpBrain(){G.brain=(G.brain||0)+1;doSave();}
   function renderStats(){
     var rows=[
       {i:"🥚",n:"Rechnen",s:"Zahlen & Rechnen",lvl:G.mLevel},
@@ -1366,7 +1368,7 @@
       }}
     function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
     function draw(){st.mode="new";st.target=null;return askAI().catch(function(){return bankPick();}).then(function(qq){if(qq&&qq.question)seenAdd(qq.question);return qq;});}
-    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen};
+    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen,localQ:function(){var qq=bankPick();return qq?{q:qq.question,opts:qq.options.slice(),correct:qq.correct}:null;}};
   })();
 
   /* ===================== PATTERN / LOGIC MODULE ===================== */
@@ -2033,7 +2035,7 @@
     function render(t){$("g-badge").textContent=t.badge;$("g-prompt").innerHTML=t.prompt;var box=$("g-opts");box.innerHTML="";t.options.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b,t);};box.appendChild(b);});$("g-next").style.display="none";say("Was meinst du, Vinni?");if(run.timed)startTimer();else resetBar();}
     function answer(i,b,t){if(run.answered)return;run.answered=true;stopTimer();freezeTimer();var ok=(i===t.correct);
       document.querySelectorAll("#g-opts .g-opt").forEach(function(o,idx){o.disabled=true;if(idx===t.correct)o.classList.add("right");});
-      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);
+      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);bumpBrain();
         var msg="Richtig! ⭐ +"+(10*level());
         if(run.timed){var el=Date.now()-run.qStart,c=el<4000?3:el<8000?2:1;addCoin(c);msg="⚡ Schnell! +"+c+" 🪙  ⭐ +"+(10*level());}
         refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast(msg);setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
@@ -2080,17 +2082,21 @@
       if(cb)cb();
     }
     function callAPI(body){var k=key(),h={"Content-Type":"application/json"};if(k){h["x-api-key"]=k;h["anthropic-version"]="2023-06-01";h["anthropic-dangerous-direct-browser-access"]="true";}return fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:h,body:JSON.stringify(body)}).then(function(r){return r.json();});}
-    var recent=[];
+    var recent=[],recentTopics=[];
+    function level(){return 1+Math.floor((G.brain||0)/6);}
+    function levelWord(L){if(L<=2)return "ganz leicht, erste Begriffe";if(L<=4)return "Grundschulwissen";if(L<=6)return "fortgeschrittenes Grundschulwissen";if(L<=8)return "weiterführend, wie ältere Schulkinder";if(L<=10)return "anspruchsvoll, überraschende Details";if(L<=12)return "sehr anspruchsvoll, tiefe Zusammenhänge";return "Experten-Niveau, faszinierend tief – aber kindgerecht erklärt";}
     function quiz(L){
-      var p="Du bist Hilde, ein kluges Huhn. Erstelle GENAU EINE kurze Multiple-Choice-Frage für Vinni (7 Jahre, hochbegabt, deutschsprachig). Wähle ZUFÄLLIG genau ein Thema: Rechnen, geometrische Formen, Naturwissenschaft, Tiere, Weltall, Körper, Logik oder Allgemeinwissen. Schwierigkeit Stufe "+L+" von 6 – passe Wortschatz und Tiefe an ein begabtes Kind an. Genau 3 kurze Antwortmöglichkeiten (1 bis 3 Wörter), nur EINE richtig, die falschen plausibel. Kindgerecht und faktisch korrekt. Vermeide diese zuletzt gestellten Fragen: "+JSON.stringify(recent.slice(-8))+". Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown: {\"question\":\"die Frage\",\"options\":[\"A\",\"B\",\"C\"],\"correct\":0}";
-      return callAPI({model:"claude-sonnet-4-6",max_tokens:300,messages:[{role:"user",content:p}]}).then(function(d){
+      var topics="Rechnen & Zahlen, Zahlenreihen & Muster, geometrische Formen, Physik, Chemie, Biologie, der menschliche Körper, Tiere, Pflanzen, Wetter & Natur, Weltall & Planeten, Erde/Länder/Flaggen, Geschichte, berühmte Menschen, Erfindungen & Technik, Kunst, Musik, Sprache & Wörter, Logik & Rätsel";
+      var p="Du bist Hilde, ein kluges Huhn, und bringst Vinni (7 Jahre, hochbegabt, deutschsprachig) nach und nach das gesamte Weltwissen bei. Erstelle GENAU EINE kurze Multiple-Choice-Frage. Wähle ZUFÄLLIG genau EIN Thema aus diesem breiten Wissen: "+topics+". Nimm möglichst ein ANDERES Thema als zuletzt ("+JSON.stringify(recentTopics.slice(-6))+"). Schwierigkeit: Stufe "+L+" ("+levelWord(L)+") – je höher die Stufe, desto tiefer, feiner und überraschender; fordere sein Können wirklich. Genau 3 kurze Antwortmöglichkeiten (1 bis 4 Wörter), nur EINE richtig, die falschen plausibel. Kindgerecht, positiv und faktisch korrekt. Stelle NICHT erneut diese zuletzt gestellten Fragen: "+JSON.stringify(recent.slice(-12))+". Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown: {\"topic\":\"Thema\",\"question\":\"die Frage\",\"options\":[\"A\",\"B\",\"C\"],\"correct\":0}";
+      return callAPI({model:"claude-sonnet-4-6",max_tokens:320,messages:[{role:"user",content:p}]}).then(function(d){
         var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim();t=t.replace(/```json/gi,"").replace(/```/g,"").trim();var f=t.indexOf("{"),l=t.lastIndexOf("}");if(f>=0&&l>f)t=t.slice(f,l+1);var o=JSON.parse(t);
         if(!o||typeof o.question!=="string"||!Array.isArray(o.options)||o.options.length!==3||typeof o.correct!=="number"||o.correct<0||o.correct>2)throw new Error("bad");
-        recent.push(o.question);if(recent.length>16)recent.shift();
+        recent.push(o.question);if(recent.length>24)recent.shift();
+        if(o.topic){recentTopics.push(String(o.topic));if(recentTopics.length>10)recentTopics.shift();}
         return {q:String(o.question),opts:o.options.map(String),correct:o.correct};
       });
     }
-    return {active:active,status:status,setup:setup,quiz:quiz};
+    return {active:active,status:status,setup:setup,quiz:quiz,level:level};
   })();
 
   /* ===================== KÖRNER-JAGD ===================== */
@@ -2120,7 +2126,7 @@
     ];
     var qToken=0;
     function shapeQ(){var s=pick(SHAPES),idx=shuf(s.o.map(function(t,i){return {t:t,i:i};})),opts=idx.map(function(x){return x.t;}),correct=0;idx.forEach(function(x,j){if(x.i===s.c)correct=j;});return {q:s.q,opts:opts,correct:correct};}
-    function localQ(L){return Math.random()<0.6?mathQ(L):shapeQ();}
+    function localQ(L){var r=Math.random();if(r<0.4)return mathQ(L);if(r<0.62)return shapeQ();var kq=(typeof E!=="undefined"&&E&&E.localQ)?E.localQ():null;return kq||mathQ(L);}
     function newBoard(){var b=[];for(var y=0;y<ROWS;y++){b.push([]);for(var x=0;x<COLS;x++)b[y].push(Math.random()<0.55?"c":0);}return b;}
     function randEmpty(){var t=0;while(t++<40){var x=rnd(0,COLS-1),y=rnd(0,ROWS-1);if((x===st.cx&&y===st.cy)||(x===st.fx&&y===st.fy))continue;if(!st.board[y][x])return {x:x,y:y};}return null;}
     function renderBoard(){var el=$("kj-board");if(!el)return;el.style.gridTemplateColumns="repeat("+COLS+",1fr)";var h="";
@@ -2143,12 +2149,12 @@
       else{st.fx=COLS-1-st.fx;st.fy=ROWS-1-st.fy;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx===0?COLS-1:0);
         renderBoard();var i2=st.fy*COLS+st.fx,c2=$("kj-board").children[i2];if(c2)c2.classList.add("kj-pop");renderPred();renderTools();
         toast("💥 BOOOM!",true);say("BOOOM! 💥 Der "+predName(st.predType)+" fliegt auf die andere Seite und verliert Energie!",true);}}
-    function nextQ(){st.await=false;var L=1+Math.floor(st.score/10),g=++qToken;
-      if(AI.active()&&Math.random()<0.6){$("kj-q").textContent="Hilde überlegt sich etwas … 🤔";$("kj-opts").innerHTML="";renderDirs();
+    function nextQ(){st.await=false;var L=(AI.level?AI.level():1)+Math.floor(st.score/20),g=++qToken;
+      if(AI.active()&&Math.random()<0.8){$("kj-q").textContent="Hilde überlegt sich etwas … 🤔";$("kj-opts").innerHTML="";renderDirs();
         AI.quiz(L).then(function(qq){if(st.over||g!==qToken)return;st.cur=qq;renderQ();}).catch(function(){if(st.over||g!==qToken)return;st.cur=localQ(L);renderQ();});}
       else{st.cur=localQ(L);renderQ();}}
     function answer(i,b){if(st.await||st.over)return;
-      if(i===st.cur.correct){b.classList.add("right");st.await=true;$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
+      if(i===st.cur.correct){b.classList.add("right");st.await=true;bumpBrain();$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
       else{b.classList.add("wrong");b.disabled=true;st.energy--;renderBattery();var bt=$("kj-battery");if(bt){bt.classList.add("flash");setTimeout(function(){var q=$("kj-battery");if(q)q.classList.remove("flash");},350);}
         if(st.energy<=0){return gameOver("🔋 Keine Energie mehr!");}
         say("Fast! Das kostet Energie 🔋. Probier eine andere Antwort – oder sammle Salat 🥬.");}}
@@ -2172,6 +2178,7 @@
       say(rec?"WOW – neuer Körner-Rekord! 🏆":"Guter Lauf! Beim nächsten Mal entkommst du dem Fuchs bestimmt.",true);}
     function start(){st={board:newBoard(),cx:0,cy:ROWS-1,fx:COLS-1,fy:0,score:0,turns:0,energy:10,predType:"fox",predHits:0,await:false,cur:null,over:false,gun:false};st.board[st.cy][st.cx]=0;st.board[st.fy][st.fx]=0;
       for(var q=0;q<2;q++){var sc=randEmpty();if(sc)st.board[sc.y][sc.x]="s";}
+      AI.status($("kj-ki-status"));var kb=$("kj-ki-btn");if(kb)kb.onclick=function(){AI.setup(function(){AI.status($("kj-ki-status"));});};
       $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();renderBattery();renderPred();renderTools();nextQ();
       say("Sammle Körner und weiche dem Fuchs 🦊 aus! Löse eine Aufgabe, dann darfst du einen Schritt gehen. Raupen 🐛 & Gold-Körner 🌟 geben mehr Punkte. Falsche Antworten kosten Energie 🔋 – iss Salat 🥬, um wieder aufzuladen!");}
     return {start:start};
@@ -2424,7 +2431,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
