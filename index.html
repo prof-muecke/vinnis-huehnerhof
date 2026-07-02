@@ -625,7 +625,31 @@
   .g-opt:hover,.kj-opt:hover,.opt:hover,.kj-dir:hover:not(:disabled){transform:translateY(-1px)}
   .modicon{border:2px solid rgba(255,255,255,.95)}
   .modicon,.staticon{filter:drop-shadow(0 1px 1px rgba(0,0,0,.08))}
-  @media (min-width:640px){.modcards{display:grid;grid-template-columns:1fr 1fr;gap:11px}}
+  @media (min-width:640px){.sec-cards{display:grid;grid-template-columns:1fr 1fr}}
+  /* Themen-Bereiche */
+  .modsec{margin-top:2px}
+  .sec-h{width:100%;display:flex;align-items:center;gap:8px;font-family:inherit;border:2px solid rgba(255,255,255,.8);background:rgba(255,255,255,.55);border-radius:14px;padding:9px 13px;font-weight:900;font-size:15px;color:var(--ink);cursor:pointer;box-shadow:0 2px 0 rgba(54,41,31,.07)}
+  .sec-h .sec-i{font-size:18px}
+  .sec-h .chev{margin-left:auto;transition:transform .2s;color:var(--ink-soft)}
+  .modsec.closed .chev{transform:rotate(-90deg)}
+  .modsec.closed .sec-cards{display:none}
+  .sec-cards{display:flex;flex-direction:column;gap:11px;padding-top:10px}
+  /* Tagesaufgaben */
+  .questcard{margin:10px 12px 0;background:linear-gradient(150deg,#eef7ff,#e7f5ec);border:3px solid #fff;border-radius:20px;box-shadow:var(--soft);padding:12px 14px}
+  .qc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .qc-title{font-weight:900;font-size:17px}
+  .qc-streak{font-weight:900;font-size:13px;color:#c2591d;background:#fff3e0;border:1px solid #f4c48a;border-radius:10px;padding:3px 9px;white-space:nowrap}
+  .qrow{width:100%;display:flex;align-items:center;gap:10px;font-family:inherit;border:2px solid #fff;background:var(--paper);border-radius:14px;padding:9px 11px;margin-bottom:7px;cursor:pointer;box-shadow:0 3px 0 rgba(54,41,31,.08);color:var(--ink)}
+  .qrow:active{transform:translateY(2px)}
+  .qrow.done{background:#e9f7ec;border-color:#cdebd4}
+  .qi{font-size:22px}
+  .qn{font-weight:900;font-size:15px;flex:1;text-align:left}
+  .qdots{display:flex;gap:4px}
+  .qdot{width:11px;height:11px;border-radius:50%;background:#e4dcc8}
+  .qdot.on{background:var(--good)}
+  .qok{width:18px;font-weight:900;font-size:16px;color:var(--good-deep);text-align:center}
+  .qc-hint,.qc-done{font-weight:800;font-size:12px;color:var(--ink-soft);text-align:center;margin-top:2px;line-height:1.35}
+  .qc-done{color:var(--good-deep);font-size:13px}
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
 </head>
@@ -685,26 +709,47 @@
         </svg>
       </div>
       <div class="storycard" id="story-card"></div>
+      <div class="questcard" id="questcard"></div>
       <div class="modcards">
-        <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
-        <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
-        <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
-        <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus &amp; Cool bleiben</div><div class="modsub">Konzentration &amp; Impuls-Bremse trainieren – deine Superkraft</div></div></button>
-        <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus – jeder Schritt eine Rechenaufgabe</div></div></button>
-        <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
-        <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
-        <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
-        <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor bauen</div><div class="modsub">Zusammenbauen, Motor verstehen & mit Zahlen fahren</div></div></button>
-        <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Natur, Welt, Logik – von Hilde erdacht</div></div></button>
-        <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
-        <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
-        <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
-        <button class="modcard mc-clk" data-go="clock"><div class="modicon">⏰</div><div><div class="modtitle">Uhr & Zeit</div><div class="modsub">Die analoge Uhr lesen lernen</div></div></button>
-        <button class="modcard mc-store" data-go="store"><div class="modicon">🏪</div><div><div class="modtitle">Kaufmannsladen</div><div class="modsub">Mit Geld bezahlen & rechnen lernen</div></div></button>
-        <button class="modcard mc-market" data-go="market"><div class="modicon">📈</div><div><div class="modtitle">Hühnermarkt</div><div class="modsub">Angebot & Nachfrage – warum Preise sich ändern</div></div></button>
-        <button class="modcard mc-read" data-go="read"><div class="modicon">🔤</div><div><div class="modtitle">Lesen & Buchstaben</div><div class="modsub">Wörter bauen und hören</div></div></button>
-        <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
-        <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
+        <div class="modsec" data-sec="action">
+          <button class="sec-h"><span class="sec-i">🎮</span> Spiele &amp; Action <span class="chev">▾</span></button>
+          <div class="sec-cards">
+            <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
+            <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus – jeder Schritt eine Rechenaufgabe</div></div></button>
+            <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor bauen</div><div class="modsub">Zusammenbauen, Motor verstehen & mit Zahlen fahren</div></div></button>
+            <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus &amp; Cool bleiben</div><div class="modsub">Konzentration &amp; Impuls-Bremse trainieren – deine Superkraft</div></div></button>
+          </div>
+        </div>
+        <div class="modsec" data-sec="wissen">
+          <button class="sec-h"><span class="sec-i">🧠</span> Wissen &amp; Köpfchen <span class="chev">▾</span></button>
+          <div class="sec-cards">
+            <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Natur, Welt, Logik – von Hilde erdacht</div></div></button>
+            <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
+            <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
+            <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
+            <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
+            <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
+            <button class="modcard mc-read" data-go="read"><div class="modicon">🔤</div><div><div class="modtitle">Lesen & Buchstaben</div><div class="modsub">Wörter bauen und hören</div></div></button>
+          </div>
+        </div>
+        <div class="modsec" data-sec="zahlen">
+          <button class="sec-h"><span class="sec-i">💰</span> Zahlen, Geld &amp; Zeit <span class="chev">▾</span></button>
+          <div class="sec-cards">
+            <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
+            <button class="modcard mc-clk" data-go="clock"><div class="modicon">⏰</div><div><div class="modtitle">Uhr & Zeit</div><div class="modsub">Die analoge Uhr lesen lernen</div></div></button>
+            <button class="modcard mc-store" data-go="store"><div class="modicon">🏪</div><div><div class="modtitle">Kaufmannsladen</div><div class="modsub">Mit Geld bezahlen & rechnen lernen</div></div></button>
+            <button class="modcard mc-market" data-go="market"><div class="modicon">📈</div><div><div class="modtitle">Hühnermarkt</div><div class="modsub">Angebot & Nachfrage – warum Preise sich ändern</div></div></button>
+            <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
+          </div>
+        </div>
+        <div class="modsec" data-sec="hof">
+          <button class="sec-h"><span class="sec-i">🏡</span> Mein Hof <span class="chev">▾</span></button>
+          <div class="sec-cards">
+            <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
+            <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
+            <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1058,13 +1103,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{}};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1080,7 +1125,7 @@
   function renderFlock(){var strip=$("home-flock");strip.innerHTML="";G.chickens.slice(-14).forEach(function(ch){strip.appendChild(birdEl(ch,false));});}
   function renderDecos(){var layer=$("home-deco");layer.innerHTML="";G.decos.forEach(function(id){var d=DECOS[id];if(!d)return;var s=document.createElement("span");s.className="deco";s.style.cssText="position:absolute;"+d.style;s.textContent=d.emoji;layer.appendChild(s);});}
   function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();if(Story)Story.progress("hatch",1);}
-  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();if(Story)Story.progress("egg",n);}
+  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();if(Story)Story.progress("egg",n);questTick();}
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
   function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();}
   function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
@@ -1116,6 +1161,31 @@
   }
   function learn(cat){if(!cat)return;if(!G.know)G.know={};G.know[cat]=(G.know[cat]||0)+1;}
   function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();}
+
+  /* ---------- Tagesaufgaben: "Heute für dich" + Streak ---------- */
+  var QMETA={math:["🥚","Eier rechnen"],explore:["🦉","Fragen & Wissen"],pattern:["🧩","Muster & Logik"],iq:["🧠","Denksport"],corn:["🌽","Körner-Jagd"],game:["🎮","Hühner-Challenge"],clock:["⏰","Uhr & Zeit"],read:["🔤","Lesen"],code:["🤖","Roboter-Hilde"],store:["🏪","Kaufmannsladen"]};
+  var QPOOL=["math","explore","pattern","iq","corn","game","clock","read","code","store"];
+  function dayKey(off){var d=new Date(Date.now()+(off||0)*864e5);return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+  function questPick(){var s=0,t=dayKey(0);for(var i=0;i<t.length;i++)s=(s*31+t.charCodeAt(i))>>>0;
+    var pool=QPOOL.slice(),out=[];for(var j=0;j<3;j++){s=(s*9301+49297)%233280;out.push(pool.splice(s%pool.length,1)[0]);}return out;}
+  function questInit(){var t=dayKey(0);
+    if(!G.daily||G.daily.d!==t){var carry=(G.daily&&G.daily.claimed&&G.daily.d===dayKey(-1))?(G.daily.streak||0):0;
+      G.daily={d:t,q:questPick(),p:{},claimed:false,streak:carry};doSave();}}
+  function questTick(){try{questInit();var k=current,d=G.daily;if(!QMETA[k]||d.q.indexOf(k)<0)return;
+    d.p[k]=Math.min(3,(d.p[k]||0)+1);
+    var all=d.q.every(function(m){return (d.p[m]||0)>=3;});
+    if(all&&!d.claimed){d.claimed=true;d.streak=(d.streak||0)+1;G.eggs+=5;G.coins=(G.coins||0)+3;refresh();
+      setTimeout(function(){toast("🎁 Tagesaufgaben geschafft! +5 🥚 +3 🪙",true);celebrate();},650);}
+    doSave();}catch(e){}}
+  function renderQuests(){questInit();var el=$("questcard");if(!el)return;var d=G.daily;
+    var streakTxt=(d.streak||0)>0?("🔥 "+d.streak+" "+(d.streak===1?"Tag":"Tage")):"⭐ Starte deine Serie!";
+    var h='<div class="qc-top"><span class="qc-title">🎯 Heute für dich</span><span class="qc-streak">'+streakTxt+'</span></div>';
+    d.q.forEach(function(m){var meta=QMETA[m]||["⭐",m],p=Math.min(3,d.p[m]||0),dots="";
+      for(var i=0;i<3;i++)dots+='<span class="qdot'+(i<p?" on":"")+'"></span>';
+      h+='<button class="qrow'+(p>=3?" done":"")+'" data-go="'+m+'"><span class="qi">'+meta[0]+'</span><span class="qn">'+meta[1]+'</span><span class="qdots">'+dots+'</span><span class="qok">'+(p>=3?"✔":"")+'</span></button>';});
+    h+=d.claimed?'<div class="qc-done">🎁 Tagesbonus abgeholt – stark, Vinni! Bis morgen!</div>':'<div class="qc-hint">3 richtige Antworten in jedem der 3 Spiele → 🎁 +5 🥚 +3 🪙</div>';
+    el.innerHTML=h;
+    el.querySelectorAll(".qrow").forEach(function(b){b.onclick=function(){show(b.getAttribute("data-go"));};});}
   function renderStats(){
     var rows=[
       {i:"🥚",n:"Rechnen",s:"Zahlen & Rechnen",lvl:G.mLevel},
@@ -1223,7 +1293,7 @@
     if(name==="barn"){renderBarn();say("Willkommen in der Scheune! Tippe ein Huhn an, um seinen Namen zu hören. 🐔");}
     if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();Story.render();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
   }
 
@@ -2253,7 +2323,7 @@
         AI.quiz(L).then(function(qq){if(st.over||g!==qToken)return;st.cur=qq;renderQ();}).catch(function(){if(st.over||g!==qToken)return;st.cur=localQ(L);renderQ();});}
       else{st.cur=localQ(L);renderQ();}}
     function answer(i,b){if(st.await||st.over)return;
-      if(i===st.cur.correct){b.classList.add("right");st.await=true;bumpBrain(st.cur.cat);$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
+      if(i===st.cur.correct){b.classList.add("right");st.await=true;bumpBrain(st.cur.cat);questTick();$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
       else{b.classList.add("wrong");b.disabled=true;st.energy--;renderBattery();var bt=$("kj-battery");if(bt){bt.classList.add("flash");setTimeout(function(){var q=$("kj-battery");if(q)q.classList.remove("flash");},350);}
         if(st.energy<=0){return gameOver("🔋 Keine Energie mehr!");}
         say("Fast! Das kostet Energie 🔋. Probier eine andere Antwort – oder sammle Salat 🥬.");}}
@@ -2507,6 +2577,11 @@
   ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde","corn-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
+  (function(){var st={};try{st=JSON.parse(window.localStorage.getItem("vinni_secs")||"{}");}catch(e){}
+    document.querySelectorAll(".modsec").forEach(function(sec){var id=sec.getAttribute("data-sec");
+      if(st[id]===0)sec.classList.add("closed");
+      var h=sec.querySelector(".sec-h");if(h)h.onclick=function(){sec.classList.toggle("closed");st[id]=sec.classList.contains("closed")?0:1;try{window.localStorage.setItem("vinni_secs",JSON.stringify(st));}catch(e){}};});})();
+  renderQuests();
   var homeKi=$("home-ki-btn");if(homeKi)homeKi.onclick=function(){AI.setup(function(){AI.status($("home-ki-status"));});};
   $("homebtn").onclick=function(){show("home");};
   var homeCoop=document.querySelector("#home .coop");if(homeCoop){homeCoop.style.cursor="pointer";homeCoop.onclick=function(){show("barn");};}
@@ -2530,7 +2605,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
