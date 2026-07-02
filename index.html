@@ -2140,9 +2140,9 @@
       if(st.predHits>5){var beaten=predName(st.predType);st.predType=(st.predType==="fox")?"marder":"fox";st.predHits=0;st.fx=COLS-1;st.fy=0;if(st.fx===st.cx&&st.fy===st.cy)st.fx=0;
         renderBoard();var i1=st.fy*COLS+st.fx,c1=$("kj-board").children[i1];if(c1)c1.classList.add("kj-pop");renderPred();renderTools();
         toast("💥 "+beaten+" besiegt!",true);say("BOOOM! 💥 Der "+beaten+" ist besiegt! Jetzt kommt der "+predName(st.predType)+" "+predEmoji()+"!"+(st.predType==="marder"?" Achtung – der Marder ist flinker! 🏃":""),true);}
-      else{st.fy=ROWS-1;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx>0?0:COLS-1);
+      else{st.fx=COLS-1-st.fx;st.fy=ROWS-1-st.fy;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx===0?COLS-1:0);
         renderBoard();var i2=st.fy*COLS+st.fx,c2=$("kj-board").children[i2];if(c2)c2.classList.add("kj-pop");renderPred();renderTools();
-        toast("💥 BOOOM!",true);say("BOOOM! 💥 Der "+predName(st.predType)+" fliegt an den Rand und verliert Energie!",true);}}
+        toast("💥 BOOOM!",true);say("BOOOM! 💥 Der "+predName(st.predType)+" fliegt auf die andere Seite und verliert Energie!",true);}}
     function nextQ(){st.await=false;var L=1+Math.floor(st.score/10),g=++qToken;
       if(AI.active()&&Math.random()<0.6){$("kj-q").textContent="Hilde überlegt sich etwas … 🤔";$("kj-opts").innerHTML="";renderDirs();
         AI.quiz(L).then(function(qq){if(st.over||g!==qToken)return;st.cur=qq;renderQ();}).catch(function(){if(st.over||g!==qToken)return;st.cur=localQ(L);renderQ();});}
