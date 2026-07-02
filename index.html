@@ -598,10 +598,39 @@
   .ki-status{font-size:12px;font-weight:800;color:var(--ink-soft)}
   .ki-btn{font-family:inherit;border:2px solid #fff;background:linear-gradient(#fffefb,#eef3f6);border-radius:12px;padding:6px 12px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow);color:var(--barn-deep)}
   .ki-btn:active{transform:translateY(2px)}
+
+  /* ---------- Grafik-Upgrade: lebendige Welt ---------- */
+  @keyframes screenIn{from{opacity:0;transform:translateY(12px) scale(.988)}to{opacity:1;transform:none}}
+  .screen.on{animation:screenIn .3s ease}
+  .skyhills{position:absolute;left:0;right:0;top:26%;height:13%;width:100%}
+  .skybird{position:absolute;font-size:15px;opacity:.55;animation:birdfly linear infinite}
+  @keyframes birdfly{0%{transform:translate(-30px,0)}25%{transform:translate(25vw,-12px)}50%{transform:translate(50vw,4px)}75%{transform:translate(75vw,-10px)}100%{transform:translate(105vw,0)}}
+  .sun{animation:sunglow 4.5s ease-in-out infinite}
+  @keyframes sunglow{0%,100%{box-shadow:0 0 26px rgba(255,201,75,.7);transform:scale(1)}50%{box-shadow:0 0 44px rgba(255,201,75,.95);transform:scale(1.05)}}
+  .meadow{position:absolute;left:0;bottom:0;right:0;height:40px;pointer-events:none;z-index:2}
+  .meadow span{position:absolute;bottom:3px;font-size:16px;transform-origin:bottom center;display:inline-block;animation:sway 3.6s ease-in-out infinite;filter:drop-shadow(0 2px 1px rgba(0,0,0,.12))}
+  .meadow span:nth-child(2n){animation-delay:-1.8s}
+  @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+  .butterfly{position:absolute;left:-24px;top:58px;font-size:17px;z-index:3;pointer-events:none;animation:flutter 18s ease-in-out infinite alternate;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+  @keyframes flutter{0%{transform:translate(0,0) rotate(8deg)}12%{transform:translate(46px,-14px) rotate(-7deg)}25%{transform:translate(95px,4px) rotate(8deg)}38%{transform:translate(150px,-18px) rotate(-8deg)}50%{transform:translate(205px,-2px) rotate(7deg)}62%{transform:translate(258px,-20px) rotate(-6deg)}75%{transform:translate(310px,-6px) rotate(8deg)}88%{transform:translate(360px,-22px) rotate(-8deg)}100%{transform:translate(408px,-8px) rotate(6deg)}}
+  .bubble.speak{animation:speakpop .24s ease}
+  @keyframes speakpop{from{transform:scale(.965)}60%{transform:scale(1.015)}to{transform:scale(1)}}
+  .kj-board{border:4px solid #8a5f33;background:linear-gradient(#8fca69,#77b854);box-shadow:0 6px 0 rgba(54,41,31,.16),inset 0 2px 6px rgba(255,255,255,.35)}
+  .kj-cell{background:linear-gradient(#aede89,#9fd478);box-shadow:inset 0 -2px 0 rgba(0,0,0,.06);text-shadow:0 2px 2px rgba(0,0,0,.12)}
+  .kj-cell.alt{background:linear-gradient(#a3d77c,#94cc6e)}
+  .kj-cell.kj-hero{animation:heroin .3s ease}
+  @keyframes heroin{from{transform:scale(.55)}65%{transform:scale(1.14)}to{transform:scale(1)}}
+  .kj-cell.kj-foe{animation:foesway 1.4s ease-in-out infinite;transform-origin:50% 85%}
+  @keyframes foesway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+  .g-opt:hover,.kj-opt:hover,.opt:hover,.kj-dir:hover:not(:disabled){transform:translateY(-1px)}
+  .modicon{border:2px solid rgba(255,255,255,.95)}
+  .modicon,.staticon{filter:drop-shadow(0 1px 1px rgba(0,0,0,.08))}
+  @media (min-width:640px){.modcards{display:grid;grid-template-columns:1fr 1fr;gap:11px}}
+  @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
 </head>
 <body>
-<div id="sky"><span class="skycloud" style="top:7%;font-size:46px;animation-duration:65s">☁️</span><span class="skycloud" style="top:20%;font-size:30px;animation-duration:90s;animation-delay:-30s">☁️</span><span class="skycloud" style="top:4%;font-size:24px;animation-duration:110s;animation-delay:-70s">☁️</span></div>
+<div id="sky"><span class="skycloud" style="top:7%;font-size:46px;animation-duration:65s">☁️</span><span class="skycloud" style="top:20%;font-size:30px;animation-duration:90s;animation-delay:-30s">☁️</span><span class="skycloud" style="top:4%;font-size:24px;animation-duration:110s;animation-delay:-70s">☁️</span><span class="skybird" style="top:12%;animation-duration:42s">🕊️</span><span class="skybird" style="top:17%;font-size:12px;animation-duration:58s;animation-delay:-25s">🐦</span><svg class="skyhills" viewBox="0 0 1000 140" preserveAspectRatio="none" aria-hidden="true"><path d="M0 92 Q 150 34 320 80 T 640 72 T 1000 86 L1000 140 0 140 Z" fill="#b9e0a2" opacity=".7"/><path d="M0 112 Q 220 62 460 100 T 1000 104 L1000 140 0 140 Z" fill="#a6d68c" opacity=".75"/><g fill="#7fb968" opacity=".6"><ellipse cx="38" cy="88" rx="16" ry="12"/><ellipse cx="64" cy="94" rx="12" ry="9"/><ellipse cx="952" cy="92" rx="14" ry="11"/><ellipse cx="978" cy="98" rx="11" ry="8"/></g></svg></div>
 <div id="fx"></div>
 <div id="app">
   <div class="header">
@@ -636,6 +665,8 @@
           <rect x="228" y="14" width="8" height="60" rx="3"/><rect x="340" y="14" width="8" height="60" rx="3"/></g>
         </svg>
         <div class="feeder" style="left:16%">🌾</div><div class="feeder" style="left:38%">💧</div>
+        <div class="meadow"><span style="left:6%">🌻</span><span style="left:24%;font-size:13px">🌼</span><span style="left:44%;font-size:14px">🌷</span><span style="left:13%;font-size:12px">🌿</span><span style="left:52%;font-size:12px">🌿</span></div>
+        <span class="butterfly">🦋</span>
         <div class="home-deco" id="home-deco"></div>
         <div class="home-flock" id="home-flock"></div>
         <svg class="coop" viewBox="0 0 200 160" aria-label="Hühnerstall">
@@ -1132,7 +1163,7 @@
   /* ---------- shared Hilde / bubble ---------- */
   var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"]};
   var current="home";
-  function say(t,happy){var ids=SCR[current];$(ids[0]).textContent=t;if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
+  function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
   /* ---------- toast + breathing (shared) ---------- */
   var tt=null;
@@ -2199,7 +2230,7 @@
     function randEmpty(){var t=0;while(t++<40){var x=rnd(0,COLS-1),y=rnd(0,ROWS-1);if((x===st.cx&&y===st.cy)||(x===st.fx&&y===st.fy))continue;if(!st.board[y][x])return {x:x,y:y};}return null;}
     function renderBoard(){var el=$("kj-board");if(!el)return;el.style.gridTemplateColumns="repeat("+COLS+",1fr)";var h="";
       for(var y=0;y<ROWS;y++)for(var x=0;x<COLS;x++){var cls=(x+y)%2?"kj-cell alt":"kj-cell",t="";
-        if(x===st.cx&&y===st.cy)t="🐔";else if(x===st.fx&&y===st.fy)t=predEmoji();else{var v=st.board[y][x];t=v==="c"?"🌽":v==="b"?"🐛":v==="g"?"🌟":v==="s"?"🥬":"";}
+        if(x===st.cx&&y===st.cy){t="🐔";cls+=" kj-hero";}else if(x===st.fx&&y===st.fy){t=predEmoji();cls+=" kj-foe";}else{var v=st.board[y][x];t=v==="c"?"🌽":v==="b"?"🐛":v==="g"?"🌟":v==="s"?"🥬":"";}
         h+='<div class="'+cls+'">'+t+"</div>";}
       el.innerHTML=h;}
     function renderBattery(){var el=$("kj-battery");if(!el)return;var e=st.energy;el.className="kj-battery"+(e<=2?" crit":e<=5?" warn":"");var segs="";for(var i=0;i<10;i++)segs+='<div class="kj-seg'+(i<e?" on":"")+'"></div>';el.innerHTML='<div class="kj-batt-cap"></div><div class="kj-batt-body">'+segs+'</div><div class="kj-batt-lbl">🔋'+e+'</div>';}
