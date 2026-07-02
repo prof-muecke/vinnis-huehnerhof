@@ -2096,7 +2096,7 @@
   /* ===================== KÖRNER-JAGD ===================== */
   var CORN=(function(){
     var COLS=6,ROWS=6,st=null;
-    function foxEvery(){return st.score<20?2:1;}
+    function predEvery(){return st.predType==="marder"?1:(st.score<20?2:1);}
     function predEmoji(){return st&&st.predType==="marder"?"🦡":"🦊";}
     function predName(t){return (t||(st&&st.predType))==="marder"?"Marder":"Fuchs";}
     function renderPred(){var el=$("kj-pred");if(el)el.innerHTML=predEmoji()+" "+Math.max(0,6-(st?st.predHits:0))+"❤";}
@@ -2139,7 +2139,7 @@
     function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);st.gun=false;st.predHits++;
       if(st.predHits>5){var beaten=predName(st.predType);st.predType=(st.predType==="fox")?"marder":"fox";st.predHits=0;st.fx=COLS-1;st.fy=0;if(st.fx===st.cx&&st.fy===st.cy)st.fx=0;
         renderBoard();var i1=st.fy*COLS+st.fx,c1=$("kj-board").children[i1];if(c1)c1.classList.add("kj-pop");renderPred();renderTools();
-        toast("💥 "+beaten+" besiegt!",true);say("BOOOM! 💥 Der "+beaten+" ist besiegt! Jetzt kommt der "+predName(st.predType)+" "+predEmoji()+"!",true);}
+        toast("💥 "+beaten+" besiegt!",true);say("BOOOM! 💥 Der "+beaten+" ist besiegt! Jetzt kommt der "+predName(st.predType)+" "+predEmoji()+"!"+(st.predType==="marder"?" Achtung – der Marder ist flinker! 🏃":""),true);}
       else{st.fy=ROWS-1;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx>0?0:COLS-1);
         renderBoard();var i2=st.fy*COLS+st.fx,c2=$("kj-board").children[i2];if(c2)c2.classList.add("kj-pop");renderPred();renderTools();
         toast("💥 BOOOM!",true);say("BOOOM! 💥 Der "+predName(st.predType)+" fliegt an den Rand und verliert Energie!",true);}}
@@ -2161,7 +2161,7 @@
       else{var gain=v==="c"?1:v==="b"?3:v==="g"?5:0;if(gain){st.score+=gain;st.board[ny][nx]=0;if(gain>1)toast("Lecker! +"+gain+" 🌽",true);}}
       $("kj-score").textContent=st.score;
       if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver(predEmoji()+" Erwischt!");}
-      st.turns++;if(st.turns%foxEvery()===0)foxStep();
+      st.turns++;if(st.turns%predEvery()===0){foxStep();if(st.predType==="marder"&&Math.random()<0.35)foxStep();}
       if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver(predEmoji()+" Erwischt!");}
       maybeSpawn();renderBoard();renderTools();nextQ();}
     function gameOver(headline){st.over=true;var best=G.cornBest||0,rec=false;if(st.score>best){G.cornBest=st.score;doSave();rec=true;}

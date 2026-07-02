@@ -1,7 +1,7 @@
 /* Vinnis Hühnerhof – Service Worker
    Macht die App offline nutzbar und installierbar.
    Bei jeder neuen Version unten die CACHE-Nummer hochzählen (v1 -> v2 ...). */
-var CACHE = 'vinni-huehnerhof-v19';
+var CACHE = 'vinni-huehnerhof-v20';
 var ASSETS = [
   './',
   'index.html',
@@ -34,15 +34,34 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   // KI-Anfragen niemals cachen – die sollen immer frisch ans Netz gehen.
   if (req.url.indexOf('api.anthropic.com') >= 0) return;
+
+  var accept = (req.headers.get('accept') || '');
+  var isPage = (req.mode === 'navigate') || accept.indexOf('text/html') >= 0;
+
+  if (isPage) {
+    // NETWORK-FIRST für die App-Seite: wenn online, immer die neueste Version.
+    e.respondWith(
+      fetch(req).then(function (res) {
+        var copy = res.clone();
+        caches.open(CACHE).then(function (c) { try { c.put(req, copy); } catch (err) {} });
+        return res;
+      }).catch(function () {
+        // Offline: aus dem Cache liefern (App bleibt nutzbar).
+        return caches.match(req).then(function (hit) {
+          return hit || caches.match('index.html') || caches.match('./');
+        });
+      })
+    );
+    return;
+  }
+
+  // CACHE-FIRST für statische Dateien (Icons, Manifest): schnell & offline.
   e.respondWith(
     caches.match(req).then(function (hit) {
       return hit || fetch(req).then(function (res) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { try { c.put(req, copy); } catch (err) {} });
         return res;
-      }).catch(function () {
-        // Offline-Fallback: bei Seitenaufrufen die App-Hülle liefern.
-        if (req.mode === 'navigate') return caches.match('index.html');
       });
     })
   );
