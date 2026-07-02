@@ -663,6 +663,7 @@
     <div class="stat">🥚 <span id="eggs">0</span> <small>Eier</small></div>
     <div class="stat">🐔 <span id="flock">0</span> <small>Hühner</small></div>
     <div class="stat">🪙 <span id="coins">0</span> <small>Münzen</small></div>
+    <button class="gear" id="sndbtn" title="Töne an/aus">🔊</button>
     <button class="gear" id="gear" title="Für Erwachsene: Fortschritt zurücksetzen">⚙️</button>
   </div>
 
@@ -1100,16 +1101,45 @@
   function randName(){return NAMES[Math.floor(Math.random()*NAMES.length)];}
   function makeDefault(n){var a=[],bk=["weiss","braun"];for(var i=0;i<n;i++)a.push({breed:bk[i%2],name:NAMES[i%NAMES.length]});return a;}
 
+  /* ---------- Sound-Effekte (WebAudio, keine Dateien) ---------- */
+  var SFX=(function(){
+    var ctx=null,on=true;
+    try{on=window.localStorage.getItem("vinni_sound")!=="0";}catch(e){}
+    function ac(){if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
+      if(ctx&&ctx.state==="suspended"){try{ctx.resume();}catch(e){}}return ctx;}
+    function tone(f,t0,dur,type,vol,slide){var c=ac();if(!c)return;try{
+      var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;
+      o.type=type||"sine";o.frequency.setValueAtTime(f,t);
+      if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+dur);
+      g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.015);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+0.05);}catch(e){}}
+    function noise(dur,vol){var c=ac();if(!c)return;try{
+      var n=Math.floor(c.sampleRate*dur),buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);
+      for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+      var s=c.createBufferSource();s.buffer=buf;var f=c.createBiquadFilter();f.type="lowpass";f.frequency.value=850;
+      var g=c.createGain();g.gain.value=vol||0.28;s.connect(f);f.connect(g);g.connect(c.destination);s.start();}catch(e){}}
+    return {
+      right:function(){if(on){tone(660,0,0.09,"sine",0.14);tone(880,0.09,0.15,"sine",0.14);}},
+      wrong:function(){if(on)tone(230,0,0.2,"triangle",0.1,175);},
+      pop:function(){if(on)tone(500,0,0.07,"square",0.05,760);},
+      coin:function(){if(on){tone(1040,0,0.06,"square",0.07);tone(1560,0.06,0.12,"square",0.07);}},
+      boom:function(){if(on){noise(0.5,0.3);tone(95,0,0.42,"sine",0.24,40);}},
+      fanfare:function(){if(on){[523,659,784,1046].forEach(function(f,i){tone(f,i*0.12,0.16,"triangle",0.15);});tone(1318,0.5,0.32,"triangle",0.16);}},
+      toggle:function(){on=!on;try{window.localStorage.setItem("vinni_sound",on?"1":"0");}catch(e){}return on;},
+      isOn:function(){return on;}
+    };
+  })();
+
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[]};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1123,11 +1153,12 @@
     return d;
   }
   function renderFlock(){var strip=$("home-flock");strip.innerHTML="";G.chickens.slice(-14).forEach(function(ch){strip.appendChild(birdEl(ch,false));});}
-  function renderDecos(){var layer=$("home-deco");layer.innerHTML="";G.decos.forEach(function(id){var d=DECOS[id];if(!d)return;var s=document.createElement("span");s.className="deco";s.style.cssText="position:absolute;"+d.style;s.textContent=d.emoji;layer.appendChild(s);});}
+  function renderDecos(){var layer=$("home-deco");layer.innerHTML="";G.decos.forEach(function(id){var d=DECOS[id];if(!d)return;var s=document.createElement("span");s.className="deco";s.style.cssText="position:absolute;"+d.style;s.textContent=d.emoji;layer.appendChild(s);});
+    (G.badges||[]).forEach(function(cat){var b=KNOW_BADGES[cat];if(!b)return;var s=document.createElement("span");s.className="deco badge";s.style.cssText="position:absolute;"+b.style;s.textContent=b.emoji;layer.appendChild(s);});}
   function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();if(Story)Story.progress("hatch",1);}
-  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();if(Story)Story.progress("egg",n);questTick();}
+  function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();SFX.pop();if(Story)Story.progress("egg",n);questTick();}
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
-  function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();}
+  function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();SFX.coin();}
   function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
   /* ---------- Wissenskarte: Kategorien des Weltwissens ---------- */
   var KNOW_CATS=[
@@ -1159,7 +1190,26 @@
     if(h("mathe","zahl","rechnen","plus","minus","summe","hälfte","doppelt","uhr","zeit","geld","euro","cent","zähl","muster","reihe","teilen"))return "mathe";
     return "logik";
   }
-  function learn(cat){if(!cat)return;if(!G.know)G.know={};G.know[cat]=(G.know[cat]||0)+1;}
+  var KNOW_BADGES={
+    mathe:{emoji:"🧮",style:"left:6%;bottom:52px;font-size:18px"},
+    formen:{emoji:"🪁",style:"left:14%;bottom:52px;font-size:18px"},
+    logik:{emoji:"♟️",style:"left:22%;bottom:52px;font-size:17px"},
+    sprache:{emoji:"📚",style:"left:30%;bottom:52px;font-size:17px"},
+    weltall:{emoji:"🚀",style:"left:38%;bottom:52px;font-size:18px"},
+    tiere:{emoji:"🦔",style:"left:46%;bottom:52px;font-size:17px"},
+    natur:{emoji:"🌺",style:"left:54%;bottom:52px;font-size:17px"},
+    koerper:{emoji:"🧬",style:"left:26%;top:8px;font-size:18px"},
+    erde:{emoji:"🌍",style:"left:34%;top:8px;font-size:18px"},
+    physik:{emoji:"🧲",style:"left:58%;top:8px;font-size:18px"},
+    technik:{emoji:"⚙️",style:"left:66%;top:8px;font-size:18px"},
+    geschichte:{emoji:"🏰",style:"left:74%;top:8px;font-size:19px"}
+  };
+  function learn(cat){if(!cat)return;if(!G.know)G.know={};G.know[cat]=(G.know[cat]||0)+1;
+    if(G.know[cat]===20){if(!G.badges)G.badges=[];
+      if(G.badges.indexOf(cat)<0){G.badges.push(cat);
+        var meta=null;KNOW_CATS.forEach(function(c){if(c.k===cat)meta=c;});
+        var b=KNOW_BADGES[cat];
+        setTimeout(function(){toast("🏅 "+(meta?meta.n:cat)+" auf Stufe 5! "+(b?b.emoji:"")+" schmückt jetzt deinen Hof!",true);SFX.fanfare();},450);}}}
   function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();}
 
   /* ---------- Tagesaufgaben: "Heute für dich" + Streak ---------- */
@@ -1175,7 +1225,7 @@
     d.p[k]=Math.min(3,(d.p[k]||0)+1);
     var all=d.q.every(function(m){return (d.p[m]||0)>=3;});
     if(all&&!d.claimed){d.claimed=true;d.streak=(d.streak||0)+1;G.eggs+=5;G.coins=(G.coins||0)+3;refresh();
-      setTimeout(function(){toast("🎁 Tagesaufgaben geschafft! +5 🥚 +3 🪙",true);celebrate();},650);}
+      setTimeout(function(){toast("🎁 Tagesaufgaben geschafft! +5 🥚 +3 🪙",true);celebrate();SFX.fanfare();},650);}
     doSave();}catch(e){}}
   function renderQuests(){questInit();var el=$("questcard");if(!el)return;var d=G.daily;
     var streakTxt=(d.streak||0)>0?("🔥 "+d.streak+" "+(d.streak===1?"Tag":"Tage")):"⭐ Starte deine Serie!";
@@ -1210,14 +1260,14 @@
     var kn=G.know||{},total=0;KNOW_CATS.forEach(function(c){total+=(kn[c.k]||0);});
     var strong=0;KNOW_CATS.forEach(function(c){if((kn[c.k]||0)>0)strong++;});
     var h='<div class="wk-wrap"><div class="wk-title">🗺️ Deine Wissenskarte</div>';
-    h+='<div class="wk-sub">Jede richtige Antwort lässt eine Insel wachsen. Hier siehst du, wo überall dein Weltwissen wächst!</div>';
+    h+='<div class="wk-sub">Jede richtige Antwort lässt eine Insel wachsen. Ab Stufe 5 gibt es ein 🏅 Abzeichen für deinen Hof!</div>';
     h+='<div class="wk-total"><span>🌟 <b>'+total+'</b> Wissenssterne</span><span>🧭 '+strong+'/'+KNOW_CATS.length+' Gebiete</span><span>'+knowTitle(total)+'</span></div>';
     h+='<div class="wk-grid">';
     KNOW_CATS.forEach(function(c){
       var n=kn[c.k]||0,lvl=1+Math.floor(n/5),within=n-(lvl-1)*5,pct=n===0?0:(within===0?100:Math.round(within/5*100));
       var cls="wk-cell"+(n===0?" empty":n>=25?" gold":"");
       h+='<div class="'+cls+'"><div class="wk-emoji">'+c.e+'</div><div class="wk-name">'+c.n+'</div>';
-      h+='<div class="wk-meta">'+(n===0?'<span class="wk-new">neu – entdecke mich!</span>':('Stufe '+lvl+' · '+n+' ⭐'))+'</div>';
+      h+='<div class="wk-meta">'+(n===0?'<span class="wk-new">neu – entdecke mich!</span>':('Stufe '+lvl+' · '+n+' ⭐'+(n>=20?' · 🏅':'')))+'</div>';
       h+='<div class="wk-bar"><div class="wk-fill" style="width:'+pct+'%"></div></div></div>';
     });
     h+='</div></div>';
@@ -2311,7 +2361,7 @@
       else{var can=st.score>=10;el.innerHTML='<button class="kj-tool'+(can?"":" off")+'" id="kj-buy">🔫 Gewehr einlösen (10 🌽)</button>';$("kj-buy").onclick=buyGun;}}
     function buyGun(){if(st.gun||st.over)return;if(st.score<10){say("Du brauchst 10 Körner für ein Gewehr. Sammle weiter! 🌽");return;}st.score-=10;$("kj-score").textContent=st.score;st.gun=true;renderTools();toast("🔫 Gewehr geladen!",true);say("Gewehr geladen! 🔫 Wenn der Gegner zu nah kommt: Schießen! 💥",true);}
     function boomAt(x,y){var board=$("kj-board");if(!board)return;board.style.position="relative";var s=document.createElement("div");s.className="kj-boom";s.textContent="BOOOM!";s.style.left=((x+0.5)/COLS*100)+"%";s.style.top=((y+0.5)/ROWS*100)+"%";board.appendChild(s);setTimeout(function(){if(s.parentNode)s.remove();},1100);}
-    function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);st.gun=false;st.predHits++;
+    function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);SFX.boom();st.gun=false;st.predHits++;
       if(st.predHits>5){var beaten=predName(st.predType);st.predType=(st.predType==="fox")?"marder":"fox";st.predHits=0;st.fx=COLS-1;st.fy=0;if(st.fx===st.cx&&st.fy===st.cy)st.fx=0;
         renderBoard();var i1=st.fy*COLS+st.fx,c1=$("kj-board").children[i1];if(c1)c1.classList.add("kj-pop");renderPred();renderTools();
         toast("💥 "+beaten+" besiegt!",true);say("BOOOM! 💥 Der "+beaten+" ist besiegt! Jetzt kommt der "+predName(st.predType)+" "+predEmoji()+"!"+(st.predType==="marder"?" Achtung – der Marder ist flinker! 🏃":""),true);}
@@ -2582,6 +2632,11 @@
       if(st[id]===0)sec.classList.add("closed");
       var h=sec.querySelector(".sec-h");if(h)h.onclick=function(){sec.classList.toggle("closed");st[id]=sec.classList.contains("closed")?0:1;try{window.localStorage.setItem("vinni_secs",JSON.stringify(st));}catch(e){}};});})();
   renderQuests();
+  (function(){var sb=$("sndbtn");if(!sb)return;sb.textContent=SFX.isOn()?"🔊":"🔇";
+    sb.onclick=function(){var o=SFX.toggle();sb.textContent=o?"🔊":"🔇";if(o)SFX.right();toast(o?"🔊 Töne an":"🔇 Töne aus");};})();
+  document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("button"):null;if(!b)return;
+    if(b.classList.contains("right"))SFX.right();
+    else if(b.classList.contains("wrong"))SFX.wrong();});
   var homeKi=$("home-ki-btn");if(homeKi)homeKi.onclick=function(){AI.setup(function(){AI.status($("home-ki-status"));});};
   $("homebtn").onclick=function(){show("home");};
   var homeCoop=document.querySelector("#home .coop");if(homeCoop){homeCoop.style.cursor="pointer";homeCoop.onclick=function(){show("barn");};}
@@ -2605,7 +2660,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
