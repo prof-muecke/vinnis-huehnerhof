@@ -671,6 +671,20 @@
   .boss-q{font-weight:900;font-size:20px;line-height:1.3;min-height:30px;margin:8px 0 4px}
   .boss-end{font-size:56px;margin:8px 0}
   .boss-endtxt{font-weight:900;font-size:17px;line-height:1.4;margin-bottom:12px}
+  /* Eltern-Wochenrückblick */
+  .pr-card{background:var(--paper);border:3px solid #fff;border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:10px}
+  .pr-h{font-weight:900;font-size:16px;margin-bottom:8px}
+  .pr-stats{display:flex;flex-wrap:wrap;gap:6px 16px;font-weight:800;font-size:13px;color:var(--ink-soft);margin-bottom:9px}
+  .pr-stats b{color:var(--ink)}
+  .pr-sub{font-weight:800;font-size:12px;color:var(--ink-soft);margin-bottom:6px}
+  .pr-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f0e9d8}
+  .pr-row:last-child{border-bottom:none}
+  .pr-i{font-size:18px}
+  .pr-n{font-weight:800;font-size:14px;flex:1}
+  .pr-d{font-weight:900;font-size:13px;color:var(--good-deep)}
+  .pr-q{font-weight:800;font-size:13px;line-height:1.4;padding:4px 0}
+  .pr-a{color:var(--good-deep);font-weight:900}
+  .pr-tip{font-weight:700;font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
 </head>
@@ -771,9 +785,16 @@
             <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
             <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
             <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
+            <button class="modcard mc-parent" data-go="parent"><div class="modicon">📖</div><div><div class="modtitle">Für Eltern</div><div class="modsub">Wochenrückblick: Was Vinni gerade lernt</div></div></button>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ELTERN-WOCHENRÜCKBLICK -->
+    <div class="screen" id="parent">
+      <div class="hilde-row"><div class="hilde" id="parent-hilde"></div><div class="bubble" id="parent-bubble">Der Wochenrückblick für die Großen. 📖</div></div>
+      <div class="stagepad"><div id="parent-list"></div></div>
     </div>
 
     <!-- WOCHEN-BOSS -->
@@ -1162,13 +1183,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1187,7 +1208,7 @@
   function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();if(Story)Story.progress("hatch",1);}
   function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();SFX.pop();if(Story)Story.progress("egg",n);questTick();}
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
-  function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();SFX.coin();}
+  function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();SFX.coin();if(Story)Story.progress("coin",n);}
   function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
   /* ---------- Wissenskarte: Kategorien des Weltwissens ---------- */
   var KNOW_CATS=[
@@ -1239,12 +1260,15 @@
         var meta=null;KNOW_CATS.forEach(function(c){if(c.k===cat)meta=c;});
         var b=KNOW_BADGES[cat];
         setTimeout(function(){toast("🏅 "+(meta?meta.n:cat)+" auf Stufe 5! "+(b?b.emoji:"")+" schmückt jetzt deinen Hof!",true);SFX.fanfare();},450);}}}
-  function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();}
+  function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();if(Story)Story.progress("brain",1);}
 
   /* ---------- Tagesaufgaben: "Heute für dich" + Streak ---------- */
   var QMETA={math:["🥚","Eier rechnen"],explore:["🦉","Fragen & Wissen"],pattern:["🧩","Muster & Logik"],iq:["🧠","Denksport"],corn:["🌽","Körner-Jagd"],game:["🎮","Hühner-Challenge"],clock:["⏰","Uhr & Zeit"],read:["🔤","Lesen"],code:["🤖","Roboter-Hilde"],store:["🏪","Kaufmannsladen"]};
   var QPOOL=["math","explore","pattern","iq","corn","game","clock","read","code","store"];
   function dayKey(off){var d=new Date(Date.now()+(off||0)*864e5);return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+  function mondayKey(){var d=new Date(),off=(d.getDay()+6)%7,m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-off);return m.getFullYear()+"-"+(m.getMonth()+1)+"-"+m.getDate();}
+  function weekInit(){var wk=mondayKey();
+    if(!G.week||G.week.wk!==wk){G.week={wk:wk,know0:JSON.parse(JSON.stringify(G.know||{})),brain0:G.brain||0,mast0:(G.eMastered||[]).length,wins0:G.bossWins||0};doSave();}}
   function questPick(){var s=0,t=dayKey(0);for(var i=0;i<t.length;i++)s=(s*31+t.charCodeAt(i))>>>0;
     var pool=QPOOL.slice(),out=[];for(var j=0;j<3;j++){s=(s*9301+49297)%233280;out.push(pool.splice(s%pool.length,1)[0]);}return out;}
   function questInit(){var t=dayKey(0);
@@ -1304,6 +1328,32 @@
     h+='</div></div>';
     return h;
   }
+  function escT(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  function renderParent(){
+    weekInit();var el=$("parent-list");if(!el)return;
+    var kn=G.know||{},k0=(G.week&&G.week.know0)||{};
+    var starsWeek=Math.max(0,(G.brain||0)-((G.week&&G.week.brain0)||0));
+    var winsWeek=Math.max(0,(G.bossWins||0)-((G.week&&G.week.wins0)||0));
+    var deltas=[];KNOW_CATS.forEach(function(c){var d=(kn[c.k]||0)-(k0[c.k]||0);if(d>0)deltas.push({c:c,d:d});});
+    deltas.sort(function(a,b){return b.d-a.d;});
+    var streak=(G.daily&&G.daily.streak)||0;
+    var h='<div class="pr-card"><div class="pr-h">📖 Diese Woche (seit Montag)</div>';
+    h+='<div class="pr-stats"><span>🌟 <b>'+starsWeek+'</b> neue Wissenssterne</span><span>🔥 <b>'+streak+'</b> Tage-Serie</span><span>🏆 <b>'+winsWeek+'</b> Boss-Siege</span><span>🧠 Wissenslevel <b>'+(AI.level?AI.level():1)+'</b></span></div>';
+    if(deltas.length){h+='<div class="pr-sub">Hier ist das Wissen gewachsen:</div>';
+      deltas.slice(0,6).forEach(function(x){h+='<div class="pr-row"><span class="pr-i">'+x.c.e+'</span><span class="pr-n">'+x.c.n+'</span><span class="pr-d">+'+x.d+' ⭐</span></div>';});}
+    else{h+='<div class="pr-sub">Diese Woche wurde noch nicht gespielt.</div>';}
+    h+='</div>';
+    var mast=(G.eMastered||[]).slice(-5).reverse();
+    if(mast.length){h+='<div class="pr-card"><div class="pr-h">✅ Frisch gemeistert</div>';
+      mast.forEach(function(q){h+='<div class="pr-q">„'+escT(q)+'“</div>';});
+      h+='<div class="pr-tip">💬 Gesprächsanlass: Fragen Sie Vinni doch mal danach – erklären festigt das Wissen doppelt.</div></div>';}
+    var rev=(G.eRevisit||[]).slice(0,4);
+    if(rev.length){h+='<div class="pr-card"><div class="pr-h">🔄 Da übt Vinni noch</div>';
+      rev.forEach(function(q){var a=(q.options&&q.options[q.correct])||"";h+='<div class="pr-q">„'+escT(q.question)+'“<span class="pr-a"> → '+escT(a)+'</span></div>';});
+      h+='<div class="pr-tip">Diese Fragen tauchen im Spiel (und beim Wochen-Boss) in neuer Form wieder auf.</div></div>';}
+    h+='<div class="pr-card"><div class="pr-h">ℹ️ So hilft die App</div><div class="pr-tip" style="text-align:left">Schwierigkeit steigt automatisch mit jeder richtigen Antwort (aktuell Level '+(AI.level?AI.level():1)+'). Falsch beantwortete Fragen kommen in anderer Form wieder, Gelerntes wird vertieft. Tagesaufgaben und Boss-Kämpfe sorgen für tägliche, kurze Lern-Rituale.</div></div>';
+    el.innerHTML=h;
+  }
   function renderBarn(){
     $("barn-roost").innerHTML='<div class="roost-bar"></div><div class="roost-hen" style="left:18%">'+chick(VAR.braun,false)+'</div><div class="roost-hen" style="left:52%">'+chick(VAR.weiss,true)+'</div>';
     var fl=$("barn-flock");fl.innerHTML="";
@@ -1312,7 +1362,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1374,6 +1424,7 @@
     if(name==="barn"){renderBarn();say("Willkommen in der Scheune! Tippe ein Huhn an, um seinen Namen zu hören. 🐔");}
     if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
     if(name==="boss")BOSS.open();
+    if(name==="parent"){renderParent();say("Hallo! Hier zeige ich den Großen, was Vinni diese Woche gelernt hat. 📖");}
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -2176,11 +2227,40 @@
       {title:"Das versteckte Goldnest",
        intro:"Alle Federn glitzern – die Spur führt zu einem versteckten Nest! Zeig zum Schluss, wie schlau du bist.",
        goals:[{ic:"🧠",label:"Denksport – Stufe 2",cur:function(){return G.iqLevel;},need:2},
-              {ic:"🥚",label:"Rechnen – Stufe 3",cur:function(){return G.mLevel;},need:3}]}
+              {ic:"🥚",label:"Rechnen – Stufe 3",cur:function(){return G.mLevel;},need:3}]},
+      /* ---------- Staffel 2: Das große Hoffest ---------- */
+      {title:"Goldies Geheimnis",
+       intro:"Goldie flüstert dir zu: „Zum Dank lade ich alle Tiere zum großen Hoffest ein!“ 🎪 Hilf ihr – sammle Vorräte und zeig dein Wissen.",
+       goals:[{ic:"🥚",label:"Sammle Eier für das Fest",cur:function(){return cnt("egg");},need:15},
+              {ic:"🌟",label:"Sammle Wissenssterne",cur:function(){return cnt("brain");},need:10}]},
+      {title:"Die Einladungen",
+       intro:"Alle Tiere sollen kommen! Verdiene Münzen für schönes Briefpapier und lerne fleißig weiter.",
+       goals:[{ic:"🪙",label:"Verdiene Münzen (Zeitmodus & Börse)",cur:function(){return cnt("coin");},need:5},
+              {ic:"🌟",label:"Sammle Wissenssterne",cur:function(){return cnt("brain");},need:15}]},
+      {title:"Der Festschmaus",
+       intro:"Ein Fest braucht leckeres Futter! Sammle Eier für den Kuchen und verdiene Münzen für den Einkauf.",
+       goals:[{ic:"🥚",label:"Eier für den Festkuchen",cur:function(){return cnt("egg");},need:15},
+              {ic:"🪙",label:"Münzen für den Einkauf",cur:function(){return cnt("coin");},need:10}]},
+      {title:"Ungebetene Gäste",
+       intro:"Oh nein – Fuchs und Marder wollen das Fest stürmen! Verteidige den Hof wie ein Held.",
+       goals:[{ic:"🥊",label:"Besiege den Wochen-Boss",cur:function(){return cnt("boss");},need:1},
+              {ic:"🦊",label:"Verjage den Fuchs (Traktor)",cur:function(){return cnt("fox");},need:2}]},
+      {title:"Die Festmusik",
+       intro:"Für den großen Hühnerchor brauchen wir Verstärkung – und ein kluger Kopf übt jeden Tag!",
+       goals:[{ic:"🐣",label:"Küken ausbrüten (Hof ausbauen)",cur:function(){return cnt("hatch");},need:1},
+              {ic:"🌟",label:"Sammle Wissenssterne",cur:function(){return cnt("brain");},need:20}]},
+      {title:"Das große Hoffest",
+       intro:"Alles ist fast bereit! Ein letzter Kraftakt, Vinni – dann steigt das größte Fest, das der Hof je gesehen hat! 🎉",
+       goals:[{ic:"🥚",label:"Die letzten Fest-Eier",cur:function(){return cnt("egg");},need:20},
+              {ic:"🌟",label:"Sammle Wissenssterne",cur:function(){return cnt("brain");},need:15},
+              {ic:"🪙",label:"Münzen für die Girlanden",cur:function(){return cnt("coin");},need:10}]}
     ];
+    var END1=5;
+    function freshC(){return {egg:0,hatch:0,fox:0,brain:0,boss:0,coin:0};}
     function init(){
-      if(!G.story||typeof G.story.ch!=="number"){G.story={ch:0,f:0,ready:false,c:{egg:0,hatch:0,fox:0}};}
-      if(!G.story.c)G.story.c={egg:0,hatch:0,fox:0};
+      if(!G.story||typeof G.story.ch!=="number"){G.story={ch:0,f:0,ready:false,c:freshC()};}
+      if(!G.story.c)G.story.c=freshC();
+      var fc=freshC();for(var k in fc){if(G.story.c[k]==null)G.story.c[k]=0;}
     }
     function chap(){return CH[G.story.ch]||null;}
     function allDone(){var c=chap();return c?c.goals.every(function(g){return g.cur()>=g.need;}):false;}
@@ -2196,9 +2276,9 @@
     function render(){
       var box=$("story-card");if(!box)return;if(!G.story)init();
       if(G.story.ch>=CH.length){
-        box.innerHTML='<div class="sc-top"><span class="sc-title">🌟 Goldie ist zuhause!</span><span class="sc-chip">Geschafft 🪶'+CH.length+'</span></div>'+
+        box.innerHTML='<div class="sc-top"><span class="sc-title">🎉 Das große Hoffest!</span><span class="sc-chip">Geschafft 🪶'+CH.length+'</span></div>'+
           '<div class="sc-gold">'+chick(BREEDS.gold.v,false)+'</div>'+
-          '<div class="sc-intro">Du hast alle Hinweise gefunden und das Goldhuhn Goldie gerettet! Es wohnt jetzt für immer auf deinem Hof. Spiel weiter und mach den Hof noch schöner. 🌟</div>';
+          '<div class="sc-intro">Goldie ist gerettet und das größte Hoffest aller Zeiten ist gefeiert – mit Sunny als zweitem Goldhuhn! Du bist der Held des Hofes. Spiel weiter, sammle Sterne und mach den Hof noch schöner. 🌟</div>';
         return;
       }
       var c=chap();
@@ -2214,19 +2294,25 @@
     }
     function claim(){
       if(G.story.ch>=CH.length||!allDone())return;
-      var last=(G.story.ch===CH.length-1);
       G.story.f++;G.eggs+=5;refresh();
-      if(last){
+      if(G.story.ch===END1){
         if(G.unlocked.indexOf("gold")<0)G.unlocked.push("gold");
-        G.story.ch=CH.length;G.story.ready=false;doSave();
-        addChicken("gold","Goldie");
+        G.story.ch++;G.story.ready=false;G.story.c=freshC();doSave();
+        addChicken("gold","Goldie");SFX.fanfare();
         toast("🌟 Goldie gefunden! +5 🥚",true);
-        say("Du hast Goldie gefunden! 🌟 Das Goldhuhn wohnt jetzt für immer auf deinem Hof. Du bist ein echter Hühner-Held!",true);
+        say("Du hast Goldie gefunden! 🌟 Und sie hat eine Überraschung: Sie lädt alle Tiere zum großen Hoffest ein – die Geschichte geht weiter!",true);
         render();return;
       }
-      G.story.ch++;G.story.ready=false;G.story.c={egg:0,hatch:0,fox:0};doSave();
+      if(G.story.ch===CH.length-1){
+        G.story.ch=CH.length;G.story.ready=false;doSave();
+        addChicken("gold","Sunny");SFX.fanfare();
+        toast("🎉 Das große Hoffest steigt! +5 🥚",true);
+        say("Du hast es geschafft, Vinni! 🎉 Das größte Hoffest aller Zeiten – und das Goldhuhn Sunny bleibt als Festgeschenk bei dir!",true);
+        render();return;
+      }
+      G.story.ch++;G.story.ready=false;G.story.c=freshC();doSave();
       celebrate();toast("🪶 Goldfeder gefunden! +5 🥚",true);
-      say("Eine goldene Feder! Die Spur führt weiter. 🌟",true);
+      say("Eine goldene Feder! Die Geschichte geht weiter. 🌟",true);
       render();
     }
     return {init:init,progress:progress,render:render};
@@ -2476,7 +2562,7 @@
       setTimeout(function(){if(current!=="boss"||!st||st.over)return;st.await=false;nextQ();},900);}
     function win(){st.over=true;var beatenAkk=(G.bossWins||0)%2?"den flinken Marder":"den frechen Fuchs";
       G.bossWins=(G.bossWins||0)+1;G.bossStars=0;doSave();
-      addEgg(10);addCoin(5);SFX.fanfare();
+      addEgg(10);addCoin(5);SFX.fanfare();if(Story)Story.progress("boss",1);
       $("boss-q").textContent="";$("boss-opts").innerHTML="";
       $("boss-stage").innerHTML='<div class="boss-end">🏆</div><div class="boss-endtxt">Du hast '+beatenAkk+' besiegt!<br>+10 🥚 +5 🪙</div><button class="hbtn next" id="boss-home">🏡 Zurück zum Hof</button>';
       $("boss-home").onclick=function(){show("home");};
@@ -2728,6 +2814,7 @@
     document.querySelectorAll(".modsec").forEach(function(sec){var id=sec.getAttribute("data-sec");
       if(st[id]===0)sec.classList.add("closed");
       var h=sec.querySelector(".sec-h");if(h)h.onclick=function(){sec.classList.toggle("closed");st[id]=sec.classList.contains("closed")?0:1;try{window.localStorage.setItem("vinni_secs",JSON.stringify(st));}catch(e){}};});})();
+  weekInit();
   renderQuests();
   BOSS.renderCard();
   (function(){var sb=$("sndbtn");if(!sb)return;sb.textContent=SFX.isOn()?"🔊":"🔇";
@@ -2758,7 +2845,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
