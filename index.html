@@ -870,7 +870,7 @@
     <!-- KÖRNER-JAGD -->
     <div class="screen" id="corn">
       <div class="hilde-row"><div class="hilde" id="corn-hilde"></div><div class="bubble" id="corn-bubble">Sammle Körner – und pass auf den Fuchs auf!</div></div>
-      <div class="kj-hud"><span>🌽 <b id="kj-score">0</b></span><span>🏆 <b id="kj-best">0</b></span></div>
+      <div class="kj-hud"><span>🌽 <b id="kj-score">0</b></span><span>🏆 <b id="kj-best">0</b></span><span id="kj-pred">🦊 6❤</span></div>
       <div class="stagepad">
         <div class="kj-arena">
           <div class="kj-battery" id="kj-battery"></div>
@@ -2097,6 +2097,9 @@
   var CORN=(function(){
     var COLS=6,ROWS=6,st=null;
     function foxEvery(){return st.score<20?2:1;}
+    function predEmoji(){return st&&st.predType==="marder"?"🦡":"🦊";}
+    function predName(t){return (t||(st&&st.predType))==="marder"?"Marder":"Fuchs";}
+    function renderPred(){var el=$("kj-pred");if(el)el.innerHTML=predEmoji()+" "+Math.max(0,6-(st?st.predHits:0))+"❤";}
     function mathQ(L){
       var ops=L<2?["+"]:L<3?["+","-"]:["+","-","×"],op=pick(ops),cap=[10,15,20,30,40,50][Math.min(L-1,5)]||20,a,b,ans,eq;
       if(op==="+"){a=rnd(1,cap);b=rnd(1,cap);ans=a+b;eq=a+" + "+b;}
@@ -2122,7 +2125,7 @@
     function randEmpty(){var t=0;while(t++<40){var x=rnd(0,COLS-1),y=rnd(0,ROWS-1);if((x===st.cx&&y===st.cy)||(x===st.fx&&y===st.fy))continue;if(!st.board[y][x])return {x:x,y:y};}return null;}
     function renderBoard(){var el=$("kj-board");if(!el)return;el.style.gridTemplateColumns="repeat("+COLS+",1fr)";var h="";
       for(var y=0;y<ROWS;y++)for(var x=0;x<COLS;x++){var cls=(x+y)%2?"kj-cell alt":"kj-cell",t="";
-        if(x===st.cx&&y===st.cy)t="🐔";else if(x===st.fx&&y===st.fy)t="🦊";else{var v=st.board[y][x];t=v==="c"?"🌽":v==="b"?"🐛":v==="g"?"🌟":v==="s"?"🥬":"";}
+        if(x===st.cx&&y===st.cy)t="🐔";else if(x===st.fx&&y===st.fy)t=predEmoji();else{var v=st.board[y][x];t=v==="c"?"🌽":v==="b"?"🐛":v==="g"?"🌟":v==="s"?"🥬":"";}
         h+='<div class="'+cls+'">'+t+"</div>";}
       el.innerHTML=h;}
     function renderBattery(){var el=$("kj-battery");if(!el)return;var e=st.energy;el.className="kj-battery"+(e<=2?" crit":e<=5?" warn":"");var segs="";for(var i=0;i<10;i++)segs+='<div class="kj-seg'+(i<e?" on":"")+'"></div>';el.innerHTML='<div class="kj-batt-cap"></div><div class="kj-batt-body">'+segs+'</div><div class="kj-batt-lbl">🔋'+e+'</div>';}
@@ -2130,10 +2133,16 @@
     function renderQ(){$("kj-q").textContent=st.cur.q;var o=$("kj-opts");o.innerHTML="";st.cur.opts.forEach(function(v,i){var b=document.createElement("button");b.className="kj-opt";b.textContent=v;b.onclick=function(){answer(i,b);};o.appendChild(b);});renderDirs();}
     function renderTools(){var el=$("kj-tools");if(!el)return;if(st.over){el.innerHTML="";return;}
       if(st.gun){el.innerHTML='<button class="kj-tool fire" id="kj-fire">💥 Schießen!</button>';$("kj-fire").onclick=fire;}
-      else{var can=st.score>=30;el.innerHTML='<button class="kj-tool'+(can?"":" off")+'" id="kj-buy">🔫 Gewehr einlösen (30 🌽)</button>';$("kj-buy").onclick=buyGun;}}
-    function buyGun(){if(st.gun||st.over)return;if(st.score<30){say("Du brauchst 30 Körner für ein Gewehr. Sammle weiter! 🌽");return;}st.score-=30;$("kj-score").textContent=st.score;st.gun=true;renderTools();toast("🔫 Gewehr geladen!",true);say("Gewehr geladen! 🔫 Wenn der Fuchs zu nah kommt: Schießen! 💥",true);}
+      else{var can=st.score>=10;el.innerHTML='<button class="kj-tool'+(can?"":" off")+'" id="kj-buy">🔫 Gewehr einlösen (10 🌽)</button>';$("kj-buy").onclick=buyGun;}}
+    function buyGun(){if(st.gun||st.over)return;if(st.score<10){say("Du brauchst 10 Körner für ein Gewehr. Sammle weiter! 🌽");return;}st.score-=10;$("kj-score").textContent=st.score;st.gun=true;renderTools();toast("🔫 Gewehr geladen!",true);say("Gewehr geladen! 🔫 Wenn der Gegner zu nah kommt: Schießen! 💥",true);}
     function boomAt(x,y){var board=$("kj-board");if(!board)return;board.style.position="relative";var s=document.createElement("div");s.className="kj-boom";s.textContent="BOOOM!";s.style.left=((x+0.5)/COLS*100)+"%";s.style.top=((y+0.5)/ROWS*100)+"%";board.appendChild(s);setTimeout(function(){if(s.parentNode)s.remove();},1100);}
-    function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);st.gun=false;st.fy=ROWS-1;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx>0?0:COLS-1);renderBoard();var idx=st.fy*COLS+st.fx,cell=$("kj-board").children[idx];if(cell)cell.classList.add("kj-pop");renderTools();toast("💥 BOOOM!",true);say("BOOOM! 💥 Der Fuchs fliegt an den unteren Rand!",true);}
+    function fire(){if(!st.gun||st.over)return;boomAt(st.fx,st.fy);st.gun=false;st.predHits++;
+      if(st.predHits>5){var beaten=predName(st.predType);st.predType=(st.predType==="fox")?"marder":"fox";st.predHits=0;st.fx=COLS-1;st.fy=0;if(st.fx===st.cx&&st.fy===st.cy)st.fx=0;
+        renderBoard();var i1=st.fy*COLS+st.fx,c1=$("kj-board").children[i1];if(c1)c1.classList.add("kj-pop");renderPred();renderTools();
+        toast("💥 "+beaten+" besiegt!",true);say("BOOOM! 💥 Der "+beaten+" ist besiegt! Jetzt kommt der "+predName(st.predType)+" "+predEmoji()+"!",true);}
+      else{st.fy=ROWS-1;if(st.fx===st.cx&&st.fy===st.cy)st.fx=(st.cx>0?0:COLS-1);
+        renderBoard();var i2=st.fy*COLS+st.fx,c2=$("kj-board").children[i2];if(c2)c2.classList.add("kj-pop");renderPred();renderTools();
+        toast("💥 BOOOM!",true);say("BOOOM! 💥 Der "+predName(st.predType)+" fliegt an den Rand und verliert Energie!",true);}}
     function nextQ(){st.await=false;var L=1+Math.floor(st.score/10),g=++qToken;
       if(AI.active()&&Math.random()<0.6){$("kj-q").textContent="Hilde überlegt sich etwas … 🤔";$("kj-opts").innerHTML="";renderDirs();
         AI.quiz(L).then(function(qq){if(st.over||g!==qToken)return;st.cur=qq;renderQ();}).catch(function(){if(st.over||g!==qToken)return;st.cur=localQ(L);renderQ();});}
@@ -2151,9 +2160,9 @@
       if(v==="s"){st.energy=Math.min(10,st.energy+2);st.board[ny][nx]=0;renderBattery();toast("🥬 Energie +2 🔋",true);}
       else{var gain=v==="c"?1:v==="b"?3:v==="g"?5:0;if(gain){st.score+=gain;st.board[ny][nx]=0;if(gain>1)toast("Lecker! +"+gain+" 🌽",true);}}
       $("kj-score").textContent=st.score;
-      if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver("🦊 Erwischt!");}
+      if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver(predEmoji()+" Erwischt!");}
       st.turns++;if(st.turns%foxEvery()===0)foxStep();
-      if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver("🦊 Erwischt!");}
+      if(st.cx===st.fx&&st.cy===st.fy){renderBoard();return gameOver(predEmoji()+" Erwischt!");}
       maybeSpawn();renderBoard();renderTools();nextQ();}
     function gameOver(headline){st.over=true;var best=G.cornBest||0,rec=false;if(st.score>best){G.cornBest=st.score;doSave();rec=true;}
       var rew=Math.max(1,Math.round(st.score/5));addEgg(rew);
@@ -2161,9 +2170,9 @@
       $("kj-opts").innerHTML="";var tl=$("kj-tools");if(tl)tl.innerHTML="";var d=$("kj-dirs");d.innerHTML='<button class="hbtn next" id="kj-again">Nochmal 🐔</button>';$("kj-again").onclick=start;
       $("kj-best").textContent=G.cornBest||0;
       say(rec?"WOW – neuer Körner-Rekord! 🏆":"Guter Lauf! Beim nächsten Mal entkommst du dem Fuchs bestimmt.",true);}
-    function start(){st={board:newBoard(),cx:0,cy:ROWS-1,fx:COLS-1,fy:0,score:0,turns:0,energy:10,await:false,cur:null,over:false,gun:false};st.board[st.cy][st.cx]=0;st.board[st.fy][st.fx]=0;
+    function start(){st={board:newBoard(),cx:0,cy:ROWS-1,fx:COLS-1,fy:0,score:0,turns:0,energy:10,predType:"fox",predHits:0,await:false,cur:null,over:false,gun:false};st.board[st.cy][st.cx]=0;st.board[st.fy][st.fx]=0;
       for(var q=0;q<2;q++){var sc=randEmpty();if(sc)st.board[sc.y][sc.x]="s";}
-      $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();renderBattery();renderTools();nextQ();
+      $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();renderBattery();renderPred();renderTools();nextQ();
       say("Sammle Körner und weiche dem Fuchs 🦊 aus! Löse eine Aufgabe, dann darfst du einen Schritt gehen. Raupen 🐛 & Gold-Körner 🌟 geben mehr Punkte. Falsche Antworten kosten Energie 🔋 – iss Salat 🥬, um wieder aufzuladen!");}
     return {start:start};
   })();
