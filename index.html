@@ -279,6 +279,22 @@
   .statname{font-weight:900;font-size:16px}
   .statsub{font-weight:700;font-size:12px;color:var(--ink-soft)}
   .statbadge{font-weight:900;font-size:14px;color:var(--barn-deep);background:var(--cream);border-radius:12px;padding:5px 11px;white-space:nowrap}
+  .wk-wrap{background:linear-gradient(160deg,#eaf6ff,#f3fbef);border:3px solid #fff;border-radius:18px;padding:12px 12px 14px;box-shadow:var(--shadow);margin-bottom:12px}
+  .wk-title{font-weight:900;font-size:18px;text-align:center}
+  .wk-sub{font-weight:700;font-size:12px;color:var(--ink-soft);text-align:center;margin:2px 0 9px}
+  .wk-total{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-weight:900;font-size:13px;margin-bottom:11px}
+  .wk-total b{color:var(--barn-deep)}
+  .wk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:9px}
+  .wk-cell{background:#fff;border:2px solid #fff;border-radius:14px;padding:9px 10px 10px;box-shadow:0 2px 6px rgba(90,70,30,.10);text-align:center}
+  .wk-cell.empty{opacity:.55;filter:grayscale(.55)}
+  .wk-cell.gold{background:linear-gradient(160deg,#fff7db,#fff);border-color:#f4d97a}
+  .wk-emoji{font-size:26px;line-height:1.1}
+  .wk-name{font-weight:900;font-size:13px;margin-top:2px}
+  .wk-meta{font-weight:800;font-size:11.5px;color:var(--barn-deep);margin:2px 0 5px;min-height:15px}
+  .wk-new{color:var(--ink-soft);font-style:italic}
+  .wk-bar{height:8px;background:#e9e2cf;border-radius:6px;overflow:hidden}
+  .wk-fill{height:100%;background:linear-gradient(90deg,#7bc36a,#3a8c63);border-radius:6px;transition:width .5s ease}
+  .wk-h{font-weight:900;font-size:15px;margin:4px 0 8px;text-align:center;color:var(--barn-deep)}
   .mc-stats .modicon{background:#e6eefb}
 
   /* iq / Denksport */
@@ -644,7 +660,7 @@
         <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
         <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus &amp; Cool bleiben</div><div class="modsub">Konzentration &amp; Impuls-Bremse trainieren – deine Superkraft</div></div></button>
         <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus – jeder Schritt eine Rechenaufgabe</div></div></button>
-        <button class="modcard mc-stats" data-go="stats"><div class="modicon">📊</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Wie weit bin ich schon?</div></div></button>
+        <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
         <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
         <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
         <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor bauen</div><div class="modsub">Zusammenbauen, Motor verstehen & mit Zahlen fahren</div></div></button>
@@ -1011,13 +1027,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{}};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
 
@@ -1037,7 +1053,38 @@
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
   function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();}
   function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
-  function bumpBrain(){G.brain=(G.brain||0)+1;doSave();}
+  /* ---------- Wissenskarte: Kategorien des Weltwissens ---------- */
+  var KNOW_CATS=[
+    {k:"mathe",e:"🔢",n:"Mathe & Zahlen"},
+    {k:"formen",e:"📐",n:"Formen & Geometrie"},
+    {k:"logik",e:"🧩",n:"Logik & Rätsel"},
+    {k:"sprache",e:"🔤",n:"Sprache & Wörter"},
+    {k:"weltall",e:"🚀",n:"Weltall & Planeten"},
+    {k:"tiere",e:"🦁",n:"Tiere"},
+    {k:"natur",e:"🌱",n:"Pflanzen & Natur"},
+    {k:"koerper",e:"🫀",n:"Körper & Gesundheit"},
+    {k:"erde",e:"🌍",n:"Erde & Länder"},
+    {k:"physik",e:"⚛️",n:"Physik & Chemie"},
+    {k:"technik",e:"🔧",n:"Technik & Erfindungen"},
+    {k:"geschichte",e:"🏛️",n:"Geschichte & Kultur"}
+  ];
+  function catFor(t){t=(t||"").toString().toLowerCase();
+    function h(){for(var i=0;i<arguments.length;i++){if(t.indexOf(arguments[i])>=0)return true;}return false;}
+    if(h("weltall","planet","stern","sonne","mond","universum","rakete","astronaut","galax","komet","all"))return "weltall";
+    if(h("körper","koerper","organ","herz","lunge","knochen","muskel","blut","gehirn","gesund","zahn","haut","schlaf","atmen","sinne"))return "koerper";
+    if(h("tier","hühn","huhn","vogel","fisch","insekt","katze","hund","säuget","reptil","hof","wal","panda","gepard","pinguin","krake","dino"))return "tiere";
+    if(h("pflanz","natur","baum","blume","blatt","wald","wetter","regen","vulkan","garten","frucht","obst","gemüse","jahreszeit","eis"))return "natur";
+    if(h("erde","land","länd","flagge","kontinent","geograf","berg","meer","ozean","wüste","stadt","hauptstadt","fluss","pyramide","nordpol"))return "erde";
+    if(h("physik","chemie","schwerkraft","magnet","energie","atom","molekül","wissenschaft","experiment","wärme","schall","dampf","schwimm"))return "physik";
+    if(h("technik","erfind","maschine","computer","roboter","program","code","motor","fahrzeug","ingenieur","brücke","teleskop","werkzeug","strom","segel"))return "technik";
+    if(h("geschichte","könig","ritter","ägypt","römer","krieg","erfinder","berühmt","kunst","musik","maler","gemälde","komponist","kultur","instrument","mittelalter"))return "geschichte";
+    if(h("sprache","wort","buchstabe","reim","lesen","vokal","alphabet","grammatik","satz","silbe","schreib","mehrzahl"))return "sprache";
+    if(h("form","geometr","dreieck","viereck","quadrat","kreis","kugel","würfel","ecke","winkel","rechteck","sechseck","oval"))return "formen";
+    if(h("mathe","zahl","rechnen","plus","minus","summe","hälfte","doppelt","uhr","zeit","geld","euro","cent","zähl","muster","reihe","teilen"))return "mathe";
+    return "logik";
+  }
+  function learn(cat){if(!cat)return;if(!G.know)G.know={};G.know[cat]=(G.know[cat]||0)+1;}
+  function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();}
   function renderStats(){
     var rows=[
       {i:"🥚",n:"Rechnen",s:"Zahlen & Rechnen",lvl:G.mLevel},
@@ -1052,8 +1099,28 @@
       {i:"🚜",n:"Traktor fahren",s:"Zahlen vergleichen",lvl:G.tLevel}
     ];
     var html='<div class="stats-sum">🥚 '+G.eggs+' Eier · 🐔 '+G.chickens.length+' Hühner</div>';
+    html+=knowMapHTML();
+    html+='<div class="wk-h">🎮 Deine Spiel-Stufen</div>';
     rows.forEach(function(r){var badge=r.lvl>0?("Stufe "+r.lvl):"aktiv";html+='<div class="statrow"><div class="staticon">'+r.i+'</div><div class="statmid"><div class="statname">'+r.n+'</div><div class="statsub">'+r.s+'</div></div><div class="statbadge">'+badge+'</div></div>';});
     $("stats-list").innerHTML=html;
+  }
+  function knowTitle(total){if(total>=250)return "Professor Vinni 🎓";if(total>=120)return "Wissens-Meister 🏅";if(total>=60)return "Wissens-Forscher 🔬";if(total>=30)return "Wissens-Sammler 📚";if(total>=10)return "Wissens-Entdecker 🧭";return "Wissens-Küken 🐣";}
+  function knowMapHTML(){
+    var kn=G.know||{},total=0;KNOW_CATS.forEach(function(c){total+=(kn[c.k]||0);});
+    var strong=0;KNOW_CATS.forEach(function(c){if((kn[c.k]||0)>0)strong++;});
+    var h='<div class="wk-wrap"><div class="wk-title">🗺️ Deine Wissenskarte</div>';
+    h+='<div class="wk-sub">Jede richtige Antwort lässt eine Insel wachsen. Hier siehst du, wo überall dein Weltwissen wächst!</div>';
+    h+='<div class="wk-total"><span>🌟 <b>'+total+'</b> Wissenssterne</span><span>🧭 '+strong+'/'+KNOW_CATS.length+' Gebiete</span><span>'+knowTitle(total)+'</span></div>';
+    h+='<div class="wk-grid">';
+    KNOW_CATS.forEach(function(c){
+      var n=kn[c.k]||0,lvl=1+Math.floor(n/5),within=n-(lvl-1)*5,pct=n===0?0:(within===0?100:Math.round(within/5*100));
+      var cls="wk-cell"+(n===0?" empty":n>=25?" gold":"");
+      h+='<div class="'+cls+'"><div class="wk-emoji">'+c.e+'</div><div class="wk-name">'+c.n+'</div>';
+      h+='<div class="wk-meta">'+(n===0?'<span class="wk-new">neu – entdecke mich!</span>':('Stufe '+lvl+' · '+n+' ⭐'))+'</div>';
+      h+='<div class="wk-bar"><div class="wk-fill" style="width:'+pct+'%"></div></div></div>';
+    });
+    h+='</div></div>';
+    return h;
   }
   function renderBarn(){
     $("barn-roost").innerHTML='<div class="roost-bar"></div><div class="roost-hen" style="left:18%">'+chick(VAR.braun,false)+'</div><div class="roost-hen" style="left:52%">'+chick(VAR.weiss,true)+'</div>';
@@ -1368,7 +1435,7 @@
       }}
     function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
     function draw(){st.mode="new";st.target=null;return askAI().catch(function(){return bankPick();}).then(function(qq){if(qq&&qq.question)seenAdd(qq.question);return qq;});}
-    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen,localQ:function(){var qq=bankPick();return qq?{q:qq.question,opts:qq.options.slice(),correct:qq.correct}:null;}};
+    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen,localQ:function(){var qq=bankPick();return qq?{q:qq.question,opts:qq.options.slice(),correct:qq.correct,cat:catFor(qq.topic)}:null;}};
   })();
 
   /* ===================== PATTERN / LOGIC MODULE ===================== */
@@ -2026,7 +2093,8 @@
     function gRead(L){if(Math.random()<0.5){var t=pick(RHYME);return task("🔤 Lesen",'<div class="g-prompt-t">Was reimt sich auf „'+t.w+'“?</div>',t.r,t.d,t.w+" – "+t.r);}var m=pick(MISS);return task("🔤 Lesen",'<div class="g-prompt-t">Welcher Buchstabe fehlt?<br><b style="font-size:30px;letter-spacing:3px">'+m.w+"</b></div>",m.a,m.d,m.full);}
     var CODE=[{q:"Welcher Baustein wiederholt etwas mehrmals?",a:"Schleife",d:["Vor","Wenn"]},{q:"Womit prüft der Roboter „ist der Weg frei?“",a:"Wenn-Dann",d:["Schleife","Rückwärts"]},{q:"Der Roboter schaut nach rechts ▶ und geht „Vor“. Wohin?",a:"nach rechts",d:["nach links","nach oben"]},{q:"Was macht der Befehl „↻ Rechts“?",a:"dreht den Roboter",d:["geht vor","sammelt ein Ei"]}];
     function gCode(L){var t=pick(CODE);return task("🤖 Roboter",'<div class="g-prompt-t">'+t.q+"</div>",t.a,t.d,t.a);}
-    function gKnow(L){return E.draw().then(function(qq){return {badge:"🦉 Wissen",prompt:'<div class="g-prompt-t">'+gEsc(qq.question)+"</div>",options:qq.options.slice(),correct:qq.correct,explain:qq.explain||""};});}
+    function gKnow(L){return E.draw().then(function(qq){return {badge:"🦉 Wissen",prompt:'<div class="g-prompt-t">'+gEsc(qq.question)+"</div>",options:qq.options.slice(),correct:qq.correct,explain:qq.explain||"",cat:catFor(qq.topic||qq.question)};});}
+    function taskCat(t){if(t&&t.cat)return t.cat;var b=(t&&t.badge)||"";if(b.indexOf("Logik")>=0||b.indexOf("Markt")>=0)return "logik";if(b.indexOf("Lesen")>=0)return "sprache";if(b.indexOf("Roboter")>=0)return "technik";if(b.indexOf("Wissen")>=0)return "logik";return "mathe";}
     var CATS=[{g:gMath},{g:gKnow,know:true},{g:gPattern},{g:gLogic},{g:gClock},{g:gMoney},{g:gMarket},{g:gCompare},{g:gRead},{g:gCode}];
     var bag=[];
     function drawCat(){if(!bag.length)bag=shuf(CATS.concat(aiKey()?[{g:gKnow,know:true}]:[]));return bag.pop();}
@@ -2035,7 +2103,7 @@
     function render(t){$("g-badge").textContent=t.badge;$("g-prompt").innerHTML=t.prompt;var box=$("g-opts");box.innerHTML="";t.options.forEach(function(o,i){var b=document.createElement("button");b.className="g-opt";b.textContent=o;b.onclick=function(){answer(i,b,t);};box.appendChild(b);});$("g-next").style.display="none";say("Was meinst du, Vinni?");if(run.timed)startTimer();else resetBar();}
     function answer(i,b,t){if(run.answered)return;run.answered=true;stopTimer();freezeTimer();var ok=(i===t.correct);
       document.querySelectorAll("#g-opts .g-opt").forEach(function(o,idx){o.disabled=true;if(idx===t.correct)o.classList.add("right");});
-      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);bumpBrain();
+      if(ok){b.classList.add("right");run.streak++;run.score+=10*level();if(run.streak>run.best){run.best=run.streak;G.gameBest=run.best;doSave();}addEgg(1);bumpBrain(taskCat(t));
         var msg="Richtig! ⭐ +"+(10*level());
         if(run.timed){var el=Date.now()-run.qStart,c=el<4000?3:el<8000?2:1;addCoin(c);msg="⚡ Schnell! +"+c+" 🪙  ⭐ +"+(10*level());}
         refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast(msg);setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
@@ -2093,7 +2161,7 @@
         if(!o||typeof o.question!=="string"||!Array.isArray(o.options)||o.options.length!==3||typeof o.correct!=="number"||o.correct<0||o.correct>2)throw new Error("bad");
         recent.push(o.question);if(recent.length>24)recent.shift();
         if(o.topic){recentTopics.push(String(o.topic));if(recentTopics.length>10)recentTopics.shift();}
-        return {q:String(o.question),opts:o.options.map(String),correct:o.correct};
+        return {q:String(o.question),opts:o.options.map(String),correct:o.correct,cat:catFor(o.topic)};
       });
     }
     return {active:active,status:status,setup:setup,quiz:quiz,level:level};
@@ -2112,7 +2180,7 @@
       else if(op==="-"){a=rnd(2,cap);b=rnd(1,a);ans=a-b;eq=a+" − "+b;}
       else{a=rnd(2,Math.min(10,2+L));b=rnd(2,Math.min(10,2+L));ans=a*b;eq=a+" × "+b;}
       var set={},opts=[String(ans)];set[ans]=1;var tr=0;while(opts.length<3&&tr<40){tr++;var d=ans+pick([-2,-1,1,2,3,-3,5,-5,4]);if(d<0||set[d])continue;set[d]=1;opts.push(String(d));}var k=1;while(opts.length<3){if(!set[ans+k]){set[ans+k]=1;opts.push(String(ans+k));}k++;}
-      var oo=shuf(opts);return {q:eq+" = ?",opts:oo,correct:oo.indexOf(String(ans))};
+      var oo=shuf(opts);return {q:eq+" = ?",opts:oo,correct:oo.indexOf(String(ans)),cat:"mathe"};
     }
     var SHAPES=[
       {q:"Welche Form hat 3 Ecken?",o:["Dreieck","Viereck","Kreis"],c:0},
@@ -2125,7 +2193,7 @@
       {q:"Welche Form hat ein Ei ungefähr?",o:["Oval","Quadrat","Dreieck"],c:0}
     ];
     var qToken=0;
-    function shapeQ(){var s=pick(SHAPES),idx=shuf(s.o.map(function(t,i){return {t:t,i:i};})),opts=idx.map(function(x){return x.t;}),correct=0;idx.forEach(function(x,j){if(x.i===s.c)correct=j;});return {q:s.q,opts:opts,correct:correct};}
+    function shapeQ(){var s=pick(SHAPES),idx=shuf(s.o.map(function(t,i){return {t:t,i:i};})),opts=idx.map(function(x){return x.t;}),correct=0;idx.forEach(function(x,j){if(x.i===s.c)correct=j;});return {q:s.q,opts:opts,correct:correct,cat:"formen"};}
     function localQ(L){var r=Math.random();if(r<0.4)return mathQ(L);if(r<0.62)return shapeQ();var kq=(typeof E!=="undefined"&&E&&E.localQ)?E.localQ():null;return kq||mathQ(L);}
     function newBoard(){var b=[];for(var y=0;y<ROWS;y++){b.push([]);for(var x=0;x<COLS;x++)b[y].push(Math.random()<0.55?"c":0);}return b;}
     function randEmpty(){var t=0;while(t++<40){var x=rnd(0,COLS-1),y=rnd(0,ROWS-1);if((x===st.cx&&y===st.cy)||(x===st.fx&&y===st.fy))continue;if(!st.board[y][x])return {x:x,y:y};}return null;}
@@ -2154,7 +2222,7 @@
         AI.quiz(L).then(function(qq){if(st.over||g!==qToken)return;st.cur=qq;renderQ();}).catch(function(){if(st.over||g!==qToken)return;st.cur=localQ(L);renderQ();});}
       else{st.cur=localQ(L);renderQ();}}
     function answer(i,b){if(st.await||st.over)return;
-      if(i===st.cur.correct){b.classList.add("right");st.await=true;bumpBrain();$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
+      if(i===st.cur.correct){b.classList.add("right");st.await=true;bumpBrain(st.cur.cat);$("kj-opts").querySelectorAll(".kj-opt").forEach(function(x){x.disabled=true;});renderDirs();say("Richtig! Jetzt wähle die Richtung. ⬅️➡️");}
       else{b.classList.add("wrong");b.disabled=true;st.energy--;renderBattery();var bt=$("kj-battery");if(bt){bt.classList.add("flash");setTimeout(function(){var q=$("kj-battery");if(q)q.classList.remove("flash");},350);}
         if(st.energy<=0){return gameOver("🔋 Keine Energie mehr!");}
         say("Fast! Das kostet Energie 🔋. Probier eine andere Antwort – oder sammle Salat 🥬.");}}
@@ -2431,7 +2499,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
