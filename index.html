@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>
+  @font-face{font-family:"Nunito";font-style:normal;font-weight:400 1000;font-display:swap;src:url("nunito.woff2") format("woff2")}
   :root{
     --sky1:#cdeafb;--sky2:#9ad2ee;--grass1:#8ecb6a;--grass2:#5e9d44;
     --paper:#fffdf6;--cream:#fff7e4;--ink:#36291f;--ink-soft:#6e5e50;
@@ -20,7 +21,7 @@
     --wood:#c79a5e;--wood-dark:#9c6f3e;--roof:#b14b39;--roof-dark:#8f3a2b;
     --shadow:0 6px 0 rgba(54,41,31,.14);--soft:0 8px 22px rgba(54,41,31,.16);
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-synthesis:none}
   html,body{margin:0;height:100%}
   body{font-family:"Nunito",ui-rounded,"Segoe UI Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
     color:var(--ink);overflow:hidden;user-select:none;-webkit-user-select:none;
@@ -702,11 +703,38 @@
   .inv-ok{background:var(--good);color:#fff}.inv-no{background:var(--wrong);color:#fff}
   .inv-ok:active,.inv-no:active{transform:translateY(3px)}
   .mc-invent .modicon{background:#e8eefb}
+
+  /* ---------- Optik-Feinschliff: Tageszeit, Bereiche, Desktop ---------- */
+  body.sky-morning{--sky1:#ffe6cf;--sky2:#b5d9ef}
+  body.sky-evening{--sky1:#ffd9a8;--sky2:#eda87e}
+  body.sky-night{--sky1:#22375c;--sky2:#31507e;--grass1:#5b8a4a;--grass2:#3d6233}
+  body.sky-night .skycloud{opacity:.14}
+  body.sky-night .skybird{display:none}
+  body.sky-night .skyhills{opacity:.45;filter:brightness(.65)}
+  body.sky-night .ki-status{color:#efe8d6;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .skymoon,.skystar{display:none}
+  body.sky-night .skymoon{display:block;position:absolute;right:8%;top:6%;font-size:40px;filter:drop-shadow(0 0 16px rgba(255,255,210,.85))}
+  body.sky-night .skystar{display:block;position:absolute;font-size:14px;animation:twinkle 2.4s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+  .stat.bump{animation:statbump .45s ease}
+  @keyframes statbump{35%{transform:scale(1.14)}70%{transform:scale(.97)}}
+  .modsec[data-sec="action"] .sec-h{background:linear-gradient(#ffe9d9,#ffe0ca)}
+  .modsec[data-sec="wissen"] .sec-h{background:linear-gradient(#ece5fb,#e3d9f7)}
+  .modsec[data-sec="zahlen"] .sec-h{background:linear-gradient(#dff3e6,#d3edda)}
+  .modsec[data-sec="hof"] .sec-h{background:linear-gradient(#fdf2d8,#f9ebc6)}
+  #home::-webkit-scrollbar,.stagepad::-webkit-scrollbar{width:8px}
+  #home::-webkit-scrollbar-thumb,.stagepad::-webkit-scrollbar-thumb{background:rgba(154,140,110,.4);border-radius:8px}
+  #home::-webkit-scrollbar-track,.stagepad::-webkit-scrollbar-track{background:transparent}
+  @media (min-width:900px){
+    #app{background:rgba(255,255,255,.26);border:1px solid rgba(255,255,255,.65);border-radius:26px;
+      margin:12px auto;height:calc(100% - 24px);box-shadow:0 18px 48px rgba(54,41,31,.18);overflow:hidden}
+    .header{padding-top:12px}
+  }
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
 </head>
 <body>
-<div id="sky"><span class="skycloud" style="top:7%;font-size:46px;animation-duration:65s">☁️</span><span class="skycloud" style="top:20%;font-size:30px;animation-duration:90s;animation-delay:-30s">☁️</span><span class="skycloud" style="top:4%;font-size:24px;animation-duration:110s;animation-delay:-70s">☁️</span><span class="skybird" style="top:12%;animation-duration:42s">🕊️</span><span class="skybird" style="top:17%;font-size:12px;animation-duration:58s;animation-delay:-25s">🐦</span><svg class="skyhills" viewBox="0 0 1000 140" preserveAspectRatio="none" aria-hidden="true"><path d="M0 92 Q 150 34 320 80 T 640 72 T 1000 86 L1000 140 0 140 Z" fill="#b9e0a2" opacity=".7"/><path d="M0 112 Q 220 62 460 100 T 1000 104 L1000 140 0 140 Z" fill="#a6d68c" opacity=".75"/><g fill="#7fb968" opacity=".6"><ellipse cx="38" cy="88" rx="16" ry="12"/><ellipse cx="64" cy="94" rx="12" ry="9"/><ellipse cx="952" cy="92" rx="14" ry="11"/><ellipse cx="978" cy="98" rx="11" ry="8"/></g></svg></div>
+<div id="sky"><span class="skycloud" style="top:7%;font-size:46px;animation-duration:65s">☁️</span><span class="skycloud" style="top:20%;font-size:30px;animation-duration:90s;animation-delay:-30s">☁️</span><span class="skycloud" style="top:4%;font-size:24px;animation-duration:110s;animation-delay:-70s">☁️</span><span class="skybird" style="top:12%;animation-duration:42s">🕊️</span><span class="skybird" style="top:17%;font-size:12px;animation-duration:58s;animation-delay:-25s">🐦</span><span class="skymoon">🌙</span><span class="skystar" style="left:14%;top:9%">✨</span><span class="skystar" style="left:38%;top:5%;animation-delay:-.9s">⭐</span><span class="skystar" style="left:62%;top:12%;animation-delay:-1.6s">✨</span><svg class="skyhills" viewBox="0 0 1000 140" preserveAspectRatio="none" aria-hidden="true"><path d="M0 92 Q 150 34 320 80 T 640 72 T 1000 86 L1000 140 0 140 Z" fill="#b9e0a2" opacity=".7"/><path d="M0 112 Q 220 62 460 100 T 1000 104 L1000 140 0 140 Z" fill="#a6d68c" opacity=".75"/><g fill="#7fb968" opacity=".6"><ellipse cx="38" cy="88" rx="16" ry="12"/><ellipse cx="64" cy="94" rx="12" ry="9"/><ellipse cx="952" cy="92" rx="14" ry="11"/><ellipse cx="978" cy="98" rx="11" ry="8"/></g></svg></div>
 <div id="fx"></div>
 <div id="app">
   <div class="header">
@@ -1216,7 +1244,14 @@
     decos:_ld.decos||[],story:_ld.story||null,
     eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
-  function refresh(){$("eggs").textContent=G.eggs;$("flock").textContent=G.chickens.length;var c=$("coins");if(c)c.textContent=G.coins;}
+  function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
+    if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
+      if(p){p.classList.remove("bump");void p.offsetWidth;p.classList.add("bump");}}}
+  function refresh(){setStat("eggs",G.eggs);setStat("flock",G.chickens.length);setStat("coins",G.coins||0);}
+  function skyTime(){var h=new Date().getHours(),c=(h<6||h>=21)?"sky-night":h<9?"sky-morning":h<17?"":"sky-evening";
+    document.body.classList.remove("sky-morning","sky-evening","sky-night");
+    if(c)document.body.classList.add(c);}
+  skyTime();setInterval(skyTime,600000);
 
   function birdEl(ch,isNew){
     var d=document.createElement("div");d.className="bird"+(isNew?" new":"");
