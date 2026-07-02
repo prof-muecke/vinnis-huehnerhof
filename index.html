@@ -685,6 +685,23 @@
   .pr-q{font-weight:800;font-size:13px;line-height:1.4;padding:4px 0}
   .pr-a{color:var(--good-deep);font-weight:900}
   .pr-tip{font-weight:700;font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
+  /* Erfinder-Werkstatt */
+  .inv-big{font-size:54px;margin:6px 0}
+  .inv-big.listening{animation:scpulse 1.1s ease-in-out infinite;display:inline-block}
+  .inv-txt{font-weight:800;font-size:15px;line-height:1.45;margin:6px 0 10px}
+  .inv-note{font-weight:800;font-size:13px;color:var(--ink-soft);margin:6px 0}
+  .inv-mic{font-family:inherit;border:none;cursor:pointer;font-weight:900;font-size:18px;color:#fff;background:linear-gradient(var(--blue),var(--blue-deep));border-radius:16px;padding:14px 18px;box-shadow:var(--shadow);width:100%;margin:6px 0}
+  .inv-mic:active{transform:translateY(3px)}
+  .inv-alt{width:100%;margin-top:8px}
+  .inv-q{font-weight:900;font-size:17px;margin:4px 0 10px;color:var(--blue-deep)}
+  .inv-hilde{font-weight:900;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
+  .inv-ans{font-weight:900;font-size:18px;line-height:1.4;background:var(--cream);border:2px solid #fff;border-radius:14px;padding:10px 12px;margin-bottom:10px}
+  .inv-ans.small{font-weight:800;font-size:14px}
+  .inv-btns{display:flex;gap:10px;margin-top:6px}
+  .inv-ok,.inv-no{flex:1;font-family:inherit;border:3px solid #fff;border-radius:16px;padding:14px 8px;font-weight:900;font-size:17px;cursor:pointer;box-shadow:var(--shadow)}
+  .inv-ok{background:var(--good);color:#fff}.inv-no{background:var(--wrong);color:#fff}
+  .inv-ok:active,.inv-no:active{transform:translateY(3px)}
+  .mc-invent .modicon{background:#e8eefb}
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
 </head>
@@ -762,6 +779,7 @@
           <div class="sec-cards">
             <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Natur, Welt, Logik – von Hilde erdacht</div></div></button>
             <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
+            <button class="modcard mc-invent" data-go="invent"><div class="modicon">🛠️</div><div><div class="modtitle">Erfinder-Werkstatt</div><div class="modsub">DU bist der Lehrer: Stell Fragen und erwische Hildes Fehler!</div></div></button>
             <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
             <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
             <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
@@ -789,6 +807,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ERFINDER-WERKSTATT -->
+    <div class="screen" id="invent">
+      <div class="hilde-row"><div class="hilde" id="invent-hilde"></div><div class="bubble" id="invent-bubble">Hier bist du der Lehrer!</div></div>
+      <div class="stagepad"><div class="card" id="inv-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- ELTERN-WOCHENRÜCKBLICK -->
@@ -1362,7 +1387,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1391,6 +1416,7 @@
   function show(name){
     try{if(typeof ASK!=="undefined"&&ASK&&ASK.stop)ASK.stop();}catch(_s){}
     try{if(typeof FOCUS!=="undefined"&&FOCUS&&FOCUS.stop)FOCUS.stop();}catch(_f){}
+    try{if(typeof INVENT!=="undefined"&&INVENT&&INVENT.stop)INVENT.stop();}catch(_v){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
     try{
@@ -1425,6 +1451,7 @@
     if(name==="stats"){renderStats();say("Schau, wie weit du schon bist! 🌟");}
     if(name==="boss")BOSS.open();
     if(name==="parent"){renderParent();say("Hallo! Hier zeige ich den Großen, was Vinni diese Woche gelernt hat. 📖");}
+    if(name==="invent")INVENT.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -2584,6 +2611,106 @@
       else{h+='<div class="bc-txt">Sammle Sterne in allen Spielen – bei '+NEED+' ⭐ kommt der Boss!</div><div class="bc-bar"><div class="bc-fill" style="width:'+pct+'%"></div></div><div class="bc-cnt">'+s+' / '+NEED+' ⭐</div>';}
       el.innerHTML=h;var f=$("bc-fight");if(f)f.onclick=function(){show("boss");};}
     return {open:open,renderCard:renderCard,ready:ready};
+  })();
+
+  /* ===================== ERFINDER-WERKSTATT ===================== */
+  var INVENT=(function(){
+    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    var rec=null,busy=false,cur=null,used=[];
+    var STMTS=[
+      {s:"Der Blauwal ist das größte Tier der Welt.",ok:true,topic:"Tiere",why:"Stimmt – er ist sogar größer, als die Dinosaurier waren."},
+      {s:"Die Sonne ist ein Planet.",ok:false,topic:"Weltall",why:"Die Sonne ist ein Stern – sie leuchtet von selbst."},
+      {s:"Ein Würfel hat 8 Ecken.",ok:true,topic:"Formen",why:"Richtig: 8 Ecken und 6 Flächen."},
+      {s:"Spinnen sind Insekten.",ok:false,topic:"Tiere",why:"Spinnen haben 8 Beine – Insekten nur 6."},
+      {s:"Wasser kocht bei 100 Grad.",ok:true,topic:"Physik",why:"Genau – bei 100 °C wird Wasser zu Dampf."},
+      {s:"Der Mond leuchtet von selbst.",ok:false,topic:"Weltall",why:"Der Mond spiegelt nur das Licht der Sonne."},
+      {s:"Ein Jahr hat 12 Monate.",ok:true,topic:"Zeit",why:"Stimmt – von Januar bis Dezember."},
+      {s:"Pinguine können fliegen.",ok:false,topic:"Tiere",why:"Pinguine fliegen nicht – aber sie schwimmen blitzschnell."},
+      {s:"Die Erde kreist um die Sonne.",ok:true,topic:"Weltall",why:"Genau – einmal herum dauert ein Jahr."},
+      {s:"7 + 8 ist 14.",ok:false,topic:"Mathe",why:"7 + 8 = 15."},
+      {s:"Blätter machen aus Sonnenlicht Nahrung.",ok:true,topic:"Natur",why:"Das nennt man Fotosynthese."},
+      {s:"Ein Dreieck hat 4 Seiten.",ok:false,topic:"Formen",why:"Ein DREIeck hat natürlich 3 Seiten."},
+      {s:"Das Herz pumpt Blut durch den Körper.",ok:true,topic:"Körper",why:"Tag und Nacht, ganz ohne Pause."},
+      {s:"In der Wüste regnet es jeden Tag.",ok:false,topic:"Erde & Länder",why:"Wüsten sind besonders trocken."},
+      {s:"Magnete ziehen Eisen an.",ok:true,topic:"Physik",why:"Deshalb haften sie am Kühlschrank."},
+      {s:"Der Gepard ist das schnellste Landtier.",ok:true,topic:"Tiere",why:"Über 100 km/h im Sprint!"},
+      {s:"Die Hälfte von 10 ist 4.",ok:false,topic:"Mathe",why:"Die Hälfte von 10 ist 5."},
+      {s:"Vögel stammen von Dinosauriern ab.",ok:true,topic:"Tiere",why:"Dein Huhn ist ein echter Dino-Verwandter!"},
+      {s:"Eis ist wärmer als Wasser.",ok:false,topic:"Physik",why:"Eis ist gefrorenes, kaltes Wasser."},
+      {s:"Rom ist die Hauptstadt von Italien.",ok:true,topic:"Erde & Länder",why:"Genau – dort steht das alte Kolosseum."}
+    ];
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function speak(t){try{var u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=1.02;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){}}
+    function stage(html){var el=$("inv-stage");if(el)el.innerHTML=html;}
+    var SPIN='<div class="loading" style="padding:10px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#5a9fd4" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde überlegt …</div></div>';
+    function intro(){busy=false;cur=null;
+      var micOk=!!SR&&!!aiKey();
+      var h='<div class="inv-big">🛠️</div><div class="inv-txt">Hier bist <b>DU</b> der Lehrer! Stell Hilde eine Frage – sie antwortet. Aber Achtung: Manchmal schummelt sie einen Fehler hinein. Erwischst du sie?</div>';
+      if(micOk)h+='<button class="inv-mic" id="inv-mic">🎤 Frage sprechen</button>';
+      else if(!SR)h+='<div class="inv-note">🎤 Sprechen geht auf diesem Gerät leider nicht – aber „Stimmt das?“ macht genauso schlau:</div>';
+      else h+='<div class="inv-note">Mit KI-Schlüssel (⚙️ KI-Modus auf dem Hof) kannst du Hilde ALLES fragen. Oder spiele gleich:</div>';
+      h+='<button class="hbtn inv-alt" id="inv-stmt">🎲 Stimmt das? – Hilde behauptet etwas</button>';
+      stage(h);
+      var m=$("inv-mic");if(m)m.onclick=listen;
+      $("inv-stmt").onclick=stmt;
+    }
+    function listen(){if(busy)return;
+      try{rec=new SR();}catch(e){rec=null;}
+      if(!rec){toast("Mikrofon klappt hier nicht");stmt();return;}
+      rec.lang="de-DE";rec.interimResults=false;rec.maxAlternatives=1;
+      stage('<div class="inv-big listening">🎤</div><div class="inv-txt">Ich höre zu … stell mir deine Frage!</div><button class="hbtn" id="inv-cancel">Abbrechen</button>');
+      $("inv-cancel").onclick=function(){try{rec.stop();}catch(e){}intro();};
+      say("Ich bin ganz Ohr! 🐔");
+      rec.onresult=function(ev){try{var t=ev.results[0][0].transcript;ask(t);}catch(e){intro();}};
+      rec.onerror=function(){toast("Ich habe nichts gehört – probier es nochmal");intro();};
+      try{rec.start();}catch(e){intro();}
+    }
+    function ask(q){busy=true;
+      stage('<div class="inv-q">„'+esc(q)+'“</div>'+SPIN);
+      var makeWrong=Math.random()<0.45;
+      var p="Du bist Hilde, ein kluges, verspieltes Huhn. Vinni (7 Jahre, hochbegabt, deutschsprachig) spielt Lehrer und hat dir diese Frage gestellt: \""+q+"\". "+
+        (makeWrong?"Baue in deine Antwort GENAU EINEN klaren Sachfehler ein, den ein kluges Kind bemerken kann (deutlich falsch, aber nicht albern).":"Antworte völlig korrekt.")+
+        " Antworte kurz (1 bis 2 Sätze), kindgerecht und freundlich. Gib zusätzlich die wirklich richtige Antwort an. Antworte AUSSCHLIESSLICH mit reinem JSON: {\"answer\":\"was du laut sagst\",\"correct\":\"die wahre, richtige Antwort in 1 Satz\",\"topic\":\"Thema in 1-2 Wörtern\"}";
+      fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:400,messages:[{role:"user",content:p}]})})
+      .then(function(r){return r.json();}).then(function(d){
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim().replace(/```json/gi,"").replace(/```/g,"");
+        var f=t.indexOf("{"),l=t.lastIndexOf("}");if(f>=0&&l>f)t=t.slice(f,l+1);var o=JSON.parse(t);
+        if(!o||!o.answer||!o.correct)throw new Error("bad");
+        cur={wrong:makeWrong,answer:String(o.answer),correct:String(o.correct),topic:String(o.topic||q),stmt:false};
+        judge();
+      }).catch(function(){toast("Das hat nicht geklappt – probier es gleich nochmal");intro();});
+    }
+    function stmt(){var pool=STMTS.filter(function(x){return used.indexOf(x.s)<0;});if(!pool.length){used=[];pool=STMTS.slice();}
+      var s=pool[Math.floor(Math.random()*pool.length)];used.push(s.s);
+      cur={wrong:!s.ok,answer:s.s,correct:s.why,topic:s.topic,stmt:true};
+      judge();}
+    function judge(){busy=false;
+      speak(cur.answer);
+      stage('<div class="inv-hilde">🐔 Hilde '+(cur.stmt?"behauptet":"antwortet")+':</div><div class="inv-ans">„'+esc(cur.answer)+'“</div><div class="inv-txt">Was sagst du als Lehrer?</div>'+
+        '<div class="inv-btns"><button class="inv-ok" id="inv-true">✅ Stimmt!</button><button class="inv-no" id="inv-false">❌ Falsch, Hilde!</button></div>');
+      $("inv-true").onclick=function(){resolve(false);};
+      $("inv-false").onclick=function(){resolve(true);};
+      say(cur.stmt?"Stimmt das – oder schwindele ich? 🤭":"So, kleiner Lehrer – war meine Antwort richtig? 🤭");
+    }
+    function resolve(saidWrong){if(!cur)return;var caught=(saidWrong===cur.wrong);
+      var h='<div class="inv-big">'+(caught?"🏆":"🤗")+'</div>';
+      if(caught&&cur.wrong)h+='<div class="inv-txt"><b>Erwischt!</b> Da war wirklich ein Fehler versteckt. Du hast Hilde korrigiert – wie ein echter Lehrer!</div>';
+      else if(caught)h+='<div class="inv-txt"><b>Genau!</b> Das war völlig richtig – gut geprüft.</div>';
+      else if(cur.wrong)h+='<div class="inv-txt">Oh! Da war doch ein Fehler versteckt. 🤭 Schau genau:</div>';
+      else h+='<div class="inv-txt">Diesmal hatte Hilde recht – kein Trick dabei.</div>';
+      h+='<div class="inv-ans small">💡 '+esc(cur.correct)+'</div>';
+      h+='<div class="inv-btns"><button class="inv-mic" id="inv-again">'+(cur.stmt?"🎲 Nochmal":"🎤 Neue Frage")+'</button><button class="hbtn" id="inv-menu">⬅ Menü</button></div>';
+      var wasStmt=cur.stmt,wasWrong=cur.wrong,topic=cur.topic;cur=null;
+      stage(h);
+      $("inv-again").onclick=wasStmt?stmt:listen;
+      $("inv-menu").onclick=intro;
+      if(caught){addEgg(wasWrong?2:1);bumpBrain(catFor(topic));say(wasWrong?"Du hast den Fehler gefunden! Ein Adlerauge! 🦅✨":"Richtig geprüft! So machen das echte Forscher. ⭐",true);}
+      else{say("Macht nichts – Fehler suchen ist Detektivarbeit. Gleich nochmal! 🔍");SFX.wrong();}
+    }
+    function start(){intro();say("Willkommen in der Erfinder-Werkstatt! Hier stellst DU die Fragen – und passt auf, dass ich keine Fehler mache. 🛠️");}
+    function stop(){try{if(rec)rec.stop();}catch(e){}try{window.speechSynthesis.cancel();}catch(e){}}
+    return {start:start,stop:stop};
   })();
 
   /* ===================== FOKUS & COOL BLEIBEN ===================== */
