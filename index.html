@@ -378,7 +378,7 @@
     60%{transform:translateX(-4px) rotate(0)}68%{transform:translateX(-4px) rotate(10deg)}75%{transform:translateX(-4px) rotate(0)}}
 
   /* card (math + explore) */
-  .stagepad{flex:1;overflow-y:auto;padding:8px 16px 6px}
+  .stagepad{flex:1;min-height:0;overflow-y:auto;padding:8px 16px 6px}
   .card{background:var(--paper);border-radius:24px;padding:16px;box-shadow:var(--soft);border:3px solid #fff;text-align:center}
 
   /* MATH */
@@ -426,11 +426,11 @@
 
   /* fokus & cool bleiben */
   .mc-focus .modicon{background:#e3eefb}
-  .foc-menu{display:flex;flex-direction:column;gap:10px;padding:10px 14px}
+  .foc-menu{display:flex;flex-direction:column;gap:10px;padding:10px 14px;overflow-y:auto;min-height:0}
   .foc-card{font-family:inherit;text-align:left;border:3px solid #fff;background:linear-gradient(#fffefb,#eef3fb);border-radius:18px;padding:15px;font-weight:900;font-size:18px;cursor:pointer;box-shadow:var(--shadow);color:var(--ink);display:flex;flex-direction:column;gap:3px}
   .foc-card small{font-weight:700;font-size:13px;color:var(--ink-soft)}
   .foc-card:active{transform:translateY(2px)}
-  .foc-stage{flex:1;overflow-y:auto;padding:0 14px}
+  .foc-stage{flex:1;min-height:0;overflow-y:auto;padding:0 14px}
   .foc-head{display:flex;align-items:center;gap:10px;padding:8px 0}
   .foc-score{font-weight:900;color:var(--ink-soft);font-size:14px}
   .foc-play{height:220px;border-radius:20px;border:3px solid #fff;box-shadow:var(--shadow);background:linear-gradient(#eafaf0,#dff0c8);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none}
@@ -729,6 +729,37 @@
     #app{background:rgba(255,255,255,.26);border:1px solid rgba(255,255,255,.65);border-radius:26px;
       margin:12px auto;height:calc(100% - 24px);box-shadow:0 18px 48px rgba(54,41,31,.18);overflow:hidden}
     .header{padding-top:12px}
+  }
+  /* Körner-Jagd: breite Bildschirme -> Feld links, Fragen rechts */
+  @media (min-width:760px){
+    #corn .stagepad{display:grid;grid-template-columns:minmax(300px,400px) minmax(280px,430px);
+      grid-template-rows:auto auto auto auto;grid-template-areas:"arena q" "arena opts" "arena dirs" "tools spacer";
+      justify-content:center;column-gap:26px;align-content:start}
+    #corn .kj-arena{grid-area:arena;max-width:none;margin:0}
+    #corn .kj-tools{grid-area:tools}
+    #corn .kj-q{grid-area:q;margin-top:4px}
+    #corn .kj-opts{grid-area:opts}
+    #corn .kj-dirs{grid-area:dirs;align-content:start}
+  }
+  /* kleine/flache Bildschirme: alles kompakter, damit nichts abgeschnitten wird */
+  @media (max-height:700px){
+    .kj-arena{max-width:280px}
+    .kj-cell{font-size:20px}
+    .kj-q{font-size:17px;margin:6px 0 6px;min-height:24px}
+    .kj-opt{padding:8px 6px;min-height:42px;font-size:14px}
+    .kj-dir{padding:8px 14px;font-size:21px}
+    .kj-hud span{padding:4px 10px;font-size:14px}
+    .bubble{font-size:14px;padding:8px 12px;min-height:40px}
+    .hilde{width:46px;height:43px;flex:0 0 46px}
+    .foc-card{padding:11px;font-size:16px}
+  }
+  /* schmale Handys: Kopfzeile kompakt, nichts wird abgeschnitten */
+  @media (max-width:420px){
+    .header{gap:5px;padding:8px 8px 4px}
+    .stat{padding:5px 9px;font-size:15px;gap:4px}
+    .stat small{display:none}
+    .homebtn{padding:7px 10px;font-size:15px}
+    .gear{padding:4px;font-size:16px}
   }
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
 </style>
@@ -2579,7 +2610,7 @@
       for(var q=0;q<2;q++){var sc=randEmpty();if(sc)st.board[sc.y][sc.x]="s";}
       AI.status($("kj-ki-status"));var kb=$("kj-ki-btn");if(kb)kb.onclick=function(){AI.setup(function(){AI.status($("kj-ki-status"));});};
       $("kj-score").textContent="0";$("kj-best").textContent=G.cornBest||0;renderBoard();renderBattery();renderPred();renderTools();nextQ();
-      say("Sammle Körner und weiche dem Fuchs 🦊 aus! Löse eine Aufgabe, dann darfst du einen Schritt gehen. Raupen 🐛 & Gold-Körner 🌟 geben mehr Punkte. Falsche Antworten kosten Energie 🔋 – iss Salat 🥬, um wieder aufzuladen!");}
+      say("Sammle Körner 🌽 und weiche dem Fuchs 🦊 aus! Richtige Antwort = ein Schritt. Salat 🥬 lädt deine Energie 🔋 auf.");}
     return {start:start};
   })();
 
