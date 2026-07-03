@@ -731,6 +731,36 @@
   .eng-say{margin:8px auto 10px;display:block}
   .night-story{font-weight:800;font-size:16px;line-height:1.65;text-align:left;background:linear-gradient(160deg,#eef1fb,#e7ecf7);border:2px solid #fff;border-radius:16px;padding:14px 16px;margin-bottom:12px}
   .night-t{font-weight:900;font-size:17px;margin-bottom:6px;color:#4a548c}
+  /* Taten & Wünsche */
+  .mc-deeds .modicon{background:#fff3d6}
+  .dd-pts{font-weight:900;font-size:22px;margin:2px 0}
+  .dd-sec{font-weight:900;font-size:14px;margin:12px 0 6px;color:var(--barn-deep);text-align:left}
+  .dd-row{display:flex;gap:8px;flex-wrap:wrap}
+  .dd-row .hbtn{flex:1;min-width:110px}
+  .dd-wish{display:flex;align-items:center;gap:8px;background:var(--paper);border:2px solid #fff;border-radius:12px;padding:8px 10px;margin-bottom:6px;box-shadow:0 2px 0 rgba(54,41,31,.06)}
+  .dd-wn{font-weight:900;font-size:14px;flex:0 0 auto;max-width:38%;text-align:left;line-height:1.2}
+  .dd-wish .sc-bar{flex:1}
+  .dd-wc{font-weight:800;font-size:11px;color:var(--ink-soft);white-space:nowrap}
+  .dd-go{font-family:inherit;border:none;background:linear-gradient(var(--good),var(--good-deep));color:#fff;font-weight:900;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:13px}
+  .dd-go:active{transform:translateY(2px)}
+  .dd-h{display:flex;gap:8px;align-items:center;font-weight:800;font-size:13px;padding:4px 0;border-bottom:1px solid #f0e9d8;text-align:left}
+  .dd-h:last-child{border-bottom:none}
+  .dd-hr{flex:1}
+  .dd-h .plus{color:var(--good-deep)}.dd-h .minus{color:var(--wrong)}
+  .dd-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+  .dd-p{font-family:inherit;border:2px solid #fff;background:#eaf6ec;border-radius:12px;padding:9px 8px;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 2px 0 rgba(54,41,31,.08);color:var(--ink);line-height:1.25}
+  .dd-p b{color:var(--good-deep)}
+  .dd-p.neg{background:#fbeae7}.dd-p.neg b{color:var(--wrong)}
+  .dd-p:active{transform:translateY(2px)}
+  /* Check-in & Auslöser */
+  .foc-q{font-weight:900;font-size:18px;margin:8px 0}
+  .ck-moods{display:flex;gap:8px;justify-content:center;margin:10px 0}
+  .ck-mood{font-family:inherit;border:3px solid #fff;background:var(--paper);border-radius:14px;padding:8px 6px;font-size:26px;cursor:pointer;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;max-width:70px}
+  .ck-mood small{font-size:10px;font-weight:800;color:var(--ink-soft)}
+  .ck-mood.on{background:#eaf6ec;border-color:#bfe4c8}
+  .ck-needs{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:8px}
+  .ck-need{font-family:inherit;border:2px solid #fff;background:var(--cream);border-radius:20px;padding:8px 12px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 2px 0 rgba(54,41,31,.08);color:var(--ink)}
+  .ck-need.on{background:var(--yolk);border-color:#f0d089}
 
   /* ---------- Optik-Feinschliff: Tageszeit, Bereiche, Desktop ---------- */
   body.sky-morning{--sky1:#ffe6cf;--sky2:#b5d9ef}
@@ -892,11 +922,19 @@
             <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
             <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
             <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
+            <button class="modcard mc-deeds" data-go="deeds"><div class="modicon">⭐</div><div><div class="modtitle">Taten & Wünsche</div><div class="modsub">Punkte aus dem echten Leben – tauschen & Wünsche erfüllen</div></div></button>
             <button class="modcard mc-night" data-go="night"><div class="modicon">🌙</div><div><div class="modtitle">Gute-Nacht-Wissen</div><div class="modsub">Ruhige Staun-Geschichten zum Einschlafen</div></div></button>
             <button class="modcard mc-parent" data-go="parent"><div class="modicon">📖</div><div><div class="modtitle">Für Eltern</div><div class="modsub">Wochenrückblick: Was Vinni gerade lernt</div></div></button>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- TATEN & WÜNSCHE -->
+    <div class="screen" id="deeds">
+      <div class="hilde-row"><div class="hilde" id="deeds-hilde"></div><div class="bubble" id="deeds-bubble">Deine Punkte aus dem echten Leben!</div></div>
+      <div class="stagepad"><div class="card" id="deeds-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- ENGLISH MIT HILDE -->
@@ -1173,6 +1211,8 @@
         <button class="foc-card" data-foc="sprint">🎯 Fokus-Sprint<small>Bleib dran und schlag deinen Konzentrations-Rekord!</small></button>
         <button class="foc-card" data-foc="ampel">🚦 Ampel: Stopp–Denk–Los<small>Der Trick für den Moment vor dem Ausrasten</small></button>
         <button class="foc-card" data-foc="wait">⏳ Warte-Spiel<small>Wer warten kann, bekommt mehr – übe die Pause</small></button>
+        <button class="foc-card" data-foc="checkin">🫶 Tages-Check-in<small>Wie geht es dir gerade? Kurz nachspüren</small></button>
+        <button class="foc-card" data-foc="trigger">🔎 Auslöser verstehen<small>Was hat dich geärgert? Gemeinsam herausfinden</small></button>
       </div>
       <div class="foc-stage" id="foc-stage"></div>
       <div style="height:12px"></div>
@@ -1319,13 +1359,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[]};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1511,6 +1551,15 @@
       deltas.slice(0,6).forEach(function(x){h+='<div class="pr-row"><span class="pr-i">'+x.c.e+'</span><span class="pr-n">'+x.c.n+'</span><span class="pr-d">+'+x.d+' ⭐</span></div>';});}
     else{h+='<div class="pr-sub">Diese Woche wurde noch nicht gespielt.</div>';}
     h+='</div>';
+    try{var cs=(typeof FOCUS!=="undefined"&&FOCUS&&FOCUS.ckStats)?FOCUS.ckStats():null;
+      if(cs&&(cs.n||cs.top.length)){h+='<div class="pr-card"><div class="pr-h">🫶 Stimmung & Auslöser</div>';
+        if(cs.mood)h+='<div class="pr-sub">Durchschnittliche Stimmung ('+cs.n+' Check-ins): <b style="font-size:16px">'+cs.mood+'</b></div>';
+        if(cs.top.length){h+='<div class="pr-sub">Häufigste Auslöser:</div>';cs.top.forEach(function(t){h+='<div class="pr-q">'+t+'</div>';});}
+        h+='<div class="pr-tip">Eingetragen wird im Fokus-Modul unter 🫶 Check-in und 🔎 Auslöser.</div></div>';}}catch(e){}
+    var dd=G.deeds;
+    if(dd&&(dd.pts||((dd.hist||[]).length))){h+='<div class="pr-card"><div class="pr-h">⭐ Taten-Punkte</div><div class="pr-sub">Aktueller Stand: <b>'+dd.pts+'</b> ⭐</div>';
+      (dd.hist||[]).slice(0,4).forEach(function(e){h+='<div class="pr-q">'+escT(e.r)+' <b class="'+(e.d>=0?'pr-a':'')+'">'+(e.d>0?"+":"")+e.d+'</b></div>';});
+      h+='</div>';}
     var mast=(G.eMastered||[]).slice(-5).reverse();
     if(mast.length){h+='<div class="pr-card"><div class="pr-h">✅ Frisch gemeistert</div>';
       mast.forEach(function(q){h+='<div class="pr-q">„'+escT(q)+'“</div>';});
@@ -1537,7 +1586,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1607,6 +1656,7 @@
     if(name==="exped")EXPED.start();
     if(name==="eng")ENG.start();
     if(name==="night")NIGHT.start();
+    if(name==="deeds")DEEDS.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -2958,6 +3008,66 @@
     return {start:start};
   })();
 
+  /* ===================== TATEN & WÜNSCHE (echtes Leben) ===================== */
+  var DEEDS=(function(){
+    var unlocked=false;
+    var PLUS=[["Im Haushalt geholfen",3],["Pünktlich angezogen",2],["Schularbeiten gemacht",5],["Schulstunde gut gemacht",2],["Hilfsbereit gewesen",3],["Guter Umgang mit den Brüdern",3],["Guter Umgang mit den Eltern",3],["Wiedergutgemacht ❤️",3]];
+    var MINUS=[["Brüder geärgert",-5],["Ärger im Unterricht",-5],["Eltern geärgert",-5],["Getrödelt / zu spät",-2]];
+    function D(){if(!G.deeds)G.deeds={pts:0,hist:[]};if(!G.deeds.hist)G.deeds.hist=[];if(!G.wishes)G.wishes=[];return G.deeds;}
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function log(r,d){var x=D();x.hist.unshift({t:Date.now(),r:r,d:d});if(x.hist.length>60)x.hist.pop();}
+    function award(r,d){var x=D();x.pts=Math.max(0,(x.pts||0)+d);log(r,d);doSave();
+      if(d>0){SFX.right();celebrate();}else SFX.wrong();
+      toast((d>0?"+":"")+d+" ⭐ "+r,d>0);render();}
+    function exchange(n){var x=D();if(x.pts<n)return;x.pts-=n;log("In Münzen getauscht",-n);doSave();addCoin(n);toast("⭐ "+n+" ➜ "+n+" 🪙",true);render();}
+    function redeem(i){var x=D(),w=G.wishes[i];if(!w||x.pts<w.c)return;
+      if(!window.confirm("„"+w.n+"“ für "+w.c+" ⭐ einlösen?"))return;
+      x.pts-=w.c;log("Wunsch erfüllt: "+w.n,-w.c);doSave();SFX.fanfare();celebrate();toast("💫 "+w.n+"!",true);render();
+      say("Wunsch erfüllt: "+w.n+"! Das hast du dir mit echten Taten verdient. 💫",true);}
+    function fmtD(t){var d=new Date(t);return d.getDate()+"."+(d.getMonth()+1)+".";}
+    function render(){var x=D(),el=$("deeds-stage");if(!el)return;
+      var h='<div class="dd-pts">⭐ <b>'+x.pts+'</b> Taten-Punkte</div>';
+      h+='<div class="inv-note">Punkte gibt es für echte Taten – Mama & Papa tragen sie ein.</div>';
+      h+='<div class="dd-sec">🪙 In Hof-Münzen tauschen</div><div class="dd-row">';
+      [5,10].forEach(function(n){h+='<button class="hbtn dd-ex" data-n="'+n+'"'+(x.pts<n?" disabled":"")+'>'+n+' ⭐ ➜ '+n+' 🪙</button>';});
+      h+='</div>';
+      h+='<div class="dd-sec">💫 Vinnis Wünsche</div>';
+      if(!G.wishes.length)h+='<div class="inv-note">Noch keine Wünsche angelegt – das geht unten im Eltern-Bereich.</div>';
+      G.wishes.forEach(function(w,i){var p=Math.min(1,x.pts/w.c);
+        h+='<div class="dd-wish"><div class="dd-wn">'+esc(w.n)+'</div><div class="sc-bar"><div class="sc-fill" style="width:'+Math.round(p*100)+'%"></div></div><div class="dd-wc">'+Math.min(x.pts,w.c)+'/'+w.c+' ⭐</div>'+(x.pts>=w.c?'<button class="dd-go" data-w="'+i+'">Einlösen!</button>':"")+'</div>';});
+      if(x.hist.length){h+='<div class="dd-sec">📜 Zuletzt</div>';
+        x.hist.slice(0,6).forEach(function(e){h+='<div class="dd-h"><span>'+fmtD(e.t)+'</span><span class="dd-hr">'+esc(e.r)+'</span><b class="'+(e.d>=0?"plus":"minus")+'">'+(e.d>0?"+":"")+e.d+'</b></div>';});}
+      h+='<div class="dd-sec" style="margin-top:14px">🔒 Für Eltern</div>';
+      if(!unlocked)h+='<button class="hbtn" id="dd-unlock" style="width:100%">Eltern-Bereich öffnen</button>';
+      else{
+        h+='<div class="dd-grid">';PLUS.forEach(function(p,i){h+='<button class="dd-p" data-p="'+i+'">'+esc(p[0])+' <b>+'+p[1]+'</b></button>';});h+='</div>';
+        h+='<div class="dd-grid">';MINUS.forEach(function(p,i){h+='<button class="dd-p neg" data-m="'+i+'">'+esc(p[0])+' <b>'+p[1]+'</b></button>';});h+='</div>';
+        h+='<div class="dd-row"><button class="hbtn" id="dd-custom">✍️ Eigener Eintrag</button><button class="hbtn" id="dd-wish">💫 Wunsch anlegen</button><button class="hbtn" id="dd-wdel">🗑️ Wunsch löschen</button></div>';
+      }
+      el.innerHTML=h;
+      el.querySelectorAll(".dd-ex").forEach(function(b){b.onclick=function(){exchange(+b.getAttribute("data-n"));};});
+      el.querySelectorAll(".dd-go").forEach(function(b){b.onclick=function(){redeem(+b.getAttribute("data-w"));};});
+      var u=$("dd-unlock");if(u)u.onclick=function(){var a=rnd(12,29),b2=rnd(13,38),v=null;
+        try{v=window.prompt("Für Erwachsene: Was ist "+a+" + "+b2+"?");}catch(e){}
+        if(v!=null&&parseInt(String(v).trim(),10)===a+b2){unlocked=true;render();}else if(v!=null)toast("Das war leider falsch");};
+      el.querySelectorAll(".dd-p").forEach(function(b){b.onclick=function(){
+        var pi=b.getAttribute("data-p"),mi=b.getAttribute("data-m");
+        if(pi!=null)award(PLUS[+pi][0],PLUS[+pi][1]);else award(MINUS[+mi][0],MINUS[+mi][1]);};});
+      var c=$("dd-custom");if(c)c.onclick=function(){var r=null,n=null;
+        try{r=window.prompt("Wofür? (kurzer Text)");if(!r)return;n=window.prompt("Wie viele Punkte? (z.B. 3 oder -2)");}catch(e){}
+        var d=parseInt(String(n||"").trim(),10);if(!r||!d)return;award(r.trim(),d);};
+      var w=$("dd-wish");if(w)w.onclick=function(){var n=null,c2=null;
+        try{n=window.prompt("Wunsch (z.B. Kinobesuch):");if(!n)return;c2=window.prompt("Punkte-Preis (z.B. 30):");}catch(e){}
+        var cost=parseInt(String(c2||"").trim(),10);if(!n||!cost||cost<1)return;G.wishes.push({n:n.trim(),c:cost});doSave();toast("💫 Wunsch angelegt");render();};
+      var wd=$("dd-wdel");if(wd)wd.onclick=function(){if(!G.wishes.length){toast("Keine Wünsche da");return;}
+        var names=G.wishes.map(function(x2,i){return (i+1)+" = "+x2.n;}).join("\n"),v=null;
+        try{v=window.prompt("Welchen Wunsch löschen?\n"+names+"\n\nNummer eingeben:");}catch(e){}
+        var idx=parseInt(String(v||"").trim(),10)-1;if(idx>=0&&idx<G.wishes.length){G.wishes.splice(idx,1);doSave();render();}};
+    }
+    function start(){render();say("Deine Taten-Punkte aus dem echten Leben! Tausche sie in Hof-Münzen – oder spare auf einen Wunsch. ⭐",true);}
+    return {start:start,render:render};
+  })();
+
   /* ===================== ENGLISH MIT HILDE ===================== */
   var ENG=(function(){
     var W=[
@@ -3213,9 +3323,55 @@
         halt=null;$("foc-again").onclick=waitGame;$("foc-menu2").onclick=back;
       };
     }
-    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else if(k==="ampel")ampelGame();else if(k==="wait")waitGame();else sprintGame();}
+    var MOODS=["😣","😕","😐","🙂","😄"],MOODL=["schwer","mau","okay","gut","super"];
+    var NEEDS=[["🍎","Hunger","Iss eine kleine, gesunde Kleinigkeit – danach geht vieles leichter."],["💧","Durst","Trink ein Glas Wasser. Schon ein paar Schlucke helfen."],["😴","Müde","Mach eine kurze Pause oder ruh dich ein paar Minuten aus."],["🔊","Zu laut / zu viel","Such dir einen ruhigeren Ort und schließ kurz die Augen."],["🥱","Langweilig","Hol dir eine Expedition 🧭 oder Denksport 🧠 – etwas Kniffliges!"],["😤","Wütend / Frust","Atme dreimal langsam ein und aus. Sag in Worten, was dich ärgert."]];
+    var TRIGS=[["🍎","Hunger"],["😴","Müde"],["🔊","Zu laut / zu voll"],["🥱","Langeweile"],["⚖️","Ungerecht behandelt gefühlt"],["😤","Etwas klappte nicht"],["🔄","Plan wurde geändert"],["🚫","Ein Nein / eine Grenze"],["👬","Streit mit Brüdern"],["📱","Aufhören müssen"]];
+    function ckKey(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+    function ckToday(){if(!G.checkin)G.checkin=[];var k=ckKey(),e=null;G.checkin.forEach(function(x){if(x.d===k)e=x;});
+      if(!e){e={d:k,m:null,trig:[]};G.checkin.push(e);if(G.checkin.length>30)G.checkin.shift();}return e;}
+    function ckStats(){var cs=G.checkin||[],ms=cs.filter(function(x){return x.m!=null;});
+      var avg=ms.length?ms.reduce(function(a,x){return a+x.m;},0)/ms.length:null;
+      var cnt={};cs.forEach(function(x){(x.trig||[]).forEach(function(i){cnt[i]=(cnt[i]||0)+1;});});
+      var top=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];}).slice(0,3).map(function(k){return TRIGS[+k][0]+" "+TRIGS[+k][1]+" ("+cnt[k]+"×)";});
+      return {n:ms.length,mood:avg!=null?MOODS[Math.round(avg)]+" ("+MOODL[Math.round(avg)]+")":null,top:top};}
+    function checkinGame(){$("foc-menu").style.display="none";var stage=$("foc-stage");
+      var h='<div class="foc-q" style="text-align:center">🫶 Wie geht es dir gerade?</div><div class="ck-moods">';
+      MOODS.forEach(function(m,i){h+='<button class="ck-mood" data-m="'+i+'">'+m+'<small>'+MOODL[i]+'</small></button>';});
+      h+='</div><div id="ck-out"></div><div class="foc-btns"><button class="hbtn" id="ck-back">⬅ Zurück</button></div>';
+      stage.innerHTML=h;$("ck-back").onclick=back;
+      stage.querySelectorAll(".ck-mood").forEach(function(b){b.onclick=function(){var m=+b.getAttribute("data-m");
+        stage.querySelectorAll(".ck-mood").forEach(function(x){x.classList.toggle("on",x===b);});
+        var e=ckToday(),first=(e.m==null);e.m=m;doSave();
+        var out=$("ck-out"),h2="";
+        if(m<=1){h2='<div class="inv-note" style="margin-top:8px;text-align:center">Was könnte helfen? Tippe an:</div><div class="ck-needs">';
+          NEEDS.forEach(function(n,i){h2+='<button class="ck-need" data-n="'+i+'">'+n[0]+' '+n[1]+'</button>';});
+          h2+='</div><div id="ck-tip" class="foc-sum" style="display:none"></div>';}
+        else h2='<div class="foc-sum">'+(m===4?"Super! Genieß den Tag – und steck jemanden mit deiner Laune an. 😄":"Schön! Merk dir kurz: Was war heute gut? 🙂")+'</div>';
+        out.innerHTML=h2;
+        out.querySelectorAll(".ck-need").forEach(function(nb){nb.onclick=function(){var n=NEEDS[+nb.getAttribute("data-n")];var t=$("ck-tip");t.style.display="";t.textContent="💡 "+n[2];};});
+        if(first){addEgg(1);say("Danke fürs Nachspüren – das ist stark! +1 🥚",true);}else say("Eingetragen. 🫶");};});
+      say("Kurz nachspüren: Wie fühlst du dich gerade? Es gibt kein Richtig oder Falsch. 🫶");
+    }
+    function triggerGame(){$("foc-menu").style.display="none";var stage=$("foc-stage"),e=ckToday();
+      var h='<div class="foc-q" style="text-align:center">🔎 Was war los, bevor der Ärger kam?</div><div class="inv-note" style="text-align:center">Tippt gemeinsam an, was passt (mehrere möglich):</div><div class="ck-needs">';
+      TRIGS.forEach(function(t,i){h+='<button class="ck-need tg'+((e.trig||[]).indexOf(i)>=0?" on":"")+'" data-t="'+i+'">'+t[0]+' '+t[1]+'</button>';});
+      h+='</div><button class="hbtn next" id="tg-save" style="display:block;margin:10px auto 0">💾 Speichern</button><div id="tg-out"></div><div class="foc-btns"><button class="hbtn" id="tg-back">⬅ Zurück</button></div>';
+      stage.innerHTML=h;$("tg-back").onclick=back;
+      stage.querySelectorAll(".tg").forEach(function(b){b.onclick=function(){b.classList.toggle("on");};});
+      $("tg-save").onclick=function(){var sel=[];stage.querySelectorAll(".tg").forEach(function(b,i){if(b.classList.contains("on"))sel.push(i);});
+        e.trig=sel;doSave();
+        var cnt={};(G.checkin||[]).forEach(function(x){(x.trig||[]).forEach(function(i){cnt[i]=(cnt[i]||0)+1;});});
+        var top=null;Object.keys(cnt).forEach(function(k){if(top==null||cnt[k]>cnt[top])top=k;});
+        var msg="Gespeichert! ";
+        if(top!=null&&cnt[top]>=2)msg+="Am häufigsten war bisher: "+TRIGS[+top][0]+" "+TRIGS[+top][1]+". Wenn ihr das früh bemerkt, könnt ihr gegensteuern, bevor es knallt. 💪";
+        else msg+="Je öfter ihr eintragt, desto besser erkennt ihr Muster. 💪";
+        $("tg-out").innerHTML='<div class="foc-sum">'+msg+'</div>';SFX.right();
+        say("Gut, dass ihr hinschaut – Detektivarbeit fürs Gefühl. 🔎",true);};
+      say("Nach einem Ärger-Moment: Was war davor los? Findet es gemeinsam heraus.");
+    }
+    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else if(k==="ampel")ampelGame();else if(k==="wait")waitGame();else if(k==="checkin")checkinGame();else if(k==="trigger")triggerGame();else sprintGame();}
     function start(){menu();var cards=document.querySelectorAll("#foc-menu .foc-card");cards.forEach(function(c){c.onclick=function(){run(c.getAttribute("data-foc"));};});say("Wähl eine Übung, Konzentrations-Held! 🦸 Hier trainierst du deine Superkraft: dranbleiben und cool bleiben.");}
-    return {start:start,stop:function(){if(halt){halt();halt=null;}}};
+    return {start:start,stop:function(){if(halt){halt();halt=null;}},ckStats:ckStats};
   })();
 
   /* ===================== FRAG HILDE (Sprache, sokratisch) ===================== */
@@ -3301,7 +3457,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
