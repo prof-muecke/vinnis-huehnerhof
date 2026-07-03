@@ -721,6 +721,16 @@
   .xp-q{font-weight:900;font-size:18px;margin:4px 0 10px;line-height:1.3}
   .pr-btns{display:flex;gap:8px;margin-top:8px}
   .pr-btns .hbtn{flex:1}
+  /* English & Gute-Nacht */
+  .mc-eng .modicon{background:#e7ecfb}
+  .mc-night .modicon{background:#e3e6f5}
+  .eng-tier{font-weight:900;font-size:12px;color:var(--ink-soft);text-align:right}
+  .eng-word{font-weight:900;font-size:30px;color:var(--blue-deep);margin:6px 0 2px}
+  .eng-word.sm{font-size:22px;color:var(--ink)}
+  .eng-emoji{font-size:52px;line-height:1.1;margin-top:4px}
+  .eng-say{margin:8px auto 10px;display:block}
+  .night-story{font-weight:800;font-size:16px;line-height:1.65;text-align:left;background:linear-gradient(160deg,#eef1fb,#e7ecf7);border:2px solid #fff;border-radius:16px;padding:14px 16px;margin-bottom:12px}
+  .night-t{font-weight:900;font-size:17px;margin-bottom:6px;color:#4a548c}
 
   /* ---------- Optik-Feinschliff: Tageszeit, Bereiche, Desktop ---------- */
   body.sky-morning{--sky1:#ffe6cf;--sky2:#b5d9ef}
@@ -858,6 +868,7 @@
             <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
             <button class="modcard mc-invent" data-go="invent"><div class="modicon">🛠️</div><div><div class="modtitle">Erfinder-Werkstatt</div><div class="modsub">DU bist der Lehrer: Stell Fragen und erwische Hildes Fehler!</div></div></button>
             <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen: 5 Stationen, eine spannende Geschichte</div></div></button>
+            <button class="modcard mc-eng" data-go="eng"><div class="modicon">🇬🇧</div><div><div class="modtitle">English mit Hilde</div><div class="modsub">Erste englische Wörter – hören, sprechen, raten</div></div></button>
             <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
             <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
             <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
@@ -881,10 +892,25 @@
             <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
             <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
             <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
+            <button class="modcard mc-night" data-go="night"><div class="modicon">🌙</div><div><div class="modtitle">Gute-Nacht-Wissen</div><div class="modsub">Ruhige Staun-Geschichten zum Einschlafen</div></div></button>
             <button class="modcard mc-parent" data-go="parent"><div class="modicon">📖</div><div><div class="modtitle">Für Eltern</div><div class="modsub">Wochenrückblick: Was Vinni gerade lernt</div></div></button>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ENGLISH MIT HILDE -->
+    <div class="screen" id="eng">
+      <div class="hilde-row"><div class="hilde" id="eng-hilde"></div><div class="bubble" id="eng-bubble">Let's learn English!</div></div>
+      <div class="stagepad"><div class="card" id="eng-stage"></div></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- GUTE-NACHT-WISSEN -->
+    <div class="screen" id="night">
+      <div class="hilde-row"><div class="hilde" id="night-hilde"></div><div class="bubble" id="night-bubble">Zeit zum Träumen …</div></div>
+      <div class="stagepad"><div class="card" id="night-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- WISSENS-EXPEDITIONEN -->
@@ -1340,7 +1366,8 @@
     {k:"erde",e:"🌍",n:"Erde & Länder"},
     {k:"physik",e:"⚛️",n:"Physik & Chemie"},
     {k:"technik",e:"🔧",n:"Technik & Erfindungen"},
-    {k:"geschichte",e:"🏛️",n:"Geschichte & Kultur"}
+    {k:"geschichte",e:"🏛️",n:"Geschichte & Kultur"},
+    {k:"englisch",e:"🇬🇧",n:"Englisch"}
   ];
   function catFor(t){t=(t||"").toString().toLowerCase();
     function h(){for(var i=0;i<arguments.length;i++){if(t.indexOf(arguments[i])>=0)return true;}return false;}
@@ -1352,6 +1379,7 @@
     if(h("physik","chemie","schwerkraft","magnet","energie","atom","molekül","wissenschaft","experiment","wärme","schall","dampf","schwimm"))return "physik";
     if(h("technik","erfind","maschine","computer","roboter","program","code","motor","fahrzeug","ingenieur","brücke","teleskop","werkzeug","strom","segel"))return "technik";
     if(h("geschichte","könig","ritter","ägypt","römer","krieg","erfinder","berühmt","kunst","musik","maler","gemälde","komponist","kultur","instrument","mittelalter"))return "geschichte";
+    if(h("englisch","english","vokabel"))return "englisch";
     if(h("sprache","wort","buchstabe","reim","lesen","vokal","alphabet","grammatik","satz","silbe","schreib","mehrzahl"))return "sprache";
     if(h("form","geometr","dreieck","viereck","quadrat","kreis","kugel","würfel","ecke","winkel","rechteck","sechseck","oval"))return "formen";
     if(h("mathe","zahl","rechnen","plus","minus","summe","hälfte","doppelt","uhr","zeit","geld","euro","cent","zähl","muster","reihe","teilen"))return "mathe";
@@ -1369,7 +1397,8 @@
     erde:{emoji:"🌍",style:"left:34%;top:8px;font-size:18px"},
     physik:{emoji:"🧲",style:"left:58%;top:8px;font-size:18px"},
     technik:{emoji:"⚙️",style:"left:66%;top:8px;font-size:18px"},
-    geschichte:{emoji:"🏰",style:"left:74%;top:8px;font-size:19px"}
+    geschichte:{emoji:"🏰",style:"left:74%;top:8px;font-size:19px"},
+    englisch:{emoji:"🇬🇧",style:"left:82%;top:8px;font-size:18px"}
   };
   function learn(cat){if(!cat)return;if(!G.know)G.know={};G.know[cat]=(G.know[cat]||0)+1;
     if(G.know[cat]===20){if(!G.badges)G.badges=[];
@@ -1380,8 +1409,8 @@
   function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();if(Story)Story.progress("brain",1);}
 
   /* ---------- Tagesaufgaben: "Heute für dich" + Streak ---------- */
-  var QMETA={math:["🥚","Eier rechnen"],explore:["🦉","Fragen & Wissen"],pattern:["🧩","Muster & Logik"],iq:["🧠","Denksport"],corn:["🌽","Körner-Jagd"],game:["🎮","Hühner-Challenge"],clock:["⏰","Uhr & Zeit"],read:["🔤","Lesen"],code:["🤖","Roboter-Hilde"],store:["🏪","Kaufmannsladen"]};
-  var QPOOL=["math","explore","pattern","iq","corn","game","clock","read","code","store"];
+  var QMETA={math:["🥚","Eier rechnen"],explore:["🦉","Fragen & Wissen"],pattern:["🧩","Muster & Logik"],iq:["🧠","Denksport"],corn:["🌽","Körner-Jagd"],game:["🎮","Hühner-Challenge"],clock:["⏰","Uhr & Zeit"],read:["🔤","Lesen"],code:["🤖","Roboter-Hilde"],store:["🏪","Kaufmannsladen"],eng:["🇬🇧","English mit Hilde"]};
+  var QPOOL=["math","explore","pattern","iq","corn","game","clock","read","code","store","eng"];
   function dayKey(off){var d=new Date(Date.now()+(off||0)*864e5);return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
   function mondayKey(){var d=new Date(),off=(d.getDay()+6)%7,m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-off);return m.getFullYear()+"-"+(m.getMonth()+1)+"-"+m.getDate();}
   function weekInit(){var wk=mondayKey();
@@ -1508,7 +1537,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1538,6 +1567,8 @@
     try{if(typeof ASK!=="undefined"&&ASK&&ASK.stop)ASK.stop();}catch(_s){}
     try{if(typeof FOCUS!=="undefined"&&FOCUS&&FOCUS.stop)FOCUS.stop();}catch(_f){}
     try{if(typeof INVENT!=="undefined"&&INVENT&&INVENT.stop)INVENT.stop();}catch(_v){}
+    try{if(typeof ENG!=="undefined"&&ENG&&ENG.stop)ENG.stop();}catch(_e1){}
+    try{if(typeof NIGHT!=="undefined"&&NIGHT&&NIGHT.stop)NIGHT.stop();}catch(_n1){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
     try{
@@ -1574,6 +1605,8 @@
     if(name==="parent"){renderParent();say("Hallo! Hier zeige ich den Großen, was Vinni diese Woche gelernt hat. 📖");}
     if(name==="invent")INVENT.start();
     if(name==="exped")EXPED.start();
+    if(name==="eng")ENG.start();
+    if(name==="night")NIGHT.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -2923,6 +2956,90 @@
       say("Was für eine Reise! Du bist ein echter Entdecker, Vinni! 🌟",true);}
     function start(){menu();say("Wohin soll unsere Wissens-Reise gehen? 🧭",true);}
     return {start:start};
+  })();
+
+  /* ===================== ENGLISH MIT HILDE ===================== */
+  var ENG=(function(){
+    var W=[
+      {en:"dog",de:"Hund",e:"🐶"},{en:"cat",de:"Katze",e:"🐱"},{en:"chicken",de:"Huhn",e:"🐔"},{en:"fish",de:"Fisch",e:"🐟"},{en:"bird",de:"Vogel",e:"🐦"},{en:"horse",de:"Pferd",e:"🐴"},{en:"cow",de:"Kuh",e:"🐮"},{en:"pig",de:"Schwein",e:"🐷"},
+      {en:"red",de:"rot",e:"🔴"},{en:"blue",de:"blau",e:"🔵"},{en:"green",de:"grün",e:"🟢"},{en:"yellow",de:"gelb",e:"🟡"},{en:"one",de:"eins",e:"1️⃣"},{en:"two",de:"zwei",e:"2️⃣"},{en:"three",de:"drei",e:"3️⃣"},{en:"ten",de:"zehn",e:"🔟"},
+      {en:"apple",de:"Apfel",e:"🍎"},{en:"bread",de:"Brot",e:"🍞"},{en:"milk",de:"Milch",e:"🥛"},{en:"egg",de:"Ei",e:"🥚"},{en:"cheese",de:"Käse",e:"🧀"},{en:"water",de:"Wasser",e:"💧"},{en:"cake",de:"Kuchen",e:"🍰"},{en:"banana",de:"Banane",e:"🍌"},
+      {en:"mother",de:"Mutter",e:"👩"},{en:"father",de:"Vater",e:"👨"},{en:"brother",de:"Bruder",e:"👦"},{en:"hand",de:"Hand",e:"✋"},{en:"eye",de:"Auge",e:"👁️"},{en:"nose",de:"Nase",e:"👃"},{en:"mouth",de:"Mund",e:"👄"},{en:"foot",de:"Fuß",e:"🦶"},
+      {en:"sun",de:"Sonne",e:"☀️"},{en:"moon",de:"Mond",e:"🌙"},{en:"star",de:"Stern",e:"⭐"},{en:"tree",de:"Baum",e:"🌳"},{en:"flower",de:"Blume",e:"🌸"},{en:"house",de:"Haus",e:"🏠"},{en:"car",de:"Auto",e:"🚗"},{en:"book",de:"Buch",e:"📚"},
+      {en:"run",de:"rennen",e:"🏃"},{en:"jump",de:"springen",e:"🤸"},{en:"eat",de:"essen",e:"🍽️"},{en:"sleep",de:"schlafen",e:"😴"},{en:"big",de:"groß",e:"🐘"},{en:"small",de:"klein",e:"🐜"},{en:"fast",de:"schnell",e:"⚡"},{en:"happy",de:"fröhlich",e:"😊"}
+    ];
+    var st={cur:null,recent:[]};
+    function tier(){return Math.min(5,Math.floor(((G.know&&G.know.englisch)||0)/8));}
+    function pool(){var max=(tier()+1)*8,p=W.slice(0,max);return p;}
+    function speakEN(t){try{var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.92;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){}}
+    function pickW(){var p=pool().filter(function(w){return st.recent.indexOf(w.en)<0;});if(!p.length){st.recent=[];p=pool();}
+      var w=p[Math.floor(Math.random()*p.length)];st.recent.push(w.en);if(st.recent.length>10)st.recent.shift();return w;}
+    function distract(w,key){var out=[],guard=0;while(out.length<2&&guard++<60){var o=W[Math.floor(Math.random()*W.length)];if(o.en!==w.en&&out.indexOf(o[key])<0&&o[key]!==w[key])out.push(o[key]);}return out;}
+    function next(){var w=pickW(),mode=Math.random()<0.5?"en2de":"de2en";st.cur={w:w,mode:mode};
+      var qHtml,opts,correct;
+      if(mode==="en2de"){qHtml='<div class="eng-word">“'+w.en+'”</div><div class="inv-note">Was heißt das auf Deutsch?</div>';correct=w.de;opts=[w.de].concat(distract(w,"de"));}
+      else{qHtml='<div class="eng-emoji">'+w.e+'</div><div class="eng-word sm">'+w.de+'</div><div class="inv-note">Wie heißt das auf Englisch?</div>';correct=w.en;opts=[w.en].concat(distract(w,"en"));}
+      for(var i=opts.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=opts[i];opts[i]=opts[j];opts[j]=t;}
+      var h='<div class="eng-tier">Stufe '+(tier()+1)+' · '+((G.know&&G.know.englisch)||0)+' ⭐</div>'+qHtml+'<button class="hbtn eng-say" id="eng-say">🔊 Anhören</button><div class="options" id="eng-opts"></div>';
+      $("eng-stage").innerHTML=h;
+      $("eng-say").onclick=function(){speakEN(w.en);};
+      var box=$("eng-opts");opts.forEach(function(t){var b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=function(){answer(t===correct,b,w);};box.appendChild(b);});
+      if(mode==="en2de")speakEN(w.en);
+      say(mode==="en2de"?"Hör gut hin – was bedeutet das? 🇬🇧":"Wie sagt man das auf Englisch? 🇬🇧");
+    }
+    function answer(ok,b,w){if(!st.cur)return;
+      if(ok){b.classList.add("right");st.cur=null;
+        document.querySelectorAll("#eng-opts .opt").forEach(function(x){x.disabled=true;});
+        bumpBrain("englisch");addEgg(1);speakEN(w.en);
+        say("Great! 🌟 “"+w.en+"” heißt „"+w.de+"“ "+w.e,true);
+        setTimeout(function(){if(current==="eng")next();},1200);}
+      else{b.classList.add("wrong");b.disabled=true;
+        say("Almost! Probier nochmal – hör dir das Wort ruhig an. 🔊");}
+    }
+    function start(){st.cur=null;next();}
+    function stop(){try{window.speechSynthesis.cancel();}catch(e){}}
+    return {start:start,stop:stop};
+  })();
+
+  /* ===================== GUTE-NACHT-WISSEN ===================== */
+  var NIGHT=(function(){
+    var TOPICS=[["⭐","Die Sterne"],["🌙","Der Mond"],["🐋","Das Meer bei Nacht"],["🦉","Tiere in der Nacht"],["☁️","Wolken & Träume"],["❄️","Der Winterwald"]];
+    var LOCAL=[
+      {t:"Die Sterne",s:"Wenn du nachts zum Himmel schaust, siehst du Sterne, deren Licht viele Jahre zu dir gereist ist. Manche Sterne, die du siehst, sind so weit weg, dass ihr Licht schon unterwegs war, als Oma und Opa noch Kinder waren. Jeder Stern ist eine riesige Sonne – nur ganz, ganz weit weg. Und irgendwo dort draußen kreisen Planeten, die noch nie ein Mensch gesehen hat. Frage zum Träumen: Wie mag es wohl auf einem Planeten mit zwei Sonnen aussehen?"},
+      {t:"Der Mond",s:"Der Mond leuchtet nicht selbst – er spiegelt nur sanft das Licht der Sonne zu uns herunter. Während du schläfst, wandert er still über den Himmel und zieht sogar am Meer: Er macht Ebbe und Flut. Astronauten haben Fußspuren auf ihm hinterlassen, und weil es dort keinen Wind gibt, sind sie heute noch da. Frage zum Träumen: Was würdest du auf dem Mond als Erstes tun?"},
+      {t:"Tiere in der Nacht",s:"Wenn du einschläfst, wachen andere gerade erst auf: Die Eule dreht lautlos ihre Runden, der Igel raschelt durchs Laub, und Fledermäuse hören mit ihren Ohren sozusagen im Dunkeln. Ihre Rufe sind so hoch, dass wir Menschen sie gar nicht hören können. Die Nacht gehört den leisen Entdeckern. Frage zum Träumen: Was erlebt wohl eine kleine Eule in dieser Nacht?"}
+    ];
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function speak(t){try{var u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=0.92;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){}}
+    var SPIN='<div class="loading" style="padding:12px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#5a6fd4" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde kuschelt sich zurecht … 🌙</div></div>';
+    function menu(){
+      var h='<div class="inv-big">🌙</div><div class="inv-txt">Such dir ein Thema aus – Hilde erzählt dir eine ruhige Wissens-Geschichte zum Einschlafen. Ohne Punkte, nur zum Staunen.</div><div class="xp-grid">';
+      TOPICS.forEach(function(t,i){h+='<button class="xp-card" data-n="'+i+'"><span class="xp-i">'+t[0]+'</span>'+t[1]+'</button>';});
+      h+='</div>';
+      $("night-stage").innerHTML=h;
+      document.querySelectorAll("#night-stage .xp-card").forEach(function(b){b.onclick=function(){tell(TOPICS[+b.getAttribute("data-n")]);};});
+    }
+    function render(title,txt){
+      $("night-stage").innerHTML='<div class="night-story"><div class="night-t">'+esc(title)+'</div>'+esc(txt)+'</div><div class="inv-btns"><button class="hbtn" id="night-again">🌙 Noch eine</button><button class="hbtn" id="night-home">🏡 Gute Nacht</button></div>';
+      $("night-again").onclick=menu;$("night-home").onclick=function(){show("home");};
+      speak(txt);
+      say("Kuschel dich ein und hör zu … 🌙",false);
+    }
+    function tell(topic){
+      if(!aiKey()){var l=LOCAL[Math.floor(Math.random()*LOCAL.length)];render(l.t,l.s);return;}
+      $("night-stage").innerHTML=SPIN;
+      var p="Du bist Hilde, ein warmherziges Huhn. Erzähle Vinni (7 Jahre, hochbegabt, deutschsprachig) eine GUTE-NACHT-WISSENSGESCHICHTE zum Thema „"+topic[1]+"“: 5 bis 6 kurze, ruhige, staunende Sätze mit einem echten, faszinierenden Fakt – sanft und beruhigend, nichts Aufregendes oder Gruseliges. Beende mit genau einem Satz, der mit „Frage zum Träumen:“ beginnt. Antworte nur mit dem Fließtext, ohne Titel, ohne Markdown, höchstens 1 Emoji.";
+      fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:500,messages:[{role:"user",content:p}]})})
+      .then(function(r){return r.json();}).then(function(d){
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim();
+        if(!t)throw new Error("empty");
+        render(topic[1],t);
+      }).catch(function(){var l=LOCAL[Math.floor(Math.random()*LOCAL.length)];render(l.t,l.s);});
+    }
+    function start(){menu();say("Zeit, runterzukommen … such dir eine Traumreise aus. 🌙",false);}
+    function stop(){try{window.speechSynthesis.cancel();}catch(e){}}
+    return {start:start,stop:stop};
   })();
 
   /* ===================== FOKUS & COOL BLEIBEN ===================== */
