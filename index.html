@@ -703,6 +703,24 @@
   .inv-ok{background:var(--good);color:#fff}.inv-no{background:var(--wrong);color:#fff}
   .inv-ok:active,.inv-no:active{transform:translateY(3px)}
   .mc-invent .modicon{background:#e8eefb}
+  /* Expeditionen */
+  .mc-exped .modicon{background:#e2f4ea}
+  .xp-count{font-weight:900;font-size:13px;color:var(--good-deep);margin-bottom:4px}
+  .xp-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}
+  .xp-card{font-family:inherit;border:3px solid #fff;background:linear-gradient(#fffefb,#eef7f0);border-radius:16px;padding:12px 8px;font-weight:900;font-size:14px;cursor:pointer;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);line-height:1.25}
+  .xp-card:active{transform:translateY(2px)}
+  .xp-i{font-size:26px}
+  .xp-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .xp-title{font-weight:900;font-size:15px}
+  .xp-prog{font-weight:900;font-size:12px;color:var(--ink-soft);white-space:nowrap}
+  .xp-path{display:flex;gap:7px;justify-content:center;margin:8px 0 10px}
+  .xp-dot{width:12px;height:12px;border-radius:50%;background:#e4dcc8;transition:transform .2s}
+  .xp-dot.done{background:var(--good)}
+  .xp-dot.cur{background:var(--yolk-deep);transform:scale(1.25)}
+  .xp-story{font-weight:800;font-size:14px;font-style:italic;background:#eef6ff;border:2px solid #fff;border-radius:12px;padding:9px 11px;margin-bottom:9px;line-height:1.45;text-align:left}
+  .xp-q{font-weight:900;font-size:18px;margin:4px 0 10px;line-height:1.3}
+  .pr-btns{display:flex;gap:8px;margin-top:8px}
+  .pr-btns .hbtn{flex:1}
 
   /* ---------- Optik-Feinschliff: Tageszeit, Bereiche, Desktop ---------- */
   body.sky-morning{--sky1:#ffe6cf;--sky2:#b5d9ef}
@@ -839,6 +857,7 @@
             <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Natur, Welt, Logik – von Hilde erdacht</div></div></button>
             <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
             <button class="modcard mc-invent" data-go="invent"><div class="modicon">🛠️</div><div><div class="modtitle">Erfinder-Werkstatt</div><div class="modsub">DU bist der Lehrer: Stell Fragen und erwische Hildes Fehler!</div></div></button>
+            <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen: 5 Stationen, eine spannende Geschichte</div></div></button>
             <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
             <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
             <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
@@ -866,6 +885,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- WISSENS-EXPEDITIONEN -->
+    <div class="screen" id="exped">
+      <div class="hilde-row"><div class="hilde" id="exped-hilde"></div><div class="bubble" id="exped-bubble">Wohin geht die Reise?</div></div>
+      <div class="stagepad"><div class="card" id="xp-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- ERFINDER-WERKSTATT -->
@@ -1267,13 +1293,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1420,6 +1446,28 @@
     return h;
   }
   function escT(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  /* ---------- Spielstand sichern & übertragen ---------- */
+  function backupSave(){try{doSave();
+    var o={app:"vinnis-huehnerhof",v:1,date:new Date().toISOString()};
+    try{o.save=window.localStorage.getItem(SAVEKEY)||null;o.secs=window.localStorage.getItem("vinni_secs")||null;o.sound=window.localStorage.getItem("vinni_sound")||null;}catch(e){}
+    if(!o.save){toast("Noch kein Spielstand vorhanden");return;}
+    var blob=new Blob([JSON.stringify(o,null,2)],{type:"application/json"});
+    var d=new Date(),name="vinnis-hof-sicherung-"+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+".json";
+    var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(function(){try{URL.revokeObjectURL(a.href);}catch(e){}if(a.parentNode)a.remove();},900);
+    toast("💾 Sicherung gespeichert");}catch(e){toast("Das hat leider nicht geklappt");}}
+  function backupLoad(ev){var f=ev.target.files&&ev.target.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(){try{var o=JSON.parse(r.result);
+      if(!o||o.app!=="vinnis-huehnerhof"||!o.save)throw new Error("bad");
+      JSON.parse(o.save);
+      if(!window.confirm("Sicherung laden? Der aktuelle Spielstand auf DIESEM Gerät wird ersetzt."))return;
+      window.localStorage.setItem(SAVEKEY,o.save);
+      if(o.secs)window.localStorage.setItem("vinni_secs",o.secs);
+      if(o.sound!=null)window.localStorage.setItem("vinni_sound",o.sound);
+      toast("✅ Sicherung geladen");setTimeout(function(){location.reload();},700);
+    }catch(e){toast("Das ist keine gültige Sicherungs-Datei");}};
+    r.readAsText(f);ev.target.value="";}
   function renderParent(){
     weekInit();var el=$("parent-list");if(!el)return;
     var kn=G.know||{},k0=(G.week&&G.week.know0)||{};
@@ -1442,8 +1490,15 @@
     if(rev.length){h+='<div class="pr-card"><div class="pr-h">🔄 Da übt Vinni noch</div>';
       rev.forEach(function(q){var a=(q.options&&q.options[q.correct])||"";h+='<div class="pr-q">„'+escT(q.question)+'“<span class="pr-a"> → '+escT(a)+'</span></div>';});
       h+='<div class="pr-tip">Diese Fragen tauchen im Spiel (und beim Wochen-Boss) in neuer Form wieder auf.</div></div>';}
+    h+='<div class="pr-card"><div class="pr-h">💾 Spielstand sichern & übertragen</div>'+
+      '<div class="pr-tip" style="text-align:left;margin-top:0">Der Fortschritt liegt nur auf diesem Gerät. Hier als Datei sichern und auf einem anderen Gerät (Handy, iPad, PC) wieder laden. Der KI-Schlüssel wird aus Sicherheitsgründen nicht mitgesichert.</div>'+
+      '<div class="pr-btns"><button class="hbtn" id="bk-save">⬇️ Sicherung speichern</button><button class="hbtn" id="bk-load">⬆️ Sicherung laden</button></div>'+
+      '<input type="file" id="bk-file" accept=".json,application/json" style="display:none"></div>';
     h+='<div class="pr-card"><div class="pr-h">ℹ️ So hilft die App</div><div class="pr-tip" style="text-align:left">Schwierigkeit steigt automatisch mit jeder richtigen Antwort (aktuell Level '+(AI.level?AI.level():1)+'). Falsch beantwortete Fragen kommen in anderer Form wieder, Gelerntes wird vertieft. Tagesaufgaben und Boss-Kämpfe sorgen für tägliche, kurze Lern-Rituale.</div></div>';
     el.innerHTML=h;
+    var bs=$("bk-save");if(bs)bs.onclick=backupSave;
+    var bl=$("bk-load");if(bl)bl.onclick=function(){var f=$("bk-file");if(f)f.click();};
+    var bf=$("bk-file");if(bf)bf.onchange=backupLoad;
   }
   function renderBarn(){
     $("barn-roost").innerHTML='<div class="roost-bar"></div><div class="roost-hen" style="left:18%">'+chick(VAR.braun,false)+'</div><div class="roost-hen" style="left:52%">'+chick(VAR.weiss,true)+'</div>';
@@ -1453,7 +1508,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1518,6 +1573,7 @@
     if(name==="boss")BOSS.open();
     if(name==="parent"){renderParent();say("Hallo! Hier zeige ich den Großen, was Vinni diese Woche gelernt hat. 📖");}
     if(name==="invent")INVENT.start();
+    if(name==="exped")EXPED.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -2779,6 +2835,96 @@
     return {start:start,stop:stop};
   })();
 
+  /* ===================== WISSENS-EXPEDITIONEN ===================== */
+  var EXPED=(function(){
+    var st=null;
+    var LOCAL=[
+      {id:"mars",icon:"🚀",title:"Reise zum Mars",cat:"weltall",steps:[
+        {story:"3-2-1 – die Rakete hebt ab! Du fliegst mit Hilde zum roten Planeten.",q:"Warum sieht der Mars rot aus?",o:["Wegen rostigem Staub","Weil er glühend heiß ist","Wegen roter Pflanzen"],c:0,why:"Eisenstaub auf dem Mars ist „verrostet“ – das macht ihn rot."},
+        {story:"Nach langem Flug: Landung! Der Himmel ist staubig-rosa.",q:"Wie viele Monde hat der Mars?",o:["2","0","7"],c:0,why:"Phobos und Deimos – zwei kleine Kartoffel-Monde."},
+        {story:"Mit dem Rover rollst du über rote Sanddünen.",q:"Was brauchen Astronauten auf dem Mars unbedingt?",o:["Sauerstoff zum Atmen","Einen Regenschirm","Gummistiefel"],c:0,why:"Die Mars-Luft hat fast keinen Sauerstoff – ohne Anzug geht nichts."},
+        {story:"Am Horizont ragt ein Riese auf – der größte Vulkan des Sonnensystems!",q:"Wie heißt der Riesen-Vulkan auf dem Mars?",o:["Olympus Mons","Mount Everest","Ätna"],c:0,why:"Olympus Mons ist fast dreimal so hoch wie der Mount Everest!"},
+        {story:"Zeit für die Heimreise – vorne leuchtet ein blauer Punkt: Zuhause!",q:"Warum sieht die Erde aus dem All blau aus?",o:["Wegen der vielen Meere","Wegen blauer Wälder","Wegen blauem Sand"],c:0,why:"Über zwei Drittel der Erde sind von Wasser bedeckt."}]},
+      {id:"tiefsee",icon:"🐋",title:"Tauchfahrt in die Tiefsee",cat:"tiere",steps:[
+        {story:"Dein U-Boot taucht ab – es wird dunkler und dunkler.",q:"Warum ist es in der Tiefsee stockdunkel?",o:["Sonnenlicht kommt nicht so tief","Die Fische machen das Licht aus","Im Meer ist immer Nacht"],c:0,why:"Schon nach 200 Metern schluckt das Wasser fast alles Licht."},
+        {story:"Plötzlich blinkt ein Lichtpunkt vor dem Fenster!",q:"Wie machen manche Tiefseefische Licht?",o:["Mit Leuchtorganen am Körper","Mit kleinen Taschenlampen","Sie reiben sich am Sand"],c:0,why:"Das nennt man Biolumineszenz – Licht aus dem eigenen Körper!"},
+        {story:"Das U-Boot knarzt leise – der Druck hier unten ist riesig.",q:"Warum ist der Druck in der Tiefe so groß?",o:["Das viele Wasser drückt von oben","Die Fische drücken dagegen","Der Wind drückt aufs Meer"],c:0,why:"Tausende Meter Wasser über dir sind schwer – das drückt gewaltig."},
+        {story:"Ein Riese gleitet vorbei – ein Pottwal auf Tauchgang!",q:"Womit atmet der Wal?",o:["Mit der Lunge – er muss auftauchen","Mit Kiemen wie ein Fisch","Er atmet gar nicht"],c:0,why:"Wale sind Säugetiere – sie holen oben Luft, wie du!"},
+        {story:"Am Meeresboden blubbert heißes Wasser aus einem Schlot.",q:"Was ist ein „Schwarzer Raucher“?",o:["Eine heiße Quelle am Meeresboden","Ein rauchender Fisch","Ein Unterwasser-Lagerfeuer"],c:0,why:"Dort strömt kochend heißes, dunkles Wasser aus der Erde."}]},
+      {id:"dino",icon:"🦖",title:"Zeitreise zu den Dinosauriern",cat:"tiere",steps:[
+        {story:"Die Zeitmaschine surrt – willkommen vor 150 Millionen Jahren!",q:"Welche Tiere von heute sind Verwandte der Dinos?",o:["Vögel","Katzen","Fische"],c:0,why:"Dein Huhn Hilde ist eine Ur-Ur-Ur-Enkelin der Dinos!"},
+        {story:"Ein Langhals-Riese frisst Blätter hoch oben in den Bäumen.",q:"Was fraß ein Brachiosaurus?",o:["Pflanzen","Fleisch","Steine"],c:0,why:"Langhälse waren friedliche Pflanzenfresser."},
+        {story:"Der Boden bebt … ein T. rex stampft vorbei!",q:"Woran erkennt man Fleischfresser-Dinos?",o:["An scharfen, spitzen Zähnen","An langen Hälsen","An bunten Federn"],c:0,why:"Spitze Zähne = Fleischfresser, flache Mahlzähne = Pflanzenfresser."},
+        {story:"Über dir segelt ein riesiger Schatten durch die Luft.",q:"War der Flugsaurier ein Dinosaurier?",o:["Nein, ein fliegendes Reptil","Ja, ein fliegender Dino","Er war ein Vogel"],c:0,why:"Flugsaurier waren Verwandte der Dinos, aber keine echten Dinosaurier."},
+        {story:"Zurück in der Gegenwart! Aber woher wissen wir das alles?",q:"Woher wissen Forscher so viel über Dinos?",o:["Aus Fossilien im Gestein","Aus ganz alten Fotos","Von Ur-Ur-Omas Erzählungen"],c:0,why:"Versteinerte Knochen und Spuren erzählen die Dino-Geschichte."}]}
+    ];
+    var AI_DESTS=[["🚀","Reise zum Mars","weltall"],["🌋","Ins Innere des Vulkans","natur"],["🐋","Tauchfahrt in die Tiefsee","tiere"],["🏺","Das alte Ägypten","geschichte"],["🦖","Zeitreise zu den Dinosauriern","tiere"],["⚡","Die Welt des Stroms","physik"],["🧊","Expedition in die Antarktis","erde"],["🌴","Geheimnisse des Regenwaldes","natur"],["🫀","Reise durch deinen Körper","koerper"],["🌙","Flug zum Mond","weltall"]];
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    var SPIN='<div class="loading" style="padding:12px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#3a8c63" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div>Hilde packt die Expeditions-Ausrüstung … 🎒</div></div>';
+    function menu(){st=null;
+      var h='';
+      if((G.exped||0)>0)h+='<div class="xp-count">🏅 '+G.exped+' Expedition'+(G.exped===1?"":"en")+' geschafft</div>';
+      h+='<div class="inv-txt">Such dir eine Reise aus – 5 Stationen, eine Geschichte, und dein Wissen wächst! 🧭</div><div class="xp-grid">';
+      if(aiKey()){AI_DESTS.forEach(function(d,i){h+='<button class="xp-card" data-ai="'+i+'"><span class="xp-i">'+d[0]+'</span>'+d[1]+'</button>';});}
+      else{LOCAL.forEach(function(d){h+='<button class="xp-card" data-loc="'+d.id+'"><span class="xp-i">'+d.icon+'</span>'+d.title+'</button>';});}
+      h+='</div>';
+      if(!aiKey())h+='<div class="inv-note">Mit KI-Schlüssel (⚙️ KI-Modus auf dem Hof) gibt es noch viel mehr Reiseziele – immer neu erdacht!</div>';
+      $("xp-stage").innerHTML=h;
+      document.querySelectorAll("#xp-stage .xp-card").forEach(function(b){b.onclick=function(){
+        var li=b.getAttribute("data-loc");
+        if(li){var d=null;LOCAL.forEach(function(x){if(x.id===li)d=x;});begin(d.title,d.steps,d.cat);}
+        else gen(AI_DESTS[+b.getAttribute("data-ai")]);};});
+    }
+    function gen(dest){
+      $("xp-stage").innerHTML=SPIN;
+      var L=AI.level?AI.level():1;
+      var p="Du bist Hilde, ein kluges Huhn, und nimmst Vinni (7 Jahre, hochbegabt, deutschsprachig) mit auf eine Wissens-Expedition: „"+dest[1]+"“. Erstelle GENAU 5 Stationen, die wie eine spannende Reise aufeinander aufbauen. Jede Station: \"story\" (1-2 kurze, spannende Erzählsätze in Du-Form), dann eine Multiple-Choice-Frage dazu mit GENAU 3 kurzen Antworten (nur eine richtig, die falschen plausibel) und \"explain\" (1 begeisternder Erklärsatz). Schwierigkeit: Stufe "+L+" – fordere ihn wirklich, aber kindgerecht und faktisch korrekt. Antworte AUSSCHLIESSLICH mit reinem JSON, ohne Markdown: {\"steps\":[{\"story\":\"..\",\"question\":\"..\",\"options\":[\"A\",\"B\",\"C\"],\"correct\":0,\"explain\":\"..\"},… genau 5]}";
+      fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1600,messages:[{role:"user",content:p}]})})
+      .then(function(r){return r.json();}).then(function(d){
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim().replace(/```json/gi,"").replace(/```/g,"");
+        var f=t.indexOf("{"),l=t.lastIndexOf("}");if(f>=0&&l>f)t=t.slice(f,l+1);var o=JSON.parse(t);
+        if(!o||!Array.isArray(o.steps)||o.steps.length!==5)throw new Error("bad");
+        o.steps.forEach(function(s){if(typeof s.question!=="string"||!Array.isArray(s.options)||s.options.length!==3||typeof s.correct!=="number")throw new Error("bad");});
+        begin(dest[1],o.steps,dest[2]);
+      }).catch(function(){var d=LOCAL[Math.floor(Math.random()*LOCAL.length)];toast("Die KI-Reise klappte nicht – Ersatz-Expedition!");begin(d.title,d.steps,d.cat);});
+    }
+    function begin(title,steps,cat){
+      st={title:title,cat:cat||catFor(title),i:0,tries:0,stars:0,steps:steps.map(function(s){
+        var q=s.q||s.question,o=(s.o||s.options).slice(),ci=(s.c!=null?s.c:s.correct),ct=o[ci];
+        for(var i=o.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),tmp=o[i];o[i]=o[j];o[j]=tmp;}
+        return {s:s.s||s.story||"",q:q,o:o,c:o.indexOf(ct),why:s.why||s.explain||""};})};
+      step();
+    }
+    function step(){var s=st.steps[st.i];st.tries=0;
+      var dots="";for(var k=0;k<st.steps.length;k++)dots+='<span class="xp-dot'+(k<st.i?" done":k===st.i?" cur":"")+'"></span>';
+      var h='<div class="xp-head"><span class="xp-title">'+esc(st.title)+'</span><span class="xp-prog">Station '+(st.i+1)+'/5</span></div><div class="xp-path">'+dots+'</div>';
+      if(s.s)h+='<div class="xp-story">'+esc(s.s)+'</div>';
+      h+='<div class="xp-q">'+esc(s.q)+'</div><div class="options" id="xp-opts"></div>';
+      $("xp-stage").innerHTML=h;
+      var box=$("xp-opts");s.o.forEach(function(t,i){var b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=function(){answer(i,b,s);};box.appendChild(b);});
+      say(st.i===0?"Die Expedition beginnt – gute Reise! 🧭":"Weiter geht die Reise! 🎒");
+    }
+    function answer(i,b,s){if(!st)return;
+      if(i===s.c){b.classList.add("right");
+        document.querySelectorAll("#xp-opts .opt").forEach(function(x){x.disabled=true;});
+        if(st.tries===0){st.stars++;bumpBrain(st.cat);}
+        say("Richtig! "+s.why,true);
+        setTimeout(function(){if(!st||current!=="exped")return;st.i++;if(st.i>=st.steps.length)finish();else step();},1000);}
+      else{b.classList.add("wrong");b.disabled=true;st.tries++;
+        if(st.tries>=2){var opts=document.querySelectorAll("#xp-opts .opt");if(opts[s.c])opts[s.c].classList.add("right");opts.forEach(function(x){x.disabled=true;});
+          say("Die richtige Antwort: "+s.o[s.c]+". "+s.why+" Weiter geht's!");
+          setTimeout(function(){if(!st||current!=="exped")return;st.i++;if(st.i>=st.steps.length)finish();else step();},1500);}
+        else say("Fast! Überleg nochmal – du schaffst das. 🤔");}
+    }
+    function finish(){var stars=st.stars;st=null;G.exped=(G.exped||0)+1;doSave();addEgg(5);SFX.fanfare();
+      $("xp-stage").innerHTML='<div class="inv-big">🏁</div><div class="inv-txt"><b>Expedition geschafft!</b><br>'+stars+' von 5 Sternen unterwegs gesammelt · +5 🥚</div><div class="inv-btns"><button class="inv-mic" id="xp-again">🧭 Neue Expedition</button><button class="hbtn" id="xp-home">🏡 Zum Hof</button></div>';
+      $("xp-again").onclick=menu;$("xp-home").onclick=function(){show("home");};
+      say("Was für eine Reise! Du bist ein echter Entdecker, Vinni! 🌟",true);}
+    function start(){menu();say("Wohin soll unsere Wissens-Reise gehen? 🧭",true);}
+    return {start:start};
+  })();
+
   /* ===================== FOKUS & COOL BLEIBEN ===================== */
   var FOCUS=(function(){
     var halt=null;
@@ -3038,7 +3184,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
