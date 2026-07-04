@@ -813,6 +813,28 @@
   .str-mbtn{width:100%;font-family:inherit;text-align:left;border:2px solid #fff;background:var(--paper);border-radius:14px;padding:11px 13px;font-weight:800;font-size:13.5px;line-height:1.35;cursor:pointer;box-shadow:0 2px 0 rgba(54,41,31,.08);margin-bottom:7px;color:var(--ink)}
   .str-mbtn b{color:var(--good-deep);white-space:nowrap}
   .str-mbtn:active{transform:translateY(2px)}
+  /* Küken-Party */
+  .mc-party .modicon{background:#fff9d9}
+  .pt-arena{position:relative;height:190px;background:linear-gradient(#bfe6fa 0%,#cfeaba 40%,#8ecb6a 100%);border:3px solid #fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
+  .pt-podium{position:absolute;left:4%;bottom:8px;font-size:34px;text-align:center;line-height:1}
+  .pt-podium small{display:block;font-size:9px;font-weight:900;color:var(--ink-soft)}
+  .pt-vortex{position:absolute;right:4%;top:8px;font-size:34px;transition:transform .4s ease,font-size .4s ease;animation:vortexspin 6s linear infinite;opacity:.75}
+  @keyframes vortexspin{to{transform:rotate(360deg)}}
+  .pt-arena.pt-warn{animation:ptshake .3s ease-in-out infinite}
+  .pt-arena.pt-warn .pt-vortex{font-size:56px;animation:vortexspin 1.2s linear infinite;opacity:1}
+  .pt-arena.pt-suck .pt-vortex{font-size:80px;animation:vortexspin .5s linear infinite;opacity:1}
+  @keyframes ptshake{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(1.5px,-1px) rotate(.3deg)}75%{transform:translate(-1.5px,1px) rotate(-.3deg)}}
+  .pt-k{position:absolute;font-size:22px;animation:kbounce 1s ease-in-out infinite}
+  @keyframes kbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .pt-arena.pt-warn .pt-k{animation-duration:.45s}
+  .pt-crumb{position:absolute;font-size:16px}
+  .pt-chicken{position:absolute;bottom:12px;left:72%;font-size:34px;transition:left .35s ease;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}
+  .pt-chicken.pt-spin{animation:ptspin 1.2s ease}
+  @keyframes ptspin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(540deg) scale(.7)}100%{transform:rotate(720deg) scale(1)}}
+  .pt-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+  .pt-stopbtn{font-family:inherit;border:3px solid #fff;background:linear-gradient(#ff8a70,var(--wrong));color:#fff;font-weight:900;font-size:20px;border-radius:16px;padding:13px 22px;cursor:pointer;box-shadow:var(--shadow)}
+  .pt-stopbtn:active{transform:translateY(3px)}
+  .pt-stopbtn:disabled{opacity:.45}
   /* ---------- Game-Feel: Splash, Zeremonie, Sprites, Ambient ---------- */
   #splash{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
     background:linear-gradient(#bfe6fa 0%,#9ad2ee 45%,#8ecb6a 100%);transition:opacity .5s ease;pointer-events:none}
@@ -996,6 +1018,7 @@
             <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus</div></div></button>
             <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor</div><div class="modsub">Bauen, verstehen, fahren</div></div></button>
             <button class="modcard mc-duel" data-go="duel"><div class="modicon">⚔️</div><div><div class="modtitle">Duell</div><div class="modsub">Vinni gegen Bruder – fair!</div></div></button>
+            <button class="modcard mc-party" data-go="party"><div class="modicon">🐥</div><div><div class="modtitle">Küken-Party</div><div class="modsub">Feiern & dem Strudel entkommen</div></div></button>
           </div>
         </div>
         <div class="modsec" data-sec="entdecken">
@@ -1048,6 +1071,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- KÜKEN-PARTY -->
+    <div class="screen" id="party">
+      <div class="hilde-row"><div class="hilde" id="party-hilde"></div><div class="bubble" id="party-bubble">Die Küken feiern – pass auf den Strudel auf!</div></div>
+      <div class="stagepad"><div class="card" id="pt-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- DUELL -->
@@ -1503,13 +1533,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1754,7 +1784,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1811,6 +1841,7 @@
     try{if(typeof INVENT!=="undefined"&&INVENT&&INVENT.stop)INVENT.stop();}catch(_v){}
     try{if(typeof ENG!=="undefined"&&ENG&&ENG.stop)ENG.stop();}catch(_e1){}
     try{if(typeof NIGHT!=="undefined"&&NIGHT&&NIGHT.stop)NIGHT.stop();}catch(_n1){}
+    try{if(typeof PARTY!=="undefined"&&PARTY&&PARTY.stop&&name!=="party")PARTY.stop();}catch(_p1){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
     if(name!=="home"&&name!=="parent"&&SCR[name]){try{var _rc=JSON.parse(window.localStorage.getItem("vinni_recent")||"[]");_rc=_rc.filter(function(x){return x!==name;});_rc.unshift(name);window.localStorage.setItem("vinni_recent",JSON.stringify(_rc.slice(0,6)));}catch(_rr){}}
@@ -1854,6 +1885,7 @@
     if(name==="forscher")RESEARCH.start();
     if(name==="prof")PROF.start();
     if(name==="duel")DUEL.start();
+    if(name==="party")PARTY.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -3351,6 +3383,94 @@
     return {start:start};
   })();
 
+  /* ===================== KÜKEN-PARTY (Strudel als Spiel) ===================== */
+  var PARTY=(function(){
+    var st=null,tick=null,phT=null;
+    var ENDLINES=["Hast du gemerkt? Erst kribbelt es – DANN kommt der Strudel. Genau wie im echten Leben. 😉","Profi-Trick: Beim ERSTEN Wackeln raus – nicht beim letzten!","Der Trainer auf dem Podest bekommt den Applaus – der Strudel bekommt nur Schwindel.","Merken → STOPP → einen Schritt raus. Das kannst du jetzt im Schlaf! 🌀🚫"];
+    function stopAll(){if(tick){clearInterval(tick);tick=null;}if(phT){clearTimeout(phT);phT=null;}}
+    function el(id){return $(id);}
+    function warnBeep(n){try{if(SFX.isOn&&SFX.isOn()){/* aufsteigender Warnton */}}catch(e){}}
+    function setPhase(p){if(!st||st.over)return;st.phase=p;var a=el("pt-arena");if(!a)return;
+      a.classList.toggle("pt-warn",p==="warn");a.classList.toggle("pt-suck",p==="suck");
+      var v=el("pt-vortex");if(v)v.textContent="🌀";
+      if(p==="calm"){st.round++;phT=setTimeout(function(){setPhase("warn");},rnd(3500,7000));updateUI();}
+      else if(p==="warn"){var dur=Math.max(1100,2600-st.round*120);
+        var bi=setInterval(function(){if(!st||st.phase!=="warn"){clearInterval(bi);return;}
+          try{SFX.pop();}catch(e){}},300);
+        phT=setTimeout(function(){clearInterval(bi);setPhase("suck");},dur);updateUI();}
+      else if(p==="suck"){
+        if(st.pos==="party"){st.sucked++;st.score=Math.floor(st.score*0.7);st.streak=0;
+          var c=el("pt-chick");if(c){c.classList.remove("pt-spin");void c.offsetWidth;c.classList.add("pt-spin");}
+          SFX.wrong();say("Wusch! 🌀 Der Strudel hat dich erwischt – halb so wild, wieder raus damit!");
+          phT=setTimeout(function(){setPhase("calm");},1400);}
+        else{st.perfect++;
+          SFX.right();
+          phT=setTimeout(function(){st.phase="after";updateUI();
+            say("Der Strudel ging LEER aus! 🎪 Zeig den Küken schnell ein Spiel!",true);
+            phT=setTimeout(function(){if(st&&st.phase==="after")setPhase("calm");},2600);},1200);}
+        updateUI();}
+    }
+    function updateUI(){if(!st)return;
+      var s=el("pt-score");if(s)s.textContent=st.score;
+      var b=el("pt-streak");if(b)b.textContent="🔥 "+st.streak;
+      var t=el("pt-time");if(t)t.textContent=Math.max(0,Math.ceil(st.timeLeft))+"s";
+      var ch=el("pt-chick");if(ch){ch.style.left=st.pos==="party"?"72%":"14%";}
+      var stop=el("pt-stop");if(stop)stop.disabled=(st.pos!=="party"||st.over);
+      var back=el("pt-back");if(back)back.style.display=(st.pos==="podium"&&st.phase!=="suck"&&!st.over)?"":"none";
+      var show2=el("pt-show");if(show2)show2.style.display=(st.phase==="after"&&st.pos==="podium")?"":"none";
+    }
+    function doStop(){if(!st||st.over||st.pos!=="party")return;
+      var wasWarn=(st.phase==="warn");st.pos="podium";
+      if(wasWarn){st.streak++;var bonus=5+st.streak*2;st.score+=bonus;SFX.coin();
+        toast("Perfekter Ausstieg! +"+bonus,true);}
+      else SFX.pop();
+      updateUI();}
+    function goParty(){if(!st||st.over||st.phase==="suck")return;st.pos="party";updateUI();}
+    function showGame(){if(!st||st.phase!=="after")return;st.score+=8;SFX.fanfare();st.phase="calm2";
+      toast("🎪 +8 – die Küken lieben dich!",true);
+      if(phT)clearTimeout(phT);setPhase("calm");}
+    function end(){if(!st)return;st.over=true;stopAll();
+      var sc=st.score,best=Math.max(G.partyBest||0,sc),rec=sc>(G.partyBest||0);
+      G.partyBest=best;doSave();
+      var eggs=Math.max(1,Math.floor(sc/15));addEgg(eggs);
+      el("pt-stage").innerHTML='<div class="inv-big">'+(rec?"🏆":"🐥")+'</div>'+
+        '<div class="boss-endtxt">'+(rec?"NEUER REKORD!<br>":"")+sc+' Party-Punkte · '+st.perfect+'× perfekt entkommen<br>+'+eggs+' 🥚</div>'+
+        '<div class="inv-btns"><button class="inv-mic" id="pt-again">🐥 Nochmal!</button><button class="hbtn" id="pt-home">🏡 Hof</button></div>';
+      el("pt-again").onclick=begin;el("pt-home").onclick=function(){show("home");};
+      if(rec)ceremony("🏆","Party-Rekord!",sc+" Punkte – strudelfest!");
+      say(pick(ENDLINES),true);}
+    function begin(){stopAll();
+      st={score:0,streak:0,round:0,pos:"party",phase:"calm",timeLeft:75,over:false,sucked:0,perfect:0};
+      el("pt-stage").innerHTML=
+        '<div class="du-bar"><span>🌽 <b id="pt-score">0</b></span><span id="pt-streak" class="du-round">🔥 0</span><span>🏆 '+(G.partyBest||0)+'</span><span id="pt-time">75s</span></div>'+
+        '<div class="pt-arena" id="pt-arena">'+
+          '<div class="pt-podium">🎪<small>Trainer-<br>Podest</small></div>'+
+          '<div class="pt-vortex" id="pt-vortex">🌀</div>'+
+          '<span class="pt-k" style="right:18%;bottom:14px">🐥</span><span class="pt-k" style="right:30%;bottom:30px;animation-delay:-.4s">🐥</span><span class="pt-k" style="right:8%;bottom:34px;animation-delay:-.8s">🐥</span>'+
+          '<span class="pt-crumb" style="right:24%;bottom:8px">🌽</span><span class="pt-crumb" style="right:12%;bottom:52px">🎉</span>'+
+          '<div class="pt-chicken" id="pt-chick">🐔</div>'+
+        '</div>'+
+        '<div class="pt-btns">'+
+          '<button class="pt-stopbtn" id="pt-stop">🛑 STOPP!</button>'+
+          '<button class="hbtn next" id="pt-show" style="display:none">🎪 Spiel zeigen!</button>'+
+          '<button class="hbtn" id="pt-back" style="display:none">🎉 Zur Party!</button>'+
+          '<button class="hbtn" id="pt-end">🏁 Fertig</button>'+
+        '</div>'+
+        '<div class="inv-note">Auf der Party regnet es Punkte 🌽 – aber wenn es wackelt: 🛑 STOPP und ab aufs Podest! Vom Podest aus: Spiel zeigen = Bonus!</div>';
+      el("pt-stop").onclick=doStop;el("pt-back").onclick=goParty;el("pt-show").onclick=showGame;el("pt-end").onclick=end;
+      tick=setInterval(function(){if(!st||st.over)return;
+        st.timeLeft-=0.25;
+        if(st.pos==="party"&&st.phase!=="suck")st.acc=(st.acc||0)+0.25;
+        if((st.acc||0)>=0.5){st.acc-=0.5;st.score++;}
+        if(st.timeLeft<=0){end();return;}
+        updateUI();},250);
+      setPhase("calm");updateUI();
+      say("Party! 🐥 Bleib, solange es sicher ist – und beim ersten Wackeln: STOPP! 🌀");}
+    function start(){begin();}
+    function stop(){stopAll();st=null;}
+    return {start:start,stop:stop};
+  })();
+
   /* ===================== DUELL (Vinni gegen Bruder) ===================== */
   var DUEL=(function(){
     var st=null,ROUNDS=5;
@@ -4003,7 +4123,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;G.duelName="";G.strudel=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;G.duelName="";G.strudel=null;G.partyBest=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
