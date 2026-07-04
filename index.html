@@ -793,6 +793,19 @@
   .pv-miss{background:var(--paper);border:3px solid #fff;border-radius:16px;box-shadow:var(--shadow);padding:12px 14px;margin-top:8px}
   .pv-mt{font-weight:900;font-size:13px;color:var(--blue-deep);margin-bottom:6px;text-align:left}
   .pv-mx{font-weight:900;font-size:18px;line-height:1.35;margin-bottom:10px}
+  /* Duell */
+  .mc-duel .modicon{background:#fde2e2}
+  .du-bar{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:13px;margin-bottom:10px;gap:6px}
+  .du-bar span{background:var(--paper);border:2px solid #fff;border-radius:12px;padding:5px 9px;box-shadow:0 2px 0 rgba(54,41,31,.08)}
+  .du-bar .du-p1.on{background:#e2ecfb}
+  .du-bar .du-p2.on{background:#ffe9d9}
+  .du-bar .du-round{color:var(--ink-soft);border:none;background:transparent;box-shadow:none;padding:0}
+  .du-hand{text-align:center;padding:10px 0}
+  .du-ht{font-weight:900;font-size:20px;line-height:1.4;margin:8px 0 14px}
+  .du-badge{display:inline-block;font-weight:900;font-size:13px;border-radius:12px;padding:5px 12px;margin-bottom:8px;border:2px solid #fff;box-shadow:var(--shadow)}
+  .du-c1{background:#e2ecfb;color:var(--blue-deep)}
+  .du-c2{background:#ffe9d9;color:var(--barn-deep)}
+  .du-names{font-weight:900;font-size:17px;margin:6px 0 12px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
   /* ---------- Game-Feel: Splash, Zeremonie, Sprites, Ambient ---------- */
   #splash{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
     background:linear-gradient(#bfe6fa 0%,#9ad2ee 45%,#8ecb6a 100%);transition:opacity .5s ease;pointer-events:none}
@@ -975,6 +988,7 @@
             <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt</div></div></button>
             <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus</div></div></button>
             <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor</div><div class="modsub">Bauen, verstehen, fahren</div></div></button>
+            <button class="modcard mc-duel" data-go="duel"><div class="modicon">⚔️</div><div><div class="modtitle">Duell</div><div class="modsub">Vinni gegen Bruder – fair!</div></div></button>
           </div>
         </div>
         <div class="modsec" data-sec="entdecken">
@@ -1027,6 +1041,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- DUELL -->
+    <div class="screen" id="duel">
+      <div class="hilde-row"><div class="hilde" id="duel-hilde"></div><div class="bubble" id="duel-bubble">Zeit für ein faires Duell!</div></div>
+      <div class="stagepad"><div class="card" id="du-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- PROFESSOR VINCENT -->
@@ -1474,13 +1495,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||""};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1718,7 +1739,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1817,6 +1838,7 @@
     if(name==="deeds")DEEDS.start();
     if(name==="forscher")RESEARCH.start();
     if(name==="prof")PROF.start();
+    if(name==="duel")DUEL.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -3314,6 +3336,72 @@
     return {start:start};
   })();
 
+  /* ===================== DUELL (Vinni gegen Bruder) ===================== */
+  var DUEL=(function(){
+    var st=null,ROUNDS=5;
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function bruder(){return G.duelName||"Bruder";}
+    function shufOpts(correct,others){var o=[correct].concat(others);
+      for(var i=o.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=o[i];o[i]=o[j];o[j]=t;}
+      return {opts:o,c:o.indexOf(correct)};}
+    function numOpts(ans,span){var set={},out=[];set[ans]=1;var tr=0;
+      while(out.length<2&&tr++<40){var d=ans+pick(span||[-2,-1,1,2,3,-3]);if(d<0||set[d])continue;set[d]=1;out.push(String(d));}
+      var k=1;while(out.length<2){if(!set[ans+k]){set[ans+k]=1;out.push(String(ans+k));}k++;}return out;}
+    function vinniQ(){var L=(AI.level&&AI.level())||1;
+      if(Math.random()<0.5||typeof E==="undefined"||!E.localQ){var ops=L<3?["+","-"]:["+","-","×"],op=pick(ops),cap=Math.min(20+L*10,100),a,b2,ans,q;
+        if(op==="+"){a=rnd(5,cap);b2=rnd(5,cap);ans=a+b2;q=a+" + "+b2;}
+        else if(op==="-"){a=rnd(10,cap);b2=rnd(1,a);ans=a-b2;q=a+" − "+b2;}
+        else{a=rnd(2,Math.min(12,3+L));b2=rnd(2,Math.min(12,3+L));ans=a*b2;q=a+" × "+b2;}
+        var s=shufOpts(String(ans),numOpts(ans));return {q:q+" = ?",opts:s.opts,c:s.c};}
+      var kq=E.localQ();if(kq)return {q:kq.q,opts:kq.opts,c:kq.correct};
+      return {q:"3 + 4 = ?",opts:["7","6","8"],c:0};}
+    var SOUNDS=[["Muh","Kuh 🐮",["Hund 🐶","Katze 🐱"]],["Wau-Wau","Hund 🐶",["Kuh 🐮","Ente 🦆"]],["Miau","Katze 🐱",["Schwein 🐷","Hahn 🐓"]],["Kikeriki","Hahn 🐓",["Schaf 🐑","Hund 🐶"]],["Mäh","Schaf 🐑",["Katze 🐱","Kuh 🐮"]],["Oink","Schwein 🐷",["Ente 🦆","Hahn 🐓"]]];
+    var COLORS=[["eine Banane","gelb 🟡",["blau 🔵","rot 🔴"]],["eine Tomate","rot 🔴",["grün 🟢","gelb 🟡"]],["das Gras","grün 🟢",["rot 🔴","lila 🟣"]],["der Himmel am Tag","blau 🔵",["grün 🟢","orange 🟠"]],["eine Karotte","orange 🟠",["blau 🔵","grün 🟢"]]];
+    var BIG=[["Elefant 🐘","Maus 🐭"],["Haus 🏠","Apfel 🍎"],["Wal 🐋","Fisch 🐟"],["Baum 🌳","Blume 🌸"]];
+    function kidQ(){var r=Math.random();
+      if(r<0.3){var n=rnd(1,5),em=pick(["🐮","🐥","🍎","⭐","🐟"]),row="";for(var i=0;i<n;i++)row+=em;
+        var s=shufOpts(String(n),numOpts(n,[-1,1,2]));return {q:row+"  –  Wie viele sind das?",opts:s.opts,c:s.c};}
+      if(r<0.5){var t=pick(SOUNDS),s2=shufOpts(t[1],t[2].slice());return {q:"Welches Tier macht „"+t[0]+"“?",opts:s2.opts,c:s2.c};}
+      if(r<0.7){var c2=pick(COLORS),s3=shufOpts(c2[1],c2[2].slice());return {q:"Welche Farbe hat "+c2[0]+"?",opts:s3.opts,c:s3.c};}
+      if(r<0.85){var a=rnd(1,3),b3=rnd(1,3),an=a+b3,s4=shufOpts(String(an),numOpts(an,[-1,1,2]));return {q:a+" + "+b3+" = ?",opts:s4.opts,c:s4.c};}
+      var p2=pick(BIG),s5=shufOpts(p2[0],[p2[1],"beide gleich"]);return {q:"Was ist größer?",opts:s5.opts,c:s5.c};}
+    function playerName(p){return p===0?"Vinni":bruder();}
+    function bar(){return '<div class="du-bar"><span class="du-p1'+(st.turn===0?" on":"")+'">🦸 Vinni: '+st.s1+'</span><span class="du-round">Runde '+st.round+'/'+ROUNDS+'</span><span class="du-p2'+(st.turn===1?" on":"")+'">🐣 '+esc(bruder())+': '+st.s2+'</span></div>';}
+    function start(){st=null;
+      $("du-stage").innerHTML='<div class="inv-big">⚔️</div><div class="inv-txt"><b>Duell!</b> Ihr seid abwechselnd dran – jeder bekommt Fragen, die zu SEINEM Alter passen. Jede richtige Antwort bringt 1 🥚 für den Hof. Wer mehr Punkte holt, trägt die Krone 👑 – aber die Eier gehören euch <b>beiden</b>!</div>'+
+        '<div class="du-names"><span>🦸 Vinni</span><b>gegen</b><span>🐣 '+esc(bruder())+'</span><button class="ki-btn" id="du-name">✏️</button></div>'+
+        '<button class="inv-mic" id="du-go">🎮 Los geht’s!</button>';
+      $("du-name").onclick=function(){var v=null;try{v=window.prompt("Wie heißt Vinnis Mitspieler?",bruder());}catch(e){}
+        if(v&&v.trim()){G.duelName=v.trim().slice(0,12);doSave();start();}};
+      $("du-go").onclick=begin;
+      say("Ein faires Duell: Jeder kämpft auf seinem eigenen Niveau! ⚔️",true);}
+    function begin(){st={turn:0,s1:0,s2:0,round:1};hand();}
+    function hand(){var p=st.turn;
+      $("du-stage").innerHTML=bar()+'<div class="du-hand"><div class="inv-big">'+(p===0?"🦸":"🐣")+'</div><div class="du-ht">Gib das Gerät an<br><b>'+esc(playerName(p))+'</b> weiter!</div><button class="inv-mic" id="du-ready">✋ Bereit!</button></div>';
+      $("du-ready").onclick=ask;
+      say(playerName(p)+" ist dran – Runde "+st.round+" von "+ROUNDS+"!");}
+    function ask(){var p=st.turn,qq=p===0?vinniQ():kidQ();
+      $("du-stage").innerHTML=bar()+'<div class="du-badge '+(p===0?"du-c1":"du-c2")+'">'+(p===0?"🦸 Vinni":"🐣 "+esc(bruder()))+'</div><div class="boss-q">'+esc(qq.q)+'</div><div class="g-opts" id="du-opts"></div>';
+      var box=$("du-opts");
+      qq.opts.forEach(function(t,i){var b=document.createElement("button");b.className="g-opt";b.textContent=t;b.onclick=function(){answer(i===qq.c,b,qq);};box.appendChild(b);});
+      say("Deine Frage, "+playerName(p)+"!");}
+    function answer(ok,b,qq){document.querySelectorAll("#du-opts .g-opt").forEach(function(x,i){x.disabled=true;if(i===qq.c)x.classList.add("right");});
+      if(ok){if(st.turn===0)st.s1++;else st.s2++;addEgg(1);say("Richtig, "+playerName(st.turn)+"! ⭐",true);}
+      else{b.classList.add("wrong");say("Knapp! Die richtige Antwort leuchtet grün.");}
+      setTimeout(function(){if(current!=="duel"||!st)return;
+        if(st.turn===1)st.round++;
+        st.turn=1-st.turn;
+        if(st.round>ROUNDS)finish();else hand();},1250);}
+    function finish(){var w=st.s1===st.s2?null:(st.s1>st.s2?0:1),team=st.s1+st.s2;
+      $("du-stage").innerHTML='<div class="inv-big">'+(w==null?"🤝":"👑")+'</div><div class="boss-endtxt">'+(w==null?"Unentschieden – starkes Team!":esc(playerName(w))+" trägt die Krone!")+'<br>🦸 '+st.s1+' : '+st.s2+' 🐣<br><b>Zusammen: +'+team+' 🥚 für den Hof!</b></div>'+
+        '<div class="inv-btns"><button class="inv-mic" id="du-again">⚔️ Revanche!</button><button class="hbtn" id="du-home">🏡 Hof</button></div>';
+      $("du-again").onclick=begin;$("du-home").onclick=function(){show("home");};
+      ceremony(w==null?"🤝":"👑",w==null?"Unentschieden!":playerName(w)+" gewinnt!","Zusammen "+team+" 🥚 für den Hof – Teamarbeit!");
+      st=null;
+      say(w==null?"Was für ein Duell – ihr seid beide spitze!":(w===0?"Glückwunsch, Vinni! Und "+bruder()+" – du warst richtig stark!":"Glückwunsch, "+bruder()+"! Und Vinni – Respekt fürs faire Spiel!"),true);}
+    return {start:start};
+  })();
+
   /* ===================== PROFESSOR VINCENT ===================== */
   var PROF=(function(){
     var SITS=[["🎲","Überall","alle"],["🏠","Zuhause","haus"],["🚗","Unterwegs","unterwegs"],["🛒","Einkaufen","laden"],["🍽️","Beim Essen","essen"],["🌳","Draußen","draussen"],["⏳","Warten","warten"]];
@@ -3796,7 +3884,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;G.duelName="";Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
