@@ -837,6 +837,15 @@
   .pt-stopbtn:disabled{opacity:.45}
   .pt-arena canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
   .pt-arena.pt-dark{border-color:#8a93b8}
+  .pt-offer{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:7;
+    background:rgba(255,255,255,.97);border:3px solid var(--yolk-deep);border-radius:18px;padding:10px 14px;
+    text-align:center;box-shadow:var(--soft);max-width:86%;animation:offerin .3s cubic-bezier(.2,1.5,.4,1)}
+  @keyframes offerin{from{transform:translate(-50%,-50%) scale(.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  .pt-oe{font-size:34px;line-height:1.1}
+  .pt-ot{font-weight:900;font-size:14.5px;line-height:1.3;margin:4px 0 9px}
+  .pt-oyes{display:block;width:100%;font-family:inherit;border:3px solid #fff;background:linear-gradient(var(--yolk),var(--yolk-deep));color:var(--ink);font-weight:900;font-size:16px;border-radius:14px;padding:10px;cursor:pointer;box-shadow:var(--shadow);animation:scpulse 1s ease-in-out infinite;margin-bottom:7px}
+  .pt-ono{display:block;width:100%;font-family:inherit;border:2px solid #fff;background:linear-gradient(#eef3f6,#dde7ee);color:var(--ink);font-weight:900;font-size:14px;border-radius:12px;padding:8px;cursor:pointer;box-shadow:0 3px 0 rgba(54,41,31,.1)}
+  .pt-ono:active,.pt-oyes:active{transform:translateY(2px)}
   .pt-banner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.6);z-index:6;
     background:rgba(255,255,255,.95);border:3px solid var(--yolk-deep);border-radius:16px;padding:8px 16px;
     font-weight:900;font-size:17px;color:var(--ink);box-shadow:var(--soft);opacity:0;pointer-events:none;
@@ -3527,18 +3536,18 @@
     /* ---------- Menü & Spielfluss (Logik unverändert) ---------- */
     function menu(){stopAll();st=null;
       var h='<div class="du-bar"><span>🏆 Rekord: '+(G.partyBest||0)+'</span><span>⭐ '+stars()+' Party-Sterne</span></div>';
-      h+='<div class="inv-txt"><b>So geht’s:</b> Auf der Party füllt sich dein Beutesack 💰 – je länger du bleibst, desto schneller (×1, ×2, ×3 …). Aber der Sack ist <b>nicht sicher</b>! Drück 🛑 STOPP, bevor der Strudel kommt. Ausstieg genau im Warn-Wackeln = <b>Beute ×2</b>!</div>';
+      h+='<div class="inv-txt"><b>So geht’s:</b> Auf der Party füllt sich dein Beutesack 💰 – je länger du bleibst, desto schneller (×1, ×2, ×3 …). Aber der Sack ist <b>nicht sicher</b>! Drück 🛑 STOPP, bevor der Strudel kommt. Ausstieg genau im Warn-Wackeln = <b>Beute ×2</b>! Und Achtung: Manche Küken laden dich zu <b>QUATSCH</b> ein 🤪 – das füttert den Strudel! Cool bleiben = sicherer Bonus. Echte Trainer-Anfragen 🐣 darfst du aber annehmen.</div>';
       h+='<div class="dd-sec">🎨 Deine Party</div><div class="ck-needs" style="justify-content:flex-start">';
       THEMES.forEach(function(t){var lock=stars()<t.need;
         h+='<button class="ck-need pt-th'+(themeId()===t.id?" on":"")+'" data-t="'+t.id+'"'+(lock?" disabled":"")+'>'+t.n+(lock?" 🔒"+t.need+"⭐":"")+'</button>';});
       h+='</div><button class="inv-mic" id="pt-go">🐥 Party starten!</button>';
-      h+='<div class="pt-goals"><b>⭐ Sterne holen:</b> 60 Beute sichern · 2× perfekt (×2) raus · nie erwischt</div>';
+      h+='<div class="pt-goals"><b>⭐ Sterne holen:</b> 60 Beute · 2× perfekt · nie erwischt · 2× widerstanden 😎</div>';
       $("pt-stage").innerHTML=h;
       document.querySelectorAll(".pt-th").forEach(function(b){b.onclick=function(){G.partyTheme=b.getAttribute("data-t");doSave();menu();};});
       $("pt-go").onclick=function(){begin(false);};
       say("Beute sammeln, rechtzeitig sichern – im Wackeln raus gibt DOPPELT! 💰");}
     function arenaHTML(){return ''+
-      '<div class="du-bar"><span>💰 Sicher: <b id="pt-bank">0</b></span><span class="du-round" id="pt-time">90s</span><span id="pt-streak">🔥 0</span></div>'+
+      '<div class="du-bar"><span>💰 <b id="pt-bank">0</b></span><span class="du-round" id="pt-time">90s</span><span id="pt-resist">😎 0</span><span id="pt-streak">🔥 0</span></div>'+
       '<div class="pt-arena '+(themeId()!=="hof"?"pt-dark":"")+'" id="pt-arena"><canvas id="pt-cv"></canvas><div class="pt-banner" id="pt-banner"></div></div>'+
       '<div class="pt-btns">'+
         '<button class="pt-stopbtn" id="pt-stop">🛑 STOPP – Beute sichern!</button>'+
@@ -3547,7 +3556,7 @@
         '<button class="hbtn" id="pt-end">🏁 Fertig</button>'+
       '</div>';}
     function begin(tut){stopAll();
-      st={bank:0,loot:0,stayT:0,streak:0,round:0,pos:tut?"podium":"party",phase:"calm",timeLeft:90,over:false,sucked:0,perfect:0,tut:!!tut,tutStep:tut?1:0,_justPerfect:false};
+      st={bank:0,loot:0,stayT:0,streak:0,round:0,pos:tut?"podium":"party",phase:"calm",timeLeft:90,over:false,sucked:0,perfect:0,resist:0,fooled:0,tut:!!tut,tutStep:tut?1:0,_justPerfect:false};
       spinT=0;
       $("pt-stage").innerHTML=arenaHTML();
       $("pt-stop").onclick=cashout;$("pt-back").onclick=goParty;$("pt-show").onclick=showGame;$("pt-end").onclick=end;
@@ -3560,7 +3569,45 @@
       if(st.pos==="party"&&st.phase!=="suck"){st.stayT+=0.25;st.loot+=mult()*0.25;}
       updateUI();}
     function schedCalm(){if(!st||st.over)return;st.phase="calm";st.round++;
-      phT=setTimeout(startWarn,rnd(3000,6500));updateUI();}
+      if(!st.tut&&st.round>1&&Math.random()<0.6)phT=setTimeout(tempt,rnd(1000,2200));
+      else phT=setTimeout(startWarn,rnd(3000,6500));
+      updateUI();}
+    /* --- Versuchungs-Events: Küken laden zu Quatsch (Falle) oder als Trainer (echt) ein --- */
+    var TEMPTS=[
+      {e:"🤪",t:"„Komm, Matsch-Schlacht! Mach mit!“",a:"MITMACHEN +20",trap:true},
+      {e:"😝",t:"„Kreisch-Wettbewerb! Wer ist am lautesten?“",a:"MITKREISCHEN +15",trap:true},
+      {e:"🎂",t:"„Kuchen-Weitwurf! Wirf auch einen!“",a:"WERFEN +25",trap:true},
+      {e:"🪣",t:"„Wasser-Panscherei! Komm panschen!“",a:"PANSCHEN +18",trap:true},
+      {e:"🐣",t:"Ein Küken fragt lieb: „Zeigst du mir einen Trick?“",a:"TRICK ZEIGEN +10",trap:false},
+      {e:"🐤",t:"Die Küken brauchen einen Schiedsrichter!",a:"SCHIRI SEIN +10",trap:false}
+    ];
+    function tempt(){if(!st||st.over||st.phase!=="calm"||st.pos!=="party"){if(st&&!st.over)phT=setTimeout(startWarn,rnd(1500,3500));return;}
+      var ev=pick(TEMPTS),ar=$("pt-arena");if(!ar){phT=setTimeout(startWarn,1500);return;}
+      var box=document.createElement("div");box.className="pt-offer";box.id="pt-offer";
+      box.innerHTML='<div class="pt-oe">'+ev.e+'</div><div class="pt-ot">'+ev.t+'</div>'+
+        '<button class="pt-oyes" id="pt-oyes">'+ev.a+'</button><button class="pt-ono" id="pt-ono">😎 Nein danke</button>';
+      ar.appendChild(box);
+      var done=false;
+      function cleanup(){if(box.parentNode)box.remove();}
+      function resolve(joined,timeout){if(done||!st)return;done=true;cleanup();
+        if(ev.trap){
+          if(joined){st.fooled++;var lost=Math.floor(st.loot);st.loot=0;st.stayT=0;st.streak=0;spinT=1.1;
+            swirl(W*chX,H-40,W*0.86,H*0.34);SFX.wrong();
+            banner("🌀 Quatsch füttert den Strudel! "+(lost>0?lost+" Beute weg!":"Uff!"),"bad");
+            say("Der Quatsch sah lustig aus – aber ZACK, Strudel! Beim nächsten Mal: cool bleiben. 😉");}
+          else{st.resist++;var bon=8+st.streak*2;st.bank+=bon;confetti(W*chX,H-70);SFX.right();
+            banner("😎 WIDERSTANDEN! +"+bon+" sicher","good");
+            say(timeout?"Einfach weitergemacht – auch das ist Widerstehen! 😎":"Stark! Quatsch-Einladung erkannt und cool geblieben. 😎",true);}}
+        else{
+          if(joined){st.bank+=10;confetti(W*chX,H-70);SFX.coin();banner("🐣 Trainer-Bonus +10!","good");
+            say("Genau! ECHTE Anfragen darf der Große annehmen – das ist Trainer-Arbeit. 🐣",true);}
+          else banner("Das wäre okay gewesen 😉");}
+        updateUI();
+        phT=setTimeout(startWarn,rnd(1800,3800));}
+      $("pt-oyes").onclick=function(){resolve(true,false);};
+      $("pt-ono").onclick=function(){resolve(false,false);};
+      phT=setTimeout(function(){resolve(false,true);},4200);
+      SFX.pop();}
     function startWarn(){if(!st||st.over)return;st.phase="warn";
       warnI=setInterval(function(){try{SFX.pop();}catch(e){}},300);
       if(!st.tut){var dur=Math.max(1000,2400-st.round*120);phT=setTimeout(startSuck,dur);}
@@ -3592,7 +3639,7 @@
       if(phT)clearTimeout(phT);schedCalm();updateUI();}
     function updateUI(){if(!st)return;
       var b=$("pt-bank");if(b)b.textContent=st.bank;
-      var s=$("pt-streak");if(s)s.textContent="🔥 "+st.streak;
+      var s=$("pt-streak");if(s)s.textContent="🔥 "+st.streak;var rz=$("pt-resist");if(rz)rz.textContent="😎 "+st.resist;
       var t=$("pt-time");if(t)t.textContent=st.tut?"ÜBUNG":Math.max(0,Math.ceil(st.timeLeft))+"s";
       var stop=$("pt-stop");if(stop)stop.disabled=(st.pos!=="party"||st.over);
       var back=$("pt-back");if(back)back.style.display=(st.pos==="podium"&&st.phase!=="suck"&&!st.over&&!(st.tut&&st.tutStep>=2))?"":"none";
@@ -3610,7 +3657,7 @@
       phT=setTimeout(function(){begin(false);},2400);}
     function end(){if(!st||st.tut)return;st.over=true;stopAll();
       var sc=st.bank,rec=sc>(G.partyBest||0);if(rec)G.partyBest=sc;
-      var goals=[[sc>=60,"60 Beute gesichert"],[st.perfect>=2,"2× perfekt (×2) raus"],[st.sucked===0,"Nie erwischt"]];
+      var goals=[[sc>=60,"60 Beute gesichert"],[st.perfect>=2,"2× perfekt (×2) raus"],[st.sucked===0,"Nie erwischt"],[st.resist>=2,"2× Quatsch widerstanden 😎"]];
       var got=0;goals.forEach(function(g){if(g[0])got++;});
       G.partyStars=(G.partyStars||0)+got;doSave();
       var eggs=Math.max(1,Math.floor(sc/20));addEgg(eggs);
@@ -3619,7 +3666,7 @@
         '<div class="boss-endtxt">'+(rec?"NEUER REKORD!<br>":"")+sc+' Beute gesichert · +'+eggs+' 🥚 · +'+got+' ⭐</div>'+gh+
         '<div class="inv-btns"><button class="inv-mic" id="pt-again">🐥 Nochmal!</button><button class="hbtn" id="pt-menu2">🎨 Menü</button></div>';
       $("pt-again").onclick=function(){begin(false);};$("pt-menu2").onclick=menu;
-      if(got===3)ceremony("🌟","3 Sterne!","Strudel-Meister Vincent!");
+      if(got>=4)ceremony("🌟","4 Sterne!","Strudel-Meister Vincent!");
       else if(rec)ceremony("🏆","Party-Rekord!",sc+" Beute gesichert!");
       say(pick(ENDLINES),true);}
     function start(){if(!G.partyTut)begin(true);else menu();}
