@@ -771,6 +771,11 @@
   .dd-bar.neg{background:linear-gradient(#e3735f,#c0392b)}
   .dd-bar.zero{background:#e4dcc8;height:3px!important}
   .tm-big{font-weight:900;font-size:52px;text-align:center;margin:16px 0 12px;color:var(--barn-deep);font-variant-numeric:tabular-nums}
+  .dd-lvl{font-weight:800;font-size:12px;color:var(--ink-soft);margin:2px 0 4px}
+  .mc-forscher .modicon{background:#fde9f0}
+  .fq-chip{font-size:10.5px;font-weight:900;color:var(--good-deep)}
+  .xp-card.fq-done{opacity:.72}
+  .xp-card.fq-done .fq-chip{color:var(--ink-soft)}
 
   /* ---------- Optik-Feinschliff: Tageszeit, Bereiche, Desktop ---------- */
   body.sky-morning{--sky1:#ffe6cf;--sky2:#b5d9ef}
@@ -910,6 +915,7 @@
             <button class="modcard mc-invent" data-go="invent"><div class="modicon">🛠️</div><div><div class="modtitle">Erfinder-Werkstatt</div><div class="modsub">DU bist der Lehrer: Stell Fragen und erwische Hildes Fehler!</div></div></button>
             <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen: 5 Stationen, eine spannende Geschichte</div></div></button>
             <button class="modcard mc-eng" data-go="eng"><div class="modicon">🇬🇧</div><div><div class="modtitle">English mit Hilde</div><div class="modsub">Erste englische Wörter – hören, sprechen, raten</div></div></button>
+            <button class="modcard mc-forscher" data-go="forscher"><div class="modicon">🚀</div><div><div class="modtitle">Forscher-Quests</div><div class="modsub">Erforsche echte Rätsel der Welt – erkläre sie den Eltern für +10 ⭐</div></div></button>
             <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
             <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
             <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
@@ -939,6 +945,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- FORSCHER-QUESTS -->
+    <div class="screen" id="forscher">
+      <div class="hilde-row"><div class="hilde" id="forscher-hilde"></div><div class="bubble" id="forscher-bubble">Forsche in der echten Welt!</div></div>
+      <div class="stagepad"><div class="card" id="fq-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- TATEN & WÜNSCHE -->
@@ -1371,13 +1384,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[]};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[]};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1459,6 +1472,11 @@
         var b=KNOW_BADGES[cat];
         setTimeout(function(){toast("🏅 "+(meta?meta.n:cat)+" auf Stufe 5! "+(b?b.emoji:"")+" schmückt jetzt deinen Hof!",true);SFX.fanfare();},450);}}}
   function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();if(Story)Story.progress("brain",1);}
+  function adultGate(){var a=rnd(12,29),b=rnd(13,38),v=null;
+    try{v=window.prompt("Für Erwachsene: Was ist "+a+" + "+b+"?");}catch(e){return false;}
+    if(v==null)return false;
+    if(parseInt(String(v).trim(),10)===a+b)return true;
+    toast("Das war leider falsch");return false;}
 
   /* ---------- Tagesaufgaben: "Heute für dich" + Streak ---------- */
   var QMETA={math:["🥚","Eier rechnen"],explore:["🦉","Fragen & Wissen"],pattern:["🧩","Muster & Logik"],iq:["🧠","Denksport"],corn:["🌽","Körner-Jagd"],game:["🎮","Hühner-Challenge"],clock:["⏰","Uhr & Zeit"],read:["🔤","Lesen"],code:["🤖","Roboter-Hilde"],store:["🏪","Kaufmannsladen"],eng:["🇬🇧","English mit Hilde"]};
@@ -1606,7 +1624,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1677,6 +1695,7 @@
     if(name==="eng")ENG.start();
     if(name==="night")NIGHT.start();
     if(name==="deeds")DEEDS.start();
+    if(name==="forscher")RESEARCH.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -3033,10 +3052,14 @@
     var unlocked=false;
     var PLUS=[["Im Haushalt geholfen",3],["Pünktlich angezogen",2],["Schularbeiten gemacht",5],["Schulstunde gut gemacht",2],["Hilfsbereit gewesen",3],["Guter Umgang mit den Brüdern",3],["Guter Umgang mit den Eltern",3],["Wiedergutgemacht ❤️",3]];
     var MINUS=[["Brüder geärgert",-5],["Ärger im Unterricht",-5],["Eltern geärgert",-5],["Getrödelt / zu spät",-2]];
-    function D(){if(!G.deeds)G.deeds={pts:0,hist:[]};if(!G.deeds.hist)G.deeds.hist=[];if(!G.wishes)G.wishes=[];return G.deeds;}
+    function D(){if(!G.deeds)G.deeds={pts:0,hist:[]};if(!G.deeds.hist)G.deeds.hist=[];if(!G.wishes)G.wishes=[];
+      if(G.deeds.total==null)G.deeds.total=G.deeds.pts||0;
+      if(!G.deeds.goal)G.deeds.goal={t:20,wk:null,claimed:false};
+      return G.deeds;}
+    var TITLES=["Taten-Küken 🐣","Fleißiges Huhn 🐔","Hof-Helfer 🛠️","Super-Helfer 🌟","Taten-Held 🦸","Goldene Feder 🪶","Hof-Legende 👑"];
     function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
     function log(r,d){var x=D();x.hist.unshift({t:Date.now(),r:r,d:d});if(x.hist.length>60)x.hist.pop();}
-    function award(r,d){var x=D();x.pts=Math.max(0,(x.pts||0)+d);log(r,d);doSave();refresh();
+    function award(r,d){var x=D();x.pts=Math.max(0,(x.pts||0)+d);if(d>0)x.total=(x.total||0)+d;log(r,d);doSave();refresh();
       if(d>0){SFX.right();celebrate();}else SFX.wrong();
       toast((d>0?"+":"")+d+" ⭐ "+r,d>0);render();}
     function routTick(i){var r=(G.routines||[])[i];if(!r)return;var t=dayKey(0);
@@ -3050,8 +3073,14 @@
       say("Wunsch erfüllt: "+w.n+"! Das hast du dir mit echten Taten verdient. 💫",true);}
     function fmtD(t){var d=new Date(t);return d.getDate()+"."+(d.getMonth()+1)+".";}
     function render(){var x=D(),el=$("deeds-stage");if(!el)return;
+      var lvl=1+Math.floor((x.total||0)/25);
       var h='<div class="dd-pts">⭐ <b>'+x.pts+'</b> Taten-Punkte</div>';
+      h+='<div class="dd-lvl">Stufe '+lvl+' · '+TITLES[Math.min(TITLES.length-1,lvl-1)]+' · insgesamt '+(x.total||0)+' ⭐ verdient</div>';
       h+='<div class="inv-note">Punkte gibt es für echte Taten – Mama & Papa tragen sie ein.</div>';
+      var g=x.goal,wk=mondayKey();if(g.wk!==wk){g.wk=wk;g.claimed=false;}
+      var mp=wk.split("-"),m0=new Date(+mp[0],+mp[1]-1,+mp[2]).getTime(),got=0;
+      x.hist.forEach(function(e){if(e.d>0&&e.t>=m0)got+=e.d;});
+      h+='<div class="dd-sec">🎯 Wochenziel</div><div class="dd-wish"><div class="dd-wn">Diese Woche</div><div class="sc-bar"><div class="sc-fill" style="width:'+Math.min(100,Math.round(got/Math.max(1,g.t)*100))+'%"></div></div><div class="dd-wc">'+got+'/'+g.t+' ⭐</div>'+((got>=g.t&&!g.claimed)?'<button class="dd-go" id="dd-goal">🎁 +5</button>':(g.claimed?'<span class="dd-done">✔ geschafft</span>':""))+'</div>';
       h+='<div class="dd-sec">🪙 In Hof-Münzen tauschen</div><div class="dd-row">';
       [5,10].forEach(function(n){h+='<button class="hbtn dd-ex" data-n="'+n+'"'+(x.pts<n?" disabled":"")+'>'+n+' ⭐ ➜ '+n+' 🪙</button>';});
       h+='</div>';
@@ -3070,16 +3099,22 @@
       else{
         h+='<div class="dd-grid">';PLUS.forEach(function(p,i){h+='<button class="dd-p" data-p="'+i+'">'+esc(p[0])+' <b>+'+p[1]+'</b></button>';});h+='</div>';
         h+='<div class="dd-grid">';MINUS.forEach(function(p,i){h+='<button class="dd-p neg" data-m="'+i+'">'+esc(p[0])+' <b>'+p[1]+'</b></button>';});h+='</div>';
-        h+='<div class="dd-row"><button class="hbtn" id="dd-custom">✍️ Eigener Eintrag</button><button class="hbtn" id="dd-wish">💫 Wunsch anlegen</button><button class="hbtn" id="dd-wdel">🗑️ Wunsch löschen</button><button class="hbtn" id="dd-rout">🔥 Routine anlegen</button><button class="hbtn" id="dd-rdel">🗑️ Routine löschen</button></div>';
+        h+='<div class="dd-sec">🏫 Schultag eintragen <span style="font-weight:700;font-size:11px;color:var(--ink-soft)">(gute Stunden, +2 ⭐ je)</span></div><div class="ck-needs" style="justify-content:flex-start">';
+        for(var si=1;si<=8;si++)h+='<button class="ck-need dd-sch" data-s="'+si+'">'+si+'</button>';
+        h+='</div>';
+        h+='<div class="dd-row" style="margin-top:8px"><button class="hbtn" id="dd-custom">✍️ Eigener Eintrag</button><button class="hbtn" id="dd-wish">💫 Wunsch anlegen</button><button class="hbtn" id="dd-wdel">🗑️ Wunsch löschen</button><button class="hbtn" id="dd-rout">🔥 Routine anlegen</button><button class="hbtn" id="dd-rdel">🗑️ Routine löschen</button><button class="hbtn" id="dd-goalset">🎯 Wochenziel ändern</button></div>';
       }
       el.innerHTML=h;
       el.querySelectorAll(".dd-ex").forEach(function(b){b.onclick=function(){exchange(+b.getAttribute("data-n"));};});
       el.querySelectorAll(".dd-go").forEach(function(b){b.onclick=function(){
         var w=b.getAttribute("data-w"),r=b.getAttribute("data-r");
         if(w!=null)redeem(+w);else if(r!=null)routTick(+r);};});
-      var u=$("dd-unlock");if(u)u.onclick=function(){var a=rnd(12,29),b2=rnd(13,38),v=null;
-        try{v=window.prompt("Für Erwachsene: Was ist "+a+" + "+b2+"?");}catch(e){}
-        if(v!=null&&parseInt(String(v).trim(),10)===a+b2){unlocked=true;render();}else if(v!=null)toast("Das war leider falsch");};
+      var u=$("dd-unlock");if(u)u.onclick=function(){if(adultGate()){unlocked=true;render();}};
+      var gl=$("dd-goal");if(gl)gl.onclick=function(){var x2=D();x2.goal.claimed=true;award("Wochenziel geschafft 🎁",5);};
+      el.querySelectorAll(".dd-sch").forEach(function(b){b.onclick=function(){var n=+b.getAttribute("data-s");award("Schultag: "+n+" gute Stunden 🏫",n*2);};});
+      var gs=$("dd-goalset");if(gs)gs.onclick=function(){var v=null;
+        try{v=window.prompt("Wochenziel (⭐ pro Woche, z.B. 20):",String(D().goal.t));}catch(e){}
+        var n=parseInt(String(v||"").trim(),10);if(n>0){D().goal.t=n;doSave();render();}};
       el.querySelectorAll(".dd-p").forEach(function(b){b.onclick=function(){
         var pi=b.getAttribute("data-p"),mi=b.getAttribute("data-m");
         if(pi!=null)award(PLUS[+pi][0],PLUS[+pi][1]);else award(MINUS[+mi][0],MINUS[+mi][1]);};});
@@ -3102,7 +3137,53 @@
         var idx=parseInt(String(v||"").trim(),10)-1;if(idx>=0&&idx<G.routines.length){G.routines.splice(idx,1);doSave();render();}};
     }
     function start(){render();say("Deine Taten-Punkte aus dem echten Leben! Tausche sie in Hof-Münzen – oder spare auf einen Wunsch. ⭐",true);}
-    return {start:start,render:render};
+    return {start:start,render:render,award:award};
+  })();
+
+  /* ===================== FORSCHER-QUESTS & FORSCHERBUCH ===================== */
+  var RESEARCH=(function(){
+    var BANK=[
+      {e:"🚀",t:"Schwarze Löcher",d:"Finde heraus, was ein Schwarzes Loch ist, und erkläre es in 3 Sätzen.",i:"Ein Schwarzes Loch ist ein Ort im Weltall, wo die Schwerkraft so stark ist, dass nicht einmal Licht entkommt. Es entsteht meist, wenn ein sehr großer Stern am Ende in sich zusammenfällt."},
+      {e:"🪐",t:"Die Planeten",d:"Sortiere die Planeten nach Größe und finde den heißesten.",i:"Es gibt 8 Planeten. Der größte ist Jupiter, der kleinste Merkur. Am heißesten ist die Venus, weil ihre dicke Wolkenhülle die Wärme festhält."},
+      {e:"🌋",t:"Vulkane",d:"Wie entsteht ein Vulkanausbruch? Zeichne den Aufbau eines Vulkans.",i:"Tief in der Erde schmilzt Gestein zu Magma. Steigt es auf und wird der Druck zu groß, bricht der Vulkan aus und spuckt Lava, Asche und Gase."},
+      {e:"🦖",t:"Dinosaurier",d:"Such dir 3 Dinos aus und finde heraus, wer am größten war.",i:"Zu den größten gehörten langhalsige Pflanzenfresser wie der Argentinosaurus; der T. rex war ein großer Jäger mit Zähnen wie Bananen."},
+      {e:"🐙",t:"Tintenfische",d:"Wie viele Herzen hat ein Oktopus? Finde 3 erstaunliche Fakten.",i:"Ein Oktopus hat drei Herzen und blaues Blut. Er ist sehr klug und kann blitzschnell Farbe und Form wechseln, um sich zu verstecken."},
+      {e:"🧠",t:"Dein Gehirn",d:"Finde heraus, was im Kopf passiert, wenn du etwas Neues lernst.",i:"Beim Lernen verbinden sich Nervenzellen im Gehirn neu. Je öfter du übst, desto stärker werden diese Verbindungen – deshalb hilft Wiederholen."},
+      {e:"🐝",t:"Bienen-Sprache",d:"Wie sagen Bienen einander, wo es Futter gibt? Finde es heraus.",i:"Honigbienen machen einen Schwänzeltanz. Richtung und Dauer des Tanzes verraten den anderen, wo das Futter ist und wie weit weg."},
+      {e:"🔢",t:"Fibonacci-Zahlen",d:"Entdecke die Reihe 1, 1, 2, 3, 5, 8 … Wie geht sie weiter, und wo steckt sie in der Natur?",i:"Jede Zahl ist die Summe der beiden davor: 13, 21, 34 … Die Reihe steckt in Sonnenblumen, Tannenzapfen und Schneckenhäusern."},
+      {e:"🌈",t:"Regenbogen",d:"Warum ist ein Regenbogen bunt? Finde die Farben in der richtigen Reihenfolge.",i:"Sonnenlicht wird in Regentropfen gebrochen und in seine Farben zerlegt: Rot, Orange, Gelb, Grün, Blau, Violett."},
+      {e:"🏺",t:"Pyramiden",d:"Wie haben die alten Ägypter die Pyramiden gebaut? Finde 2 Ideen der Forscher.",i:"Vermutlich zogen tausende Arbeiter die tonnenschweren Steine auf Schlitten über Rampen aus Sand und Lehm – mit sehr viel Teamarbeit."},
+      {e:"⚡",t:"Blitz und Donner",d:"Was ist ein Blitz – und warum hört man den Donner erst später?",i:"Ein Blitz ist ein riesiger elektrischer Funke. Licht ist viel schneller als Schall – darum siehst du den Blitz zuerst und hörst den Donner danach."},
+      {e:"🌊",t:"Ebbe und Flut",d:"Warum steigt und sinkt das Meer? Finde heraus, wer daran „zieht“.",i:"Vor allem der Mond zieht mit seiner Schwerkraft am Wasser der Erde. So entstehen Ebbe und Flut – etwa zweimal am Tag."}
+    ];
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function isDone(t){return (G.fbook||[]).some(function(x){return x.t===t;});}
+    function menu(){
+      var h='<div class="inv-txt">Such dir eine Forscher-Frage aus, erforsche sie in der <b>echten Welt</b> (Bücher, Eltern, Ausprobieren!) und erkläre sie dann Mama oder Papa. Bestätigen sie es, gibt es <b>+10 ⭐</b> Taten-Punkte!</div><div class="xp-grid">';
+      BANK.forEach(function(q,i){h+='<button class="xp-card'+(isDone(q.t)?" fq-done":"")+'" data-q="'+i+'"><span class="xp-i">'+q.e+'</span>'+q.t+'<small class="fq-chip">'+(isDone(q.t)?"✔ erforscht":"+10 ⭐")+'</small></button>';});
+      h+='</div>';
+      var fb=(G.fbook||[]);
+      if(fb.length){h+='<div class="dd-sec">📓 Forscherbuch ('+fb.length+')</div>';
+        fb.slice().reverse().forEach(function(x){h+='<div class="dd-h"><span>'+x.e+'</span><span class="dd-hr">'+esc(x.t)+'</span><span>✔</span></div>';});}
+      $("fq-stage").innerHTML=h;
+      document.querySelectorAll("#fq-stage .xp-card").forEach(function(b){b.onclick=function(){detail(+b.getAttribute("data-q"));};});
+    }
+    function detail(i){var q=BANK[i],done=isDone(q.t);
+      var h='<div class="inv-big">'+q.e+'</div><div class="xp-title" style="font-size:19px">'+esc(q.t)+'</div><div class="inv-txt">'+esc(q.d)+'</div>';
+      if(done)h+='<div class="xp-story">📓 Hildes Wissen dazu: '+esc(q.i)+'</div><div class="inv-btns"><button class="hbtn" id="fq-back">⬅ Zurück</button></div>';
+      else h+='<div class="inv-note">Tipp: Frag Hilde 🎤, schaut in Bücher oder forscht gemeinsam draußen!</div><div class="inv-btns"><button class="inv-mic" id="fq-claim">✅ Ich habe es erforscht!</button><button class="hbtn" id="fq-back">⬅</button></div>';
+      $("fq-stage").innerHTML=h;
+      $("fq-back").onclick=menu;
+      var c=$("fq-claim");if(c)c.onclick=function(){
+        if(!adultGate())return;
+        if(!window.confirm("Hat Vinni „"+q.t+"“ wirklich erforscht und erklärt?"))return;
+        if(!G.fbook)G.fbook=[];G.fbook.push({t:q.t,e:q.e,when:Date.now()});doSave();
+        DEEDS.award("Forscher-Quest: "+q.t+" 🚀",10);SFX.fanfare();
+        detail(i);say("Du hast es erforscht! 🚀 Hier steht, was Hilde dazu weiß – vergleicht mal! 📓",true);};
+      if(!done)say("Erforsche es in der echten Welt – und erklär es dann deinen Eltern wie ein Professor! 🚀");
+    }
+    function start(){menu();say("Willkommen, Forscher Vinni! Diese Fragen erforschst du in der ECHTEN Welt – die App wartet solange. 🚀",true);}
+    return {start:start};
   })();
 
   /* ===================== ENGLISH MIT HILDE ===================== */
@@ -3515,7 +3596,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
