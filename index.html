@@ -815,7 +815,7 @@
   .str-mbtn:active{transform:translateY(2px)}
   /* Küken-Party */
   .mc-party .modicon{background:#fff9d9}
-  .pt-arena{position:relative;height:190px;background:linear-gradient(#bfe6fa 0%,#cfeaba 40%,#8ecb6a 100%);border:3px solid #fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
+  .pt-arena{position:relative;height:230px;background:linear-gradient(#bfe6fa 0%,#cfeaba 40%,#8ecb6a 100%);border:3px solid #fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
   .pt-podium{position:absolute;left:4%;bottom:8px;font-size:34px;text-align:center;line-height:1}
   .pt-podium small{display:block;font-size:9px;font-weight:900;color:var(--ink-soft)}
   .pt-vortex{position:absolute;right:4%;top:8px;font-size:34px;transition:transform .4s ease,font-size .4s ease;animation:vortexspin 6s linear infinite;opacity:.75}
@@ -835,6 +835,8 @@
   .pt-stopbtn{font-family:inherit;border:3px solid #fff;background:linear-gradient(#ff8a70,var(--wrong));color:#fff;font-weight:900;font-size:20px;border-radius:16px;padding:13px 22px;cursor:pointer;box-shadow:var(--shadow)}
   .pt-stopbtn:active{transform:translateY(3px)}
   .pt-stopbtn:disabled{opacity:.45}
+  .pt-arena canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .pt-arena.pt-dark{border-color:#8a93b8}
   .pt-banner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.6);z-index:6;
     background:rgba(255,255,255,.95);border:3px solid var(--yolk-deep);border-radius:16px;padding:8px 16px;
     font-weight:900;font-size:17px;color:var(--ink);box-shadow:var(--soft);opacity:0;pointer-events:none;
@@ -3402,28 +3404,133 @@
     return {start:start};
   })();
 
-  /* ===================== KÜKEN-PARTY (Strudel als Spiel) ===================== */
+  /* ===================== KÜKEN-PARTY (Canvas-Videogame) ===================== */
   var PARTY=(function(){
-    var st=null,tick=null,phT=null,warnI=null;
+    var st=null,tick=null,phT=null,warnI=null,raf=null;
+    var cv=null,cx2=null,W=0,H=0,T0=0,parts=[],shake=0,chX=0.68,spinT=0;
     var THEMES=[
-      {id:"hof",n:"🏡 Hof-Party",need:0,cls:""},
-      {id:"disco",n:"🪩 Scheunen-Disco",need:6,cls:"pt-disco"},
-      {id:"strand",n:"🏖️ Strand-Party",need:15,cls:"pt-strand"},
-      {id:"space",n:"🚀 Weltraum-Party",need:30,cls:"pt-space"}
+      {id:"hof",n:"🏡 Hof-Party",need:0},
+      {id:"disco",n:"🪩 Scheunen-Disco",need:6},
+      {id:"strand",n:"🏖️ Strand-Party",need:15},
+      {id:"space",n:"🚀 Weltraum-Party",need:30}
     ];
     var ENDLINES=["Hast du gemerkt? Erst wackelt es – DANN kommt der Strudel. Genau wie im echten Leben. 😉","Profi-Trick: Beim ERSTEN Wackeln raus – da ist die Beute am dicksten!","Wer rechtzeitig geht, nimmt die Beute mit. Wer bleibt, wird durchgewirbelt. 🌀","Merken → STOPP → sichern. Das kannst du jetzt im Schlaf!"];
-    function stopAll(){if(tick){clearInterval(tick);tick=null;}if(phT){clearTimeout(phT);phT=null;}if(warnI){clearInterval(warnI);warnI=null;}}
+    function stopAll(){if(tick){clearInterval(tick);tick=null;}if(phT){clearTimeout(phT);phT=null;}if(warnI){clearInterval(warnI);warnI=null;}if(raf){cancelAnimationFrame(raf);raf=null;}}
     function stars(){return G.partyStars||0;}
-    function theme(){var t=THEMES[0];THEMES.forEach(function(x){if(x.id===(G.partyTheme||"hof"))t=x;});return t;}
+    function themeId(){return G.partyTheme||"hof";}
     function banner(txt,cls){var b=$("pt-banner");if(!b)return;b.textContent=txt;b.className="pt-banner show "+(cls||"");
       clearTimeout(b._t);b._t=setTimeout(function(){b.classList.remove("show");},1500);}
     function mult(){return st?1+Math.floor(st.stayT/3):1;}
+    /* ---------- Partikel ---------- */
+    function spawn(n,fn){for(var i=0;i<n;i++)parts.push(fn(i));if(parts.length>220)parts.splice(0,parts.length-220);}
+    function confetti(x,y){spawn(6,function(){return {t:"c",x:x+rnd(-18,18),y:y+rnd(-10,10),vx:(Math.random()*2-1)*30,vy:-40-Math.random()*50,g:130,life:1.1,col:pick(["#ffc94b","#e3735f","#54b07e","#5a9fd4","#c78bd4"]),s:3+Math.random()*3};});}
+    function coinBurst(x,y){spawn(10,function(){return {t:"e",e:"🪙",x:x,y:y,vx:(Math.random()*2-1)*60,vy:-90-Math.random()*80,g:140,life:1.0,s:13+Math.random()*6};});}
+    function dust(x,y){spawn(6,function(){return {t:"c",x:x,y:y+rnd(-4,4),vx:(Math.random()*2-1)*40,vy:-10-Math.random()*20,g:30,life:0.6,col:"rgba(180,160,120,.8)",s:3+Math.random()*3};});}
+    function swirl(x,y,tx,ty){spawn(16,function(){return {t:"s",x:x+rnd(-14,14),y:y+rnd(-14,14),tx:tx,ty:ty,life:1.0,col:"#cfd8ea",s:2.5+Math.random()*3};});}
+    function stepParts(dt){for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.life-=dt;
+      if(p.life<=0){parts.splice(i,1);continue;}
+      if(p.t==="s"){p.x+=(p.tx-p.x)*dt*4;p.y+=(p.ty-p.y)*dt*4;}
+      else{p.vy+=(p.g||0)*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;}}}
+    function drawParts(){parts.forEach(function(p){cx2.globalAlpha=Math.max(0,Math.min(1,p.life));
+      if(p.t==="e"){cx2.font=p.s+"px serif";cx2.textAlign="center";cx2.fillText(p.e,p.x,p.y);}
+      else{cx2.fillStyle=p.col;cx2.fillRect(p.x-p.s/2,p.y-p.s/2,p.s,p.s);}
+      cx2.globalAlpha=1;});}
+    /* ---------- Szene ---------- */
+    function initCanvas(){cv=$("pt-cv");if(!cv)return;
+      var dpr=Math.min(2,window.devicePixelRatio||1);
+      W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+      cx2=cv.getContext("2d");cx2.scale(dpr,dpr);T0=performance.now();parts=[];chX=st&&st.pos==="podium"?0.13:0.68;
+      if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);}
+    function bg(t){var th=themeId(),g;
+      if(th==="disco"){g=cx2.createLinearGradient(0,0,0,H);g.addColorStop(0,"#241d3d");g.addColorStop(.65,"#3c2c56");g.addColorStop(1,"#2c2136");
+        cx2.fillStyle=g;cx2.fillRect(0,0,W,H);
+        cx2.font="26px serif";cx2.textAlign="center";cx2.fillText("🪩",W*0.5,34);
+        for(var i=0;i<5;i++){cx2.globalAlpha=0.10+0.06*Math.sin(t*2+i);cx2.fillStyle=["#ff6ec7","#6ec7ff","#fff26e","#8aff6e","#c78bff"][i];
+          cx2.save();cx2.translate(W*0.5,26);cx2.rotate(t*0.5+i*1.256);cx2.fillRect(-3,0,6,H);cx2.restore();}
+        cx2.globalAlpha=1;
+        cx2.fillStyle="#4a3a2c";cx2.fillRect(0,H-26,W,26);}
+      else if(th==="strand"){g=cx2.createLinearGradient(0,0,0,H);g.addColorStop(0,"#8fd7f5");g.addColorStop(.45,"#bfe9f7");g.addColorStop(.46,"#6fb7dd");g.addColorStop(.6,"#5aa8d4");g.addColorStop(.61,"#f3dfa8");g.addColorStop(1,"#e8c987");
+        cx2.fillStyle=g;cx2.fillRect(0,0,W,H);
+        cx2.font="22px serif";cx2.fillText("☀️",W-34,30);cx2.fillText("⛵",W*0.35+Math.sin(t*0.4)*8,H*0.5);
+        cx2.strokeStyle="rgba(255,255,255,.6)";cx2.lineWidth=2;
+        for(var w=0;w<3;w++){cx2.beginPath();cx2.moveTo(0,H*0.52+w*5);cx2.bezierCurveTo(W*0.3,H*0.52+w*5+Math.sin(t+w)*3,W*0.6,H*0.52+w*5-Math.sin(t+w)*3,W,H*0.52+w*5);cx2.stroke();}}
+      else if(th==="space"){g=cx2.createLinearGradient(0,0,0,H);g.addColorStop(0,"#0e1730");g.addColorStop(.7,"#233258");g.addColorStop(1,"#39304f");
+        cx2.fillStyle=g;cx2.fillRect(0,0,W,H);
+        cx2.fillStyle="#fff";for(var s2=0;s2<26;s2++){var sx=(s2*97)%W,sy=(s2*53)%Math.floor(H*0.7);
+          cx2.globalAlpha=0.4+0.5*Math.abs(Math.sin(t*1.5+s2));cx2.fillRect(sx,sy,1.8,1.8);}
+        cx2.globalAlpha=1;cx2.font="22px serif";cx2.fillText("🌍",30,32);cx2.fillText("🛸",W*0.4+Math.sin(t*0.6)*14,26);
+        cx2.fillStyle="#494064";cx2.fillRect(0,H-26,W,26);}
+      else{g=cx2.createLinearGradient(0,0,0,H);g.addColorStop(0,"#bfe6fa");g.addColorStop(.55,"#cfeaba");g.addColorStop(1,"#8ecb6a");
+        cx2.fillStyle=g;cx2.fillRect(0,0,W,H);
+        cx2.font="24px serif";cx2.fillText("☀️",34,32);
+        cx2.fillStyle="#a6d68c";cx2.beginPath();cx2.ellipse(W*0.25,H*0.55,W*0.4,26,0,0,7);cx2.fill();
+        cx2.fillStyle="#96c97b";cx2.beginPath();cx2.ellipse(W*0.8,H*0.6,W*0.35,24,0,0,7);cx2.fill();
+        cx2.font="18px serif";cx2.fillText("🛖",W*0.32,H*0.5);}
+    }
+    function drawPodium(t){var x=W*0.13,y=H-24;
+      cx2.fillStyle="#9c6f3e";cx2.fillRect(x-34,y-8,68,14);
+      cx2.fillStyle="#c79a5e";cx2.fillRect(x-30,y-22,60,14);
+      cx2.font="24px serif";cx2.textAlign="center";cx2.fillText("🎪",x,y-28);
+      cx2.font="900 9px Nunito,sans-serif";cx2.fillStyle=themeId()==="hof"||themeId()==="strand"?"#6e5e50":"#e8e2d2";
+      cx2.fillText("PODEST",x,y+16);}
+    function drawVortex(t){if(!st)return;var x=W*0.86,y=H*0.34;
+      var s=st.phase==="warn"?(1.25+0.18*Math.sin(t*9)):st.phase==="suck"?2.0:0.55;
+      var speed=st.phase==="suck"?9:st.phase==="warn"?5:1.4;
+      cx2.save();cx2.translate(x,y);cx2.rotate(t*speed);
+      for(var a=0;a<3;a++){cx2.strokeStyle=st.phase==="calm"?"rgba(120,140,180,.45)":(st.phase==="warn"?"rgba(90,110,200,.8)":"rgba(70,80,190,.95)");
+        cx2.lineWidth=3.5*s;cx2.beginPath();
+        for(var r=3;r<22;r+=0.6){var ang=a*2.09+r*0.5;cx2.lineTo(Math.cos(ang)*r*s,Math.sin(ang)*r*s);}
+        cx2.stroke();}
+      cx2.restore();
+      if(st.phase!=="calm"){for(var o=0;o<4;o++){var oa=t*speed*0.8+o*1.57,orr=(26+o*7)*s;
+        cx2.fillStyle="rgba(200,215,240,.7)";cx2.beginPath();cx2.arc(x+Math.cos(oa)*orr,y+Math.sin(oa)*orr*0.6,2.4,0,7);cx2.fill();}}}
+    function drawChicks(t){if(!st)return;var speed=st.phase==="warn"||st.phase==="suck"?7:3;
+      var pos=[[0.62,0],[0.74,-14],[0.83,4]];
+      cx2.textAlign="center";
+      pos.forEach(function(p2,i){var bx=W*p2[0],by=H-30+p2[1]-Math.abs(Math.sin(t*speed+i*1.3))*12;
+        cx2.save();cx2.translate(bx,by);cx2.rotate(Math.sin(t*speed+i)*0.14);
+        cx2.font="20px serif";cx2.fillText("🐥",0,0);cx2.restore();
+        if(st.phase!=="suck"&&Math.random()<0.02)confetti(bx,by-10);});}
+    function drawChicken(t,dt){if(!st)return;
+      var target=st.pos==="party"?0.68:0.13,old=chX;
+      chX+=(target-chX)*Math.min(1,dt*6);
+      var moving=Math.abs(target-chX)>0.01;
+      if(moving&&Math.random()<0.4)dust(W*chX,H-26);
+      var x=W*chX,y=H-34;
+      var bob=moving?Math.abs(Math.sin(t*12))*6:(st.pos==="party"?Math.abs(Math.sin(t*5))*3:0);
+      cx2.save();cx2.translate(x,y-bob);
+      if(spinT>0){cx2.rotate(t*20);}
+      else if(moving&&target<old){cx2.scale(-1,1);}
+      cx2.font="30px serif";cx2.textAlign="center";cx2.fillText("🐔",0,0);cx2.restore();
+      if(st.pos==="party"&&st.phase!=="suck"){var lv=Math.floor(st.loot);
+        var fs=13+Math.min(14,lv*0.25);
+        cx2.font="900 "+Math.round(fs)+"px Nunito,sans-serif";
+        var tw=cx2.measureText("💰"+lv+" ×"+mult()).width;
+        cx2.fillStyle="rgba(255,255,255,.92)";
+        cx2.beginPath();cx2.roundRect?cx2.roundRect(x-tw/2-8,y-64-fs,tw+16,fs+12,8):cx2.fillRect(x-tw/2-8,y-64-fs,tw+16,fs+12);cx2.fill();
+        cx2.strokeStyle="#f0d089";cx2.lineWidth=2;cx2.stroke();
+        cx2.fillStyle="#9a6b00";cx2.textAlign="center";cx2.fillText("💰"+lv+" ×"+mult(),x,y-56);}}
+    function frame(now){if(!cv||!cv.isConnected){raf=null;return;}
+      var t=(now-T0)/1000,dt=Math.min(0.05,(frame._l?now-frame._l:16)/1000);frame._l=now;
+      if(spinT>0)spinT-=dt;
+      var sh=st&&st.phase==="warn"?2:(st&&st.phase==="suck"?5:0);
+      cx2.clearRect(0,0,W,H);cx2.save();
+      if(sh)cx2.translate((Math.random()*2-1)*sh,(Math.random()*2-1)*sh);
+      bg(t);drawPodium(t);drawVortex(t);drawChicks(t);
+      stepParts(dt);drawParts();
+      drawChicken(t,dt);
+      cx2.restore();
+      if(st&&st.phase==="warn"){cx2.save();var vg=cx2.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,H*0.85);
+        vg.addColorStop(0,"rgba(220,60,40,0)");vg.addColorStop(1,"rgba(220,60,40,"+(0.25+0.15*Math.sin(t*10))+")");
+        cx2.fillStyle=vg;cx2.fillRect(0,0,W,H);cx2.restore();}
+      raf=requestAnimationFrame(frame);}
+    /* ---------- Menü & Spielfluss (Logik unverändert) ---------- */
     function menu(){stopAll();st=null;
       var h='<div class="du-bar"><span>🏆 Rekord: '+(G.partyBest||0)+'</span><span>⭐ '+stars()+' Party-Sterne</span></div>';
-      h+='<div class="inv-txt"><b>So geht’s:</b> Auf der Party füllt sich dein Beutesack 💰 – je länger du bleibst, desto schneller (×1, ×2, ×3 …). Aber der Sack ist <b>nicht sicher</b>! Drück 🛑 STOPP und bring ihn aufs Podest, bevor der Strudel kommt. Ausstieg genau im Warn-Wackeln = <b>Beute ×2</b>!';
-      h+='</div><div class="dd-sec">🎨 Deine Party</div><div class="ck-needs" style="justify-content:flex-start">';
+      h+='<div class="inv-txt"><b>So geht’s:</b> Auf der Party füllt sich dein Beutesack 💰 – je länger du bleibst, desto schneller (×1, ×2, ×3 …). Aber der Sack ist <b>nicht sicher</b>! Drück 🛑 STOPP, bevor der Strudel kommt. Ausstieg genau im Warn-Wackeln = <b>Beute ×2</b>!</div>';
+      h+='<div class="dd-sec">🎨 Deine Party</div><div class="ck-needs" style="justify-content:flex-start">';
       THEMES.forEach(function(t){var lock=stars()<t.need;
-        h+='<button class="ck-need pt-th'+((G.partyTheme||"hof")===t.id?" on":"")+'" data-t="'+t.id+'"'+(lock?' disabled':'')+'>'+t.n+(lock?" 🔒"+t.need+"⭐":"")+'</button>';});
+        h+='<button class="ck-need pt-th'+(themeId()===t.id?" on":"")+'" data-t="'+t.id+'"'+(lock?" disabled":"")+'>'+t.n+(lock?" 🔒"+t.need+"⭐":"")+'</button>';});
       h+='</div><button class="inv-mic" id="pt-go">🐥 Party starten!</button>';
       h+='<div class="pt-goals"><b>⭐ Sterne holen:</b> 60 Beute sichern · 2× perfekt (×2) raus · nie erwischt</div>';
       $("pt-stage").innerHTML=h;
@@ -3432,14 +3539,7 @@
       say("Beute sammeln, rechtzeitig sichern – im Wackeln raus gibt DOPPELT! 💰");}
     function arenaHTML(){return ''+
       '<div class="du-bar"><span>💰 Sicher: <b id="pt-bank">0</b></span><span class="du-round" id="pt-time">90s</span><span id="pt-streak">🔥 0</span></div>'+
-      '<div class="pt-arena '+theme().cls+'" id="pt-arena">'+
-        '<div class="pt-banner" id="pt-banner"></div>'+
-        '<div class="pt-podium">🎪<small>Podest</small></div>'+
-        '<div class="pt-vortex" id="pt-vortex">🌀</div>'+
-        '<span class="pt-k" style="right:18%;bottom:14px">🐥</span><span class="pt-k" style="right:30%;bottom:30px;animation-delay:-.4s">🐥</span><span class="pt-k" style="right:8%;bottom:34px;animation-delay:-.8s">🐥</span>'+
-        '<div class="pt-loot" id="pt-loot">💰 <b id="pt-lootn">0</b> <small id="pt-mult">×1</small></div>'+
-        '<div class="pt-chicken" id="pt-chick">🐔</div>'+
-      '</div>'+
+      '<div class="pt-arena '+(themeId()!=="hof"?"pt-dark":"")+'" id="pt-arena"><canvas id="pt-cv"></canvas><div class="pt-banner" id="pt-banner"></div></div>'+
       '<div class="pt-btns">'+
         '<button class="pt-stopbtn" id="pt-stop">🛑 STOPP – Beute sichern!</button>'+
         '<button class="hbtn next" id="pt-show" style="display:none">🎪 Spiel zeigen! +10</button>'+
@@ -3448,26 +3548,27 @@
       '</div>';}
     function begin(tut){stopAll();
       st={bank:0,loot:0,stayT:0,streak:0,round:0,pos:tut?"podium":"party",phase:"calm",timeLeft:90,over:false,sucked:0,perfect:0,tut:!!tut,tutStep:tut?1:0,_justPerfect:false};
+      spinT=0;
       $("pt-stage").innerHTML=arenaHTML();
       $("pt-stop").onclick=cashout;$("pt-back").onclick=goParty;$("pt-show").onclick=showGame;$("pt-end").onclick=end;
+      initCanvas();
       tick=setInterval(loop,250);
       if(st.tut)tutStep1();else schedCalm();
       updateUI();}
     function loop(){if(!st||st.over)return;
       if(!st.tut){st.timeLeft-=0.25;if(st.timeLeft<=0){end();return;}}
-      if(st.pos==="party"&&st.phase!=="suck")
-        {st.stayT+=0.25;st.loot+=mult()*0.25;}
+      if(st.pos==="party"&&st.phase!=="suck"){st.stayT+=0.25;st.loot+=mult()*0.25;}
       updateUI();}
-    function schedCalm(){if(!st||st.over)return;st.phase="calm";st.round++;syncArena();
+    function schedCalm(){if(!st||st.over)return;st.phase="calm";st.round++;
       phT=setTimeout(startWarn,rnd(3000,6500));updateUI();}
-    function startWarn(){if(!st||st.over)return;st.phase="warn";syncArena();
+    function startWarn(){if(!st||st.over)return;st.phase="warn";
       warnI=setInterval(function(){try{SFX.pop();}catch(e){}},300);
       if(!st.tut){var dur=Math.max(1000,2400-st.round*120);phT=setTimeout(startSuck,dur);}
       updateUI();}
     function startSuck(){if(!st||st.over)return;if(warnI){clearInterval(warnI);warnI=null;}
-      st.phase="suck";syncArena();
+      st.phase="suck";
       if(st.pos==="party"){st.sucked++;var lost=Math.floor(st.loot);st.loot=0;st.stayT=0;st.streak=0;
-        var c=$("pt-chick");if(c){c.classList.remove("pt-spin");void c.offsetWidth;c.classList.add("pt-spin");}
+        spinT=1.2;swirl(W*chX,H-40,W*0.86,H*0.34);
         SFX.wrong();banner("😵 "+lost+" Beute weg!","bad");
         phT=setTimeout(schedCalm,1500);}
       else{if(st._justPerfect){st.perfect++;st._justPerfect=false;}
@@ -3478,6 +3579,7 @@
     function cashout(){if(!st||st.over||st.pos!=="party")return;
       var wasWarn=(st.phase==="warn");
       var gain=Math.floor(st.loot);st.loot=0;st.stayT=0;st.pos="podium";
+      coinBurst(W*chX,H-50);
       if(wasWarn){gain*=2;st.streak++;st._justPerfect=true;SFX.coin();banner("💰 PERFEKT! +"+gain+" (×2)","good");}
       else if(gain>0){SFX.pop();banner("💰 +"+gain+" gesichert");}
       st.bank+=gain;
@@ -3486,16 +3588,12 @@
     function goParty(){if(!st||st.over||st.phase==="suck")return;st.pos="party";updateUI();
       if(st.tut&&st.tutStep===1)tutStep2();}
     function showGame(){if(!st||st.phase!=="after")return;st.bank+=10;SFX.fanfare();banner("🎪 +10 – die Küken jubeln!","good");
+      confetti(W*0.7,H-60);confetti(W*0.75,H-40);
       if(phT)clearTimeout(phT);schedCalm();updateUI();}
-    function syncArena(){var a=$("pt-arena");if(!a)return;a.classList.toggle("pt-warn",st.phase==="warn");a.classList.toggle("pt-suck",st.phase==="suck");}
     function updateUI(){if(!st)return;
       var b=$("pt-bank");if(b)b.textContent=st.bank;
-      var l=$("pt-lootn");if(l)l.textContent=Math.floor(st.loot);
-      var m=$("pt-mult");if(m)m.textContent="×"+mult();
       var s=$("pt-streak");if(s)s.textContent="🔥 "+st.streak;
       var t=$("pt-time");if(t)t.textContent=st.tut?"ÜBUNG":Math.max(0,Math.ceil(st.timeLeft))+"s";
-      var ch=$("pt-chick");if(ch)ch.style.left=st.pos==="party"?"70%":"12%";
-      var lo=$("pt-loot");if(lo)lo.style.opacity=st.pos==="party"?"1":".35";
       var stop=$("pt-stop");if(stop)stop.disabled=(st.pos!=="party"||st.over);
       var back=$("pt-back");if(back)back.style.display=(st.pos==="podium"&&st.phase!=="suck"&&!st.over&&!(st.tut&&st.tutStep>=2))?"":"none";
       var sh=$("pt-show");if(sh)sh.style.display=(st.phase==="after"&&st.pos==="podium")?"":"none";
@@ -3506,7 +3604,7 @@
       phT=setTimeout(function(){if(!st)return;startWarn();banner("🌀 ES WACKELT! Drück 🛑 STOPP!","bad");
         say("Der Strudel kommt! JETZT 🛑 drücken – dann gibt es die Beute DOPPELT!");},3500);}
     function tutStep3(){st.tutStep=3;if(warnI){clearInterval(warnI);warnI=null;}if(phT){clearTimeout(phT);phT=null;}
-      st.phase="calm";syncArena();
+      st.phase="calm";
       say("GENAU SO! Im Wackeln raus = doppelte Beute. Jetzt das echte Spiel – 90 Sekunden! 🐥",true);
       G.partyTut=1;doSave();
       phT=setTimeout(function(){begin(false);},2400);}
