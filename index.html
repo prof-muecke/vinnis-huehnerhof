@@ -806,6 +806,13 @@
   .du-c1{background:#e2ecfb;color:var(--blue-deep)}
   .du-c2{background:#ffe9d9;color:var(--barn-deep)}
   .du-names{font-weight:900;font-size:17px;margin:6px 0 12px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+  /* Quatsch-Strudel */
+  .str-intro{font-weight:800;font-size:14px;line-height:1.5;background:linear-gradient(150deg,#eef1fb,#fbeef5);border:2px solid #fff;border-radius:14px;padding:11px 13px;margin:8px 0 12px;text-align:left}
+  .str-plancard{font-weight:900;font-size:19px;line-height:1.45;background:#fff8e2;border:3px solid #f0d089;border-radius:16px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+  .str-scn{font-weight:900;font-size:16px;line-height:1.4;background:var(--cream);border:2px solid #fff;border-radius:14px;padding:11px 13px;margin-bottom:10px;text-align:left}
+  .str-mbtn{width:100%;font-family:inherit;text-align:left;border:2px solid #fff;background:var(--paper);border-radius:14px;padding:11px 13px;font-weight:800;font-size:13.5px;line-height:1.35;cursor:pointer;box-shadow:0 2px 0 rgba(54,41,31,.08);margin-bottom:7px;color:var(--ink)}
+  .str-mbtn b{color:var(--good-deep);white-space:nowrap}
+  .str-mbtn:active{transform:translateY(2px)}
   /* ---------- Game-Feel: Splash, Zeremonie, Sprites, Ambient ---------- */
   #splash{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
     background:linear-gradient(#bfe6fa 0%,#9ad2ee 45%,#8ecb6a 100%);transition:opacity .5s ease;pointer-events:none}
@@ -1348,6 +1355,7 @@
         <button class="foc-card" data-foc="checkin">🫶 Tages-Check-in<small>Wie geht es dir gerade? Kurz nachspüren</small></button>
         <button class="foc-card" data-foc="trigger">🔎 Auslöser verstehen<small>Was hat dich geärgert? Gemeinsam herausfinden</small></button>
         <button class="foc-card" data-foc="timer">⏳ Ruhe-Timer<small>5–20 Minuten konzentriert dranbleiben – z.B. bei Hausaufgaben</small></button>
+        <button class="foc-card" data-foc="strudel">🌀 Der Quatsch-Strudel<small>Bei kleinen Kindern der Große bleiben – tricks den Strudel aus!</small></button>
       </div>
       <div class="foc-stage" id="foc-stage"></div>
       <div style="height:12px"></div>
@@ -1495,13 +1503,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||""};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1713,6 +1721,13 @@
       h+='</div>';
       (dd.hist||[]).slice(0,4).forEach(function(e){h+='<div class="pr-q">'+escT(e.r)+' <b class="'+(e.d>=0?'pr-a':'')+'">'+(e.d>0?"+":"")+e.d+'</b></div>';});
       h+='</div>';}
+    if(G.strudel&&((G.strudel.sig||[]).length||(G.strudel.plans||[]).length)){
+      var SS=["Ich werde immer lauter","Alles ist plötzlich MEGA witzig","Ich zapple und hüpfe herum","Ich mache alles nach, was die Kleinen machen","Ich kann nicht mehr aufhören zu lachen","Mein Kopf sagt: Ist doch egal!"];
+      var SP=["… sage ich innerlich STOPP und atme einmal tief","… gehe ich 3 große Schritte weg","… hole ich mir ein Glas Wasser","… sage ich: „Ich bin der Trainer!“ und zeige den Kleinen ein Spiel","… gehe ich zu einem Erwachsenen und sage „Strudel!“","… setze ich die Professor-Brille auf: Was würde Prof. Vincent tun?"];
+      h+='<div class="pr-card"><div class="pr-h">🌀 Vincents Strudel-Schutz</div>';
+      if((G.strudel.sig||[]).length){h+='<div class="pr-sub">Seine Frühwarn-Zeichen:</div>';G.strudel.sig.forEach(function(i){if(SS[i])h+='<div class="pr-q">🚨 '+SS[i]+'</div>';});}
+      if((G.strudel.plans||[]).length){h+='<div class="pr-sub">Seine Wenn-Dann-Pläne:</div>';G.strudel.plans.forEach(function(i){if(SP[i])h+='<div class="pr-q">🛟 Wenn Zeichen, dann '+SP[i].replace("… ","")+'</div>';});}
+      h+='<div class="pr-tip">Codewort „Strudel-Alarm!“ ruhig und freundlich sagen – es startet seinen Plan, ohne zu beschämen. Gelungene Momente unter Fokus → 🏅 Der-Große-Missionen bestätigen (+3 ⭐). Trainings-Runden bisher: '+((G.strudel.done||0))+', Missionen: '+((G.strudel.miss||0))+'.</div></div>';}
     var mast=(G.eMastered||[]).slice(-5).reverse();
     if(mast.length){h+='<div class="pr-card"><div class="pr-h">✅ Frisch gemeistert</div>';
       mast.forEach(function(q){h+='<div class="pr-q">„'+escT(q)+'“</div>';});
@@ -3788,7 +3803,111 @@
         $("tm-again").onclick=choose;$("tm-menu").onclick=back;
         say("Geschafft! So sieht echte Konzentration aus. 🏅",true);}
       choose();}
-    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else if(k==="ampel")ampelGame();else if(k==="wait")waitGame();else if(k==="checkin")checkinGame();else if(k==="trigger")triggerGame();else if(k==="timer")timerGame();else sprintGame();}
+    /* --- Der Quatsch-Strudel: Selbstregulation bei kleinen Kindern --- */
+    var STR_SIG=["Ich werde immer lauter","Alles ist plötzlich MEGA witzig","Ich zapple und hüpfe herum","Ich mache alles nach, was die Kleinen machen","Ich kann nicht mehr aufhören zu lachen","Mein Kopf sagt: Ist doch egal!"];
+    var STR_PLAN=["… sage ich innerlich STOPP und atme einmal tief","… gehe ich 3 große Schritte weg","… hole ich mir ein Glas Wasser","… sage ich: „Ich bin der Trainer!“ und zeige den Kleinen ein Spiel","… gehe ich zu einem Erwachsenen und sage „Strudel!“","… setze ich die Professor-Brille auf: Was würde Prof. Vincent tun?"];
+    var STR_SCN=[
+      {q:"Du spielst mit deinem kleinen Bruder und seinen Freunden. Sie fangen an, wild zu kreischen und Sachen zu werfen. Es sieht lustig aus – der Strudel zieht!",
+       o:["Ich denke STOPP und werde der Trainer: „Ich zeig euch ein besseres Spiel!“","Ich kreische lauter als alle","Ich werfe auch – aber nur ein bisschen"],ok:0,
+       good:"Genau! Der Trainer steht ÜBER dem Strudel. Die Kleinen folgen dir sowieso – zeig ihnen was Cooles. 💪",
+       meh:"Dann hat dich der Strudel – und am Ende gibt es Ärger für DICH, weil du der Große bist. Die starke Wahl: Trainer werden."},
+      {q:"Kindergeburtstag: Die Kleinen matschen mit dem Essen herum und kichern.",
+       o:["Ich gehe 3 Schritte weg und trinke etwas","Ich matsche mit – nur kurz!","Ich schaue zu und lache immer lauter"],ok:0,
+       good:"Stark! Weggehen ist kein Weglaufen – es ist der Trick gegen den Sog. Aus 3 Schritten Abstand sieht Matschen ziemlich albern aus. 😄",
+       meh:"„Nur kurz“ gibt es im Strudel nicht – er zieht immer tiefer. Erst Abstand, dann entscheidet dein kluger Kopf wieder."},
+      {q:"Die Kleinen feiern dich, wenn du den Clown machst: „Nochmal! Nochmal!“",
+       o:["Einmal Clown ist okay – dann sage ich: „Jetzt zeige ich euch einen Trick!“ und werde der Große","Ich mache immer weiter, solange sie lachen","Ich schubse aus Spaß einen um"],ok:0,
+       good:"Perfekt! Du darfst lustig sein – aber DU bestimmst, wann Schluss ist. Ein Zaubertrick oder ein Spiel zeigen: Dann bist du der Star UND der Große.",
+       meh:"Applaus fühlt sich gut an – aber der Strudel bezahlt mit Ärger. Nimm den Applaus mit einem Trainer-Trick, nicht mit Quatsch."},
+      {q:"Dein Bruder ärgert dich beim Spielen, und die anderen Kleinen kichern.",
+       o:["Ich sage ruhig: „Stopp, das mag ich nicht“ – und gehe zu den Großen","Ich ärgere zurück, nur doller","Ich schreie los"],ok:0,
+       good:"Genau richtig! Ruhig „Stopp“ sagen und gehen – das ist die stärkste Antwort, die es gibt. Wer schreit, hat den Strudel im Kopf.",
+       meh:"Zurückärgern füttert den Strudel. Kleine Kinder testen dich – der Große gewinnt, indem er GEHT."},
+      {q:"Ihr tobt – und plötzlich merkst du dein Frühwarn-Zeichen: Du wirst immer lauter!",
+       o:["Jetzt sofort mein Wenn-Dann-Plan!","Egal, ist ja gerade lustig","Ich mache weiter, bis ein Erwachsener schimpft"],ok:0,
+       good:"WOW – du hast den Strudel ERWISCHT, bevor er dich hatte! Genau dafür ist dein Zeichen da. Das ist die Königsdisziplin. 👑",
+       meh:"Das Zeichen ist wie eine Rauchmelder-Sirene: Wer sie ignoriert, steht bald mitten im Feuer. Zeichen bemerkt = sofort Plan!"},
+      {q:"Die Kleinen spielen ein Baby-Spiel und wollen, dass du das Baby bist.",
+       o:["Ich sage: „Ich bin der Tierarzt!“ – und nehme mir eine große Rolle","Ich bin das Baby – den ganzen Nachmittag","Ich rufe „Baby-Spiele sind doof!“ und mache ihr Spiel kaputt"],ok:0,
+       good:"Clever! Mitspielen ja – aber in einer GROSSEN Rolle: Tierarzt, Trainer, Kapitän. So gehörst du dazu, ohne zum Baby zu werden.",
+       meh:"Du darfst mit Kleinen spielen – aber als der Große. Such dir im Spiel die Rolle mit Verantwortung, dann zieht der Strudel nicht."}
+    ];
+    function strG(){if(!G.strudel)G.strudel={sig:[],plans:[],done:0,miss:0};if(!G.strudel.sig)G.strudel.sig=[];if(!G.strudel.plans)G.strudel.plans=[];return G.strudel;}
+    function strudelGame(){$("foc-menu").style.display="none";strMenu();}
+    function strMenu(){var s=strG(),stage=$("foc-stage");
+      var ready=s.sig.length&&s.plans.length;
+      var h='<div class="foc-q" style="text-align:center">🌀 Der Quatsch-Strudel</div>'+
+        '<div class="str-intro">Wenn du mit kleinen Kindern spielst, zieht manchmal ein unsichtbarer <b>Strudel</b>: Er macht aus dem großen Vincent ein Quatsch-Kind. <b>Du bist nicht schuld – der Strudel ist stark.</b> Aber Forscher wie du können ihn austricksen!</div>'+
+        '<div class="foc-menu" style="padding:0">'+
+        '<button class="foc-card" id="str-sig">🚨 Meine Frühwarn-Zeichen'+(s.sig.length?' ✔':'')+'<small>Woran merke ich, dass der Strudel zieht?</small></button>'+
+        '<button class="foc-card" id="str-plan">🛟 Meine Wenn-Dann-Pläne'+(s.plans.length?' ✔':'')+'<small>Mein Notfall-Trick – vorher festgelegt</small></button>'+
+        '<button class="foc-card" id="str-train">🎬 Strudel-Training<small>6 Situationen mit kleinen Kindern üben</small></button>'+
+        '<button class="foc-card" id="str-miss">🏅 Der-Große-Missionen ('+(s.miss||0)+')<small>Beweise im echten Leben – Eltern bestätigen</small></button>'+
+        '</div><div class="foc-btns"><button class="hbtn" id="str-back">⬅ Zurück</button></div>';
+      stage.innerHTML=h;
+      $("str-back").onclick=back;
+      $("str-sig").onclick=strSig;$("str-plan").onclick=strPlan;$("str-train").onclick=function(){strTrain(0,0);};$("str-miss").onclick=strMiss;
+      say(ready?"Dein Strudel-Schutz steht! Trainiere weiter oder hol dir eine Mission. 🌀":"Bau dir zuerst deinen Strudel-Schutz: Zeichen und Pläne! 🌀");}
+    function strSig(){var s=strG(),stage=$("foc-stage");
+      var h='<div class="foc-q" style="text-align:center">🚨 Woran merkst DU den Strudel?</div><div class="inv-note" style="text-align:center">Wähle 2 bis 3 Zeichen, die zu dir passen:</div><div class="ck-needs">';
+      STR_SIG.forEach(function(t,i){h+='<button class="ck-need strs'+(s.sig.indexOf(i)>=0?" on":"")+'" data-i="'+i+'">'+t+'</button>';});
+      h+='</div><button class="hbtn next" id="strs-save" style="display:block;margin:12px auto 0">💾 Merken</button><div class="foc-btns"><button class="hbtn" id="strs-back">⬅</button></div>';
+      stage.innerHTML=h;$("strs-back").onclick=strMenu;
+      stage.querySelectorAll(".strs").forEach(function(b){b.onclick=function(){b.classList.toggle("on");};});
+      $("strs-save").onclick=function(){var sel=[];stage.querySelectorAll(".strs").forEach(function(b,i){if(b.classList.contains("on"))sel.push(i);});
+        if(!sel.length){toast("Wähle mindestens 1 Zeichen");return;}
+        s.sig=sel.slice(0,3);doSave();SFX.right();say("Gemerkt! Wenn eins davon passiert: STRUDEL-ALARM – dann kommt dein Plan. 🚨",true);strMenu();};
+      say("Der Strudel hat Vorboten – wie ein Gewitter. Welche spürst du?");}
+    function strPlan(){var s=strG(),stage=$("foc-stage");
+      var h='<div class="foc-q" style="text-align:center">🛟 WENN ich mein Zeichen merke, DANN …</div><div class="inv-note" style="text-align:center">Wähle deine 2 Lieblings-Tricks:</div><div class="ck-needs">';
+      STR_PLAN.forEach(function(t,i){h+='<button class="ck-need strp'+(s.plans.indexOf(i)>=0?" on":"")+'" data-i="'+i+'">'+t+'</button>';});
+      h+='</div><button class="hbtn next" id="strp-save" style="display:block;margin:12px auto 0">💾 Das ist mein Plan!</button><div class="foc-btns"><button class="hbtn" id="strp-back">⬅</button></div>';
+      stage.innerHTML=h;$("strp-back").onclick=strMenu;
+      stage.querySelectorAll(".strp").forEach(function(b){b.onclick=function(){
+        if(!b.classList.contains("on")&&stage.querySelectorAll(".strp.on").length>=2){toast("Höchstens 2 – die musst du auswendig können!");return;}
+        b.classList.toggle("on");};});
+      $("strp-save").onclick=function(){var sel=[];stage.querySelectorAll(".strp").forEach(function(b,i){if(b.classList.contains("on"))sel.push(i);});
+        if(!sel.length){toast("Wähle 1 oder 2 Tricks");return;}
+        s.plans=sel.slice(0,2);doSave();strRehearse(0);};
+      say("Ein Plan, den du VORHER festlegst, funktioniert von allein – wie ein Zauberspruch. ✨");}
+    function strRehearse(n){var s=strG(),stage=$("foc-stage");
+      var plan="WENN ich mein Zeichen merke, DANN "+STR_PLAN[s.plans[0]].replace("… ","");
+      stage.innerHTML='<div class="foc-q" style="text-align:center">🗣️ Sag deinen Plan 3× LAUT!</div><div class="str-plancard">'+plan+'</div>'+
+        '<button class="inv-mic" id="strr-btn">Ich habe es gesagt! ('+n+'/3)</button><div class="foc-btns"><button class="hbtn" id="strr-back">⬅</button></div>';
+      $("strr-back").onclick=strMenu;
+      $("strr-btn").onclick=function(){if(n+1>=3){addEgg(1);SFX.fanfare();say("Dein Plan sitzt! Jetzt gehört er dir – wie ein Muskel. 💪",true);strMenu();}
+        else{SFX.right();strRehearse(n+1);}};
+      say("Laut sagen macht den Plan stark – dein Gehirn speichert ihn wie einen Befehl.");}
+    function strTrain(i,score){var stage=$("foc-stage");
+      if(i>=STR_SCN.length){addEgg(Math.max(1,score));var s=strG();s.done=(s.done||0)+1;doSave();
+        stage.innerHTML='<div class="inv-big">'+(score>=5?"🏆":"💪")+'</div><div class="foc-sum">'+score+' von '+STR_SCN.length+' stark gelöst! +'+Math.max(1,score)+' 🥚<br>'+(score>=5?"Der Strudel hat gegen dich keine Chance!":"Gut trainiert – beim nächsten Mal erwischst du noch mehr!")+'</div><div class="foc-btns"><button class="hbtn next" id="strt-again">🎬 Nochmal</button><button class="hbtn" id="strt-menu">⬅ Menü</button></div>';
+        $("strt-again").onclick=function(){strTrain(0,0);};$("strt-menu").onclick=strMenu;
+        say(score>=5?"Du bist offiziell strudelfest, "+profRank()[1]+" Vincent! 🌀🚫":"Jedes Training macht den Strudel schwächer. Stark!",true);return;}
+      var sc=STR_SCN[i],order=shuf(sc.o.map(function(t,x){return {t:t,x:x};}));
+      var h='<div class="du-bar"><span>🎬 Situation '+(i+1)+'/'+STR_SCN.length+'</span><span class="du-round">⭐ '+score+'</span></div><div class="str-scn">'+sc.q+'</div><div class="options" id="strt-opts"></div>';
+      stage.innerHTML=h;var box=$("strt-opts");
+      order.forEach(function(o){var b=document.createElement("button");b.className="opt";b.textContent=o.t;
+        b.onclick=function(){var ok=(o.x===sc.ok);
+          box.querySelectorAll(".opt").forEach(function(x,j){x.disabled=true;if(order[j].x===sc.ok)x.classList.add("right");});
+          if(!ok)b.classList.add("wrong");
+          say(ok?sc.good:sc.meh,ok);
+          setTimeout(function(){if(current==="focus")strTrain(i+1,score+(ok?1:0));},2600);};
+        box.appendChild(b);});
+      say("Was macht der große Vincent?");}
+    function strMiss(){var s=strG(),stage=$("foc-stage");
+      var MISS2=["Du hast bei kleinen Kindern deinen Strudel-Alarm selbst bemerkt","Du hast deinen Wenn-Dann-Plan wirklich benutzt","Du warst der Trainer/Spielleiter für die Kleinen","Du bist selbst aus dem Toben ausgestiegen – ohne dass jemand etwas sagen musste"];
+      var h='<div class="foc-q" style="text-align:center">🏅 Der-Große-Missionen</div><div class="inv-note" style="text-align:center">Beweise aus dem echten Leben – Eltern bestätigen, +3 ⭐:</div>';
+      MISS2.forEach(function(m,i){h+='<button class="str-mbtn" data-m="'+i+'">'+m+' <b>+3 ⭐</b></button>';});
+      h+='<div class="inv-note" style="margin-top:10px">💡 Familien-Codewort: Wenn Mama oder Papa <b>„Strudel-Alarm!“</b> sagen, startet dein Plan – das ist kein Schimpfen, das ist euer Geheimzeichen.</div>'+
+        '<div class="foc-btns"><button class="hbtn" id="strm-back">⬅</button></div>';
+      stage.innerHTML=h;$("strm-back").onclick=strMenu;
+      stage.querySelectorAll(".str-mbtn").forEach(function(b,i){b.onclick=function(){
+        if(!adultGate())return;
+        if(!window.confirm("Hat Vincent das wirklich geschafft?"))return;
+        var s2=strG();s2.miss=(s2.miss||0)+1;doSave();DEEDS.award("Der Große: "+MISS2[i].slice(0,40)+"… 🌀",3);
+        say("Das ist ein RIESEN-Schritt, "+profRank()[1]+" Vincent! Genau so tricksen Große den Strudel aus. 🌀🚫",true);strMenu();};});
+      say("Diese Missionen zählen doppelt – sie passieren im echten Leben!");}
+    function run(k){if(halt){halt();halt=null;}if(k==="cool")coolGame();else if(k==="stop")stopGame();else if(k==="ampel")ampelGame();else if(k==="wait")waitGame();else if(k==="checkin")checkinGame();else if(k==="trigger")triggerGame();else if(k==="timer")timerGame();else if(k==="strudel")strudelGame();else sprintGame();}
     function start(){menu();var cards=document.querySelectorAll("#foc-menu .foc-card");cards.forEach(function(c){c.onclick=function(){run(c.getAttribute("data-foc"));};});say("Wähl eine Übung, Konzentrations-Held! 🦸 Hier trainierst du deine Superkraft: dranbleiben und cool bleiben.");}
     return {start:start,stop:function(){if(halt){halt();halt=null;}},ckStats:ckStats};
   })();
@@ -3884,7 +4003,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;G.duelName="";Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;G.duelName="";G.strudel=null;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
