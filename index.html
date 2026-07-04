@@ -3449,6 +3449,12 @@
       var dpr=Math.min(2,window.devicePixelRatio||1);
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
       cx2=cv.getContext("2d");cx2.scale(dpr,dpr);T0=performance.now();parts=[];chX=st&&st.pos==="podium"?0.13:0.68;
+      cv.onpointerdown=function(ev2){if(!st||!st.atk)return;var r=cv.getBoundingClientRect();
+        var px=(ev2.clientX-r.left)/r.width*W,py=(ev2.clientY-r.top)/r.height*H,hitOne=false;
+        st.atk.projs.forEach(function(q){if(!q.dead&&Math.abs(q.x-px)<30&&Math.abs(q.y-py)<30){
+          q.dead=(performance.now()-T0)/1000+0.35;q.vx=(Math.random()*2-1)*140;q.vy=-200;q.g=300;
+          st.atk.defl++;hitOne=true;confetti(q.x,q.y);}});
+        if(hitOne){SFX.pop();updateUI();}};
       if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);}
     function bg(t){var th=themeId(),g;
       if(th==="disco"){g=cx2.createLinearGradient(0,0,0,H);g.addColorStop(0,"#241d3d");g.addColorStop(.65,"#3c2c56");g.addColorStop(1,"#2c2136");
@@ -3494,7 +3500,8 @@
       if(st.phase!=="calm"){for(var o=0;o<4;o++){var oa=t*speed*0.8+o*1.57,orr=(26+o*7)*s;
         cx2.fillStyle="rgba(200,215,240,.7)";cx2.beginPath();cx2.arc(x+Math.cos(oa)*orr,y+Math.sin(oa)*orr*0.6,2.4,0,7);cx2.fill();}}}
     function drawChicks(t){if(!st)return;var speed=st.phase==="warn"||st.phase==="suck"?7:3;
-      var pos=[[0.62,0],[0.74,-14],[0.83,4]];
+      var atkPull=(st&&st.atk)?0.16:0;
+      var pos=[[0.62-atkPull,0],[0.74-atkPull*1.4,-14],[0.83-atkPull,4]];
       cx2.textAlign="center";
       pos.forEach(function(p2,i){var bx=W*p2[0],by=H-30+p2[1]-Math.abs(Math.sin(t*speed+i*1.3))*12;
         cx2.save();cx2.translate(bx,by);cx2.rotate(Math.sin(t*speed+i)*0.14);
@@ -3522,10 +3529,12 @@
     function frame(now){if(!cv||!cv.isConnected){raf=null;return;}
       var t=(now-T0)/1000,dt=Math.min(0.05,(frame._l?now-frame._l:16)/1000);frame._l=now;
       if(spinT>0)spinT-=dt;
-      var sh=st&&st.phase==="warn"?2:(st&&st.phase==="suck"?5:0);
+      var sh=st&&st.phase==="warn"?2:(st&&st.phase==="suck"?5:0);if(shakeHit>0)sh=Math.max(sh,3);
       cx2.clearRect(0,0,W,H);cx2.save();
       if(sh)cx2.translate((Math.random()*2-1)*sh,(Math.random()*2-1)*sh);
       bg(t);drawPodium(t);drawVortex(t);drawChicks(t);
+      if(st&&st.atk){updAttack(t,dt);st.atk&&st.atk.projs.forEach(drawProj);}
+      if(shakeHit>0)shakeHit-=dt;
       stepParts(dt);drawParts();
       drawChicken(t,dt);
       cx2.restore();
@@ -3572,42 +3581,83 @@
       if(!st.tut&&st.round>1&&Math.random()<0.6)phT=setTimeout(tempt,rnd(1000,2200));
       else phT=setTimeout(startWarn,rnd(3000,6500));
       updateUI();}
-    /* --- Versuchungs-Events: Küken laden zu Quatsch (Falle) oder als Trainer (echt) ein --- */
+    /* --- Versuchungs-Events: sichtbarer Quatsch + Abwehr-Action --- */
     var TEMPTS=[
-      {e:"🤪",t:"„Komm, Matsch-Schlacht! Mach mit!“",a:"MITMACHEN +20",trap:true},
-      {e:"😝",t:"„Kreisch-Wettbewerb! Wer ist am lautesten?“",a:"MITKREISCHEN +15",trap:true},
-      {e:"🎂",t:"„Kuchen-Weitwurf! Wirf auch einen!“",a:"WERFEN +25",trap:true},
-      {e:"🪣",t:"„Wasser-Panscherei! Komm panschen!“",a:"PANSCHEN +18",trap:true},
+      {e:"🤪",t:"„Matsch-Schlacht! Mach mit!“",a:"MITMACHEN +20",trap:true,p:"matsch",inst:"Tipp die Matschbälle weg! 👆"},
+      {e:"😝",t:"„Kreisch-Konzert! Mitkreischen!“",a:"MITKREISCHEN +15",trap:true,p:"note",inst:"Tipp die Kreisch-Noten weg! 👆"},
+      {e:"🎂",t:"„Kuchen-Weitwurf! Wirf mit!“",a:"WERFEN +25",trap:true,p:"cake",inst:"Tipp die Kuchen weg! 👆"},
+      {e:"🪣",t:"„Wasser-Panscherei!“",a:"PANSCHEN +18",trap:true,p:"drop",inst:"Tipp die Wasserbomben weg! 👆"},
       {e:"🐣",t:"Ein Küken fragt lieb: „Zeigst du mir einen Trick?“",a:"TRICK ZEIGEN +10",trap:false},
       {e:"🐤",t:"Die Küken brauchen einen Schiedsrichter!",a:"SCHIRI SEIN +10",trap:false}
     ];
     function tempt(){if(!st||st.over||st.phase!=="calm"||st.pos!=="party"){if(st&&!st.over)phT=setTimeout(startWarn,rnd(1500,3500));return;}
       var ev=pick(TEMPTS),ar=$("pt-arena");if(!ar){phT=setTimeout(startWarn,1500);return;}
       var box=document.createElement("div");box.className="pt-offer";box.id="pt-offer";
-      box.innerHTML='<div class="pt-oe">'+ev.e+'</div><div class="pt-ot">'+ev.t+'</div>'+
-        '<button class="pt-oyes" id="pt-oyes">'+ev.a+'</button><button class="pt-ono" id="pt-ono">😎 Nein danke</button>';
+      if(ev.trap)box.innerHTML='<div class="pt-oe">'+ev.e+'</div><div class="pt-ot">'+ev.t+'</div>'+
+        '<button class="pt-oyes" id="pt-oyes">'+ev.a+'</button><button class="pt-ono" id="pt-ono">😎 ABWEHREN!</button>';
+      else box.innerHTML='<div class="pt-oe">'+ev.e+'</div><div class="pt-ot">'+ev.t+'</div>'+
+        '<button class="pt-oyes" id="pt-oyes">'+ev.a+'</button><button class="pt-ono" id="pt-ono">Nein danke</button>';
       ar.appendChild(box);
       var done=false;
       function cleanup(){if(box.parentNode)box.remove();}
-      function resolve(joined,timeout){if(done||!st)return;done=true;cleanup();
-        if(ev.trap){
-          if(joined){st.fooled++;var lost=Math.floor(st.loot);st.loot=0;st.stayT=0;st.streak=0;spinT=1.1;
-            swirl(W*chX,H-40,W*0.86,H*0.34);SFX.wrong();
-            banner("🌀 Quatsch füttert den Strudel! "+(lost>0?lost+" Beute weg!":"Uff!"),"bad");
-            say("Der Quatsch sah lustig aus – aber ZACK, Strudel! Beim nächsten Mal: cool bleiben. 😉");}
-          else{st.resist++;var bon=8+st.streak*2;st.bank+=bon;confetti(W*chX,H-70);SFX.right();
-            banner("😎 WIDERSTANDEN! +"+bon+" sicher","good");
-            say(timeout?"Einfach weitergemacht – auch das ist Widerstehen! 😎":"Stark! Quatsch-Einladung erkannt und cool geblieben. 😎",true);}}
-        else{
-          if(joined){st.bank+=10;confetti(W*chX,H-70);SFX.coin();banner("🐣 Trainer-Bonus +10!","good");
-            say("Genau! ECHTE Anfragen darf der Große annehmen – das ist Trainer-Arbeit. 🐣",true);}
-          else banner("Das wäre okay gewesen 😉");}
-        updateUI();
-        phT=setTimeout(startWarn,rnd(1800,3800));}
-      $("pt-oyes").onclick=function(){resolve(true,false);};
-      $("pt-ono").onclick=function(){resolve(false,false);};
-      phT=setTimeout(function(){resolve(false,true);},4200);
+      if(ev.trap){
+        $("pt-oyes").onclick=function(){if(done)return;done=true;cleanup();joinQuatsch(ev);};
+        $("pt-ono").onclick=function(){if(done)return;done=true;cleanup();startAttack(ev);};
+        phT=setTimeout(function(){if(done)return;done=true;cleanup();startAttack(ev);},3000);
+      } else {
+        $("pt-oyes").onclick=function(){if(done)return;done=true;cleanup();
+          st.bank+=10;confetti(W*chX,H-70);SFX.coin();banner("🐣 Trainer-Bonus +10!","good");
+          say("Genau! ECHTE Anfragen darf der Große annehmen – Trainer-Arbeit. 🐣",true);
+          updateUI();phT=setTimeout(startWarn,rnd(1800,3800));};
+        $("pt-ono").onclick=function(){if(done)return;done=true;cleanup();
+          banner("Das wäre okay gewesen 😉");phT=setTimeout(startWarn,rnd(1800,3800));};
+        phT=setTimeout(function(){if(done)return;done=true;cleanup();phT=setTimeout(startWarn,rnd(1500,3000));},4200);
+      }
       SFX.pop();}
+    function joinQuatsch(ev){if(!st)return;st.fooled++;
+      var em={matsch:"🟫",cake:"🍰",drop:"💧",note:"🎵"}[ev.p]||"🎉";spawn(6,function(){return {t:"e",e:em,x:W*chX,y:H-56,vx:(Math.random()*2-1)*120,vy:-120-Math.random()*80,g:230,life:1.2,s:16};});
+      var lost=Math.floor(st.loot);st.loot=0;st.stayT=0;st.streak=0;spinT=1.1;
+      swirl(W*chX,H-40,W*0.86,H*0.34);SFX.wrong();
+      banner("🌀 Quatsch füttert den Strudel! "+(lost>0?lost+" Beute weg!":"Uff!"),"bad");
+      say("Der Quatsch sah lustig aus – aber ZACK, Strudel! Nächstes Mal: abwehren oder weggehen. 😉");
+      updateUI();phT=setTimeout(startWarn,rnd(2200,4200));}
+    function startAttack(ev){if(!st)return;
+      var tn=(performance.now()-T0)/1000;st.atk={ev:ev,projs:[],hits:0,defl:0,end:tn+5.5,next:0,spawned:0};
+      banner("🤪 QUATSCH-ATTACKE! "+ev.inst,"bad");
+      say(ev.inst+" Oder ab aufs Podest – Weggehen zählt auch!");}
+    function throwProj(tx,ty,kind,fromPlayer){if(!st)return;
+      var ci=rnd(0,2),sx=fromPlayer?W*chX:W*[0.62,0.74,0.83][ci],sy=fromPlayer?H-56:H-40;
+      var dx=fromPlayer?(Math.random()*2-1)*W*0.3:(tx-sx),fl=fromPlayer?0.9:(0.9+Math.random()*0.4);
+      var pr={x:sx,y:sy,vx:(tx-sx)/fl,vy:-90-Math.random()*60,g:210,kind:kind,dead:0};
+      if(st.atk)st.atk.projs.push(pr);}
+    function updAttack(now,dt){if(!st||!st.atk)return;var a=st.atk;
+      if(now<a.end-1&&now>a.next&&a.spawned<7){a.next=now+0.55;a.spawned++;
+        throwProj(W*chX+rnd(-8,8),H-52,a.ev.p,false);}
+      for(var i=a.projs.length-1;i>=0;i--){var q=a.projs[i];
+        if(q.dead&&now>q.dead){a.projs.splice(i,1);continue;}
+        q.vy+=q.g*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;
+        if(!q.dead&&Math.abs(q.x-W*chX)<16&&q.y>H-62){a.hits++;a.projs.splice(i,1);
+          dust(W*chX,H-50);try{SFX.wrong();}catch(e){}shakeHit=0.4;continue;}
+        if(q.y>H+20)a.projs.splice(i,1);}
+      if(now>=a.end&&!a.projs.length)resolveAttack(false);}
+    var shakeHit=0;
+    function drawProj(q){cx2.save();cx2.translate(q.x,q.y);
+      if(q.kind==="matsch"){cx2.fillStyle="#8a5a33";cx2.beginPath();cx2.arc(0,0,8,0,7);cx2.fill();
+        cx2.fillStyle="#6e4626";cx2.beginPath();cx2.arc(3,-2,3,0,7);cx2.fill();}
+      else{cx2.font="18px serif";cx2.textAlign="center";
+        cx2.fillText(q.kind==="cake"?"🍰":q.kind==="drop"?"💧":"🎵",0,6);}
+      cx2.restore();}
+    function resolveAttack(escaped){if(!st||!st.atk)return;var a=st.atk;st.atk=null;
+      if(escaped){st.resist++;st.bank+=6;SFX.right();banner("😎 WEGGEGANGEN! +6 – auch stark!","good");
+        say("Weggehen ist kein Verlieren – es ist der Profi-Trick! 😎",true);}
+      else if(a.hits>=3){st.fooled++;var lost=Math.floor(st.loot);st.loot=0;st.stayT=0;st.streak=0;spinT=1.1;
+        swirl(W*chX,H-40,W*0.86,H*0.34);SFX.wrong();
+        banner("🌀 Zu viel Quatsch erwischt! "+(lost>0?lost+" Beute weg!":""),"bad");
+        say("Der Quatsch war schneller – macht nichts! Tipp schneller oder geh aufs Podest.");}
+      else{st.resist++;var bon=8+a.defl*2+st.streak*2;st.bank+=bon;confetti(W*chX,H-70);SFX.coin();
+        banner("😎 ABGEWEHRT! +"+bon+" ("+a.defl+"× 👆)","good");
+        say("Stark abgewehrt! "+a.defl+" Treffer weggetippt – cool geblieben. 😎",true);}
+      updateUI();phT=setTimeout(startWarn,rnd(1800,3800));}
     function startWarn(){if(!st||st.over)return;st.phase="warn";
       warnI=setInterval(function(){try{SFX.pop();}catch(e){}},300);
       if(!st.tut){var dur=Math.max(1000,2400-st.round*120);phT=setTimeout(startSuck,dur);}
@@ -3624,6 +3674,8 @@
           phT=setTimeout(function(){if(st&&st.phase==="after")schedCalm();},2600);},1100);}
       updateUI();}
     function cashout(){if(!st||st.over||st.pos!=="party")return;
+      if(st.atk){var g0=Math.floor(st.loot);st.bank+=g0;st.loot=0;st.stayT=0;st.pos="podium";
+        if(phT)clearTimeout(phT);resolveAttack(true);return;}
       var wasWarn=(st.phase==="warn");
       var gain=Math.floor(st.loot);st.loot=0;st.stayT=0;st.pos="podium";
       coinBurst(W*chX,H-50);
