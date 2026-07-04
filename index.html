@@ -776,6 +776,23 @@
   .fq-chip{font-size:10.5px;font-weight:900;color:var(--good-deep)}
   .xp-card.fq-done{opacity:.72}
   .xp-card.fq-done .fq-chip{color:var(--ink-soft)}
+  /* Professor Vincent */
+  .mc-prof .modicon{background:linear-gradient(135deg,#fff3cf,#e6f1fb)}
+  .pv-card{background:linear-gradient(150deg,#fffdf6,#eef3fb);border:3px solid #fff;border-radius:18px;box-shadow:var(--soft);overflow:hidden;margin-bottom:10px}
+  .pv-head{background:linear-gradient(90deg,var(--blue),var(--blue-deep));color:#fff;font-weight:900;font-size:13px;letter-spacing:2px;text-align:center;padding:7px}
+  .pv-main{display:flex;align-items:center;gap:12px;padding:12px 14px 6px}
+  .pv-photo{font-size:52px;background:#fff;border:3px solid var(--blue);border-radius:14px;padding:4px 8px;box-shadow:var(--shadow)}
+  .pv-info{flex:1;text-align:left}
+  .pv-name{font-weight:900;font-size:17px;line-height:1.25}
+  .pv-name b{font-size:21px;color:var(--blue-deep)}
+  .pv-rankbar{font-weight:800;font-size:12px;color:var(--ink-soft);margin-top:3px}
+  .pv-seal{font-size:30px;text-align:center;line-height:1;opacity:.9}
+  .pv-seal small{display:block;font-size:8px;font-weight:900;color:var(--ink-soft);letter-spacing:.5px}
+  .pv-stats{display:flex;flex-wrap:wrap;gap:5px 14px;font-weight:800;font-size:12.5px;color:var(--ink-soft);padding:6px 14px 12px}
+  .pv-trick{background:#fff8e2;border:2px solid #f0d089;border-radius:14px;padding:10px 12px;font-weight:800;font-size:13px;line-height:1.55;text-align:left;margin-bottom:4px}
+  .pv-miss{background:var(--paper);border:3px solid #fff;border-radius:16px;box-shadow:var(--shadow);padding:12px 14px;margin-top:8px}
+  .pv-mt{font-weight:900;font-size:13px;color:var(--blue-deep);margin-bottom:6px;text-align:left}
+  .pv-mx{font-weight:900;font-size:18px;line-height:1.35;margin-bottom:10px}
   /* ---------- Game-Feel: Splash, Zeremonie, Sprites, Ambient ---------- */
   #splash{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
     background:linear-gradient(#bfe6fa 0%,#9ad2ee 45%,#8ecb6a 100%);transition:opacity .5s ease;pointer-events:none}
@@ -1001,6 +1018,7 @@
         <div class="modsec" data-sec="hof">
           <button class="sec-h"><span class="sec-i">🏡</span> Mein Hof <span class="chev">▾</span></button>
           <div class="sec-cards">
+            <button class="modcard mc-prof" data-go="prof"><div class="modicon">🎓</div><div><div class="modtitle">Prof. Vincent</div><div class="modsub">Dein Ausweis & Einsätze</div></div></button>
             <button class="modcard mc-deeds" data-go="deeds"><div class="modicon">⭐</div><div><div class="modtitle">Taten & Wünsche</div><div class="modsub">Punkte aus dem echten Leben</div></div></button>
             <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck freischalten</div></div></button>
             <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">Scheune</div><div class="modsub">Schau in den Stall</div></div></button>
@@ -1009,6 +1027,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- PROFESSOR VINCENT -->
+    <div class="screen" id="prof">
+      <div class="hilde-row"><div class="hilde" id="prof-hilde"></div><div class="bubble" id="prof-bubble">Der Professor ist im Dienst!</div></div>
+      <div class="stagepad"><div id="prof-stage"></div></div>
+      <div style="height:12px"></div>
     </div>
 
     <!-- FORSCHER-QUESTS -->
@@ -1449,13 +1474,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[]};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1536,7 +1561,11 @@
         var meta=null;KNOW_CATS.forEach(function(c){if(c.k===cat)meta=c;});
         var b=KNOW_BADGES[cat];
         setTimeout(function(){ceremony(b?b.emoji:"🏅","Abzeichen freigeschaltet!",(meta?meta.n:cat)+" Stufe 5 – neu auf deinem Hof!");},450);}}}
-  function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();if(Story)Story.progress("brain",1);}
+  function profRank(){var L=(typeof AI!=="undefined"&&AI&&AI.level)?AI.level():1;
+    return L>=15?["🧑‍🔬","Super-Professor",5]:L>=12?["🎓","Professor",4]:L>=9?["🥼","Doktor",3]:L>=6?["🔭","Ober-Forscher",2]:L>=3?["🔬","Forscher",1]:["🧪","Junior-Forscher",0];}
+  function bumpBrain(cat){G.brain=(G.brain||0)+1;learn(cat);doSave();if(Story)Story.progress("brain",1);
+    try{var r=profRank();if(r[2]>(G.profRank||0)){G.profRank=r[2];doSave();
+      setTimeout(function(){ceremony(r[0],"Beförderung!","Du bist jetzt "+r[1]+" Vincent!");},700);}}catch(e){}}
   function adultGate(){var a=rnd(12,29),b=rnd(13,38),v=null;
     try{v=window.prompt("Für Erwachsene: Was ist "+a+" + "+b+"?");}catch(e){return false;}
     if(v==null)return false;
@@ -1689,7 +1718,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1787,8 +1816,9 @@
     if(name==="night")NIGHT.start();
     if(name==="deeds")DEEDS.start();
     if(name==="forscher")RESEARCH.start();
+    if(name==="prof")PROF.start();
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
   }
 
@@ -3284,6 +3314,71 @@
     return {start:start};
   })();
 
+  /* ===================== PROFESSOR VINCENT ===================== */
+  var PROF=(function(){
+    var SITS=[["🎲","Überall","alle"],["🏠","Zuhause","haus"],["🚗","Unterwegs","unterwegs"],["🛒","Einkaufen","laden"],["🍽️","Beim Essen","essen"],["🌳","Draußen","draussen"],["⏳","Warten","warten"]];
+    var MISS=[
+      {s:"haus",t:"Zähle alle Türen in der Wohnung – auch Schranktüren!"},
+      {s:"haus",t:"Finde 3 Dinge, die älter sind als du. Wie alt sind sie wohl?"},
+      {s:"haus",t:"Untersuche: Aus wie vielen Teilen besteht dein Frühstück?"},
+      {s:"haus",t:"Miss mit deinen Füßen: Wie lang ist der Flur?"},
+      {s:"unterwegs",t:"Zähle 2 Minuten lang alle roten Autos."},
+      {s:"unterwegs",t:"Finde 5 Zahlen auf Schildern und rechne sie zusammen."},
+      {s:"unterwegs",t:"Schätze: Wie viele Bäume stehen an dieser Straße? Zähl nach!"},
+      {s:"unterwegs",t:"Beobachte die Wolken: Welche Formen erkennst du?"},
+      {s:"laden",t:"Finde das billigste und das teuerste Obst."},
+      {s:"laden",t:"Schätze das Gewicht von 3 Sachen im Wagen – dann heb sie an!"},
+      {s:"laden",t:"Zähle, wie viele verschiedene Käsesorten es gibt."},
+      {s:"laden",t:"Rechne mit: Was kosten 2 Packungen von deinem Müsli?"},
+      {s:"essen",t:"Untersuche dein Essen: Welche Zutaten erkennst du?"},
+      {s:"essen",t:"Zähle leise: Wie oft kaust du einen einzigen Bissen?"},
+      {s:"essen",t:"Beobachte still: Wer am Tisch lacht als Erstes?"},
+      {s:"essen",t:"Schätze: Wie viele Nudeln (oder Erbsen) sind auf deinem Teller?"},
+      {s:"draussen",t:"Finde 3 verschiedene Blätter und vergleiche sie genau."},
+      {s:"draussen",t:"Zähle Vögel: Wie viele siehst oder hörst du in 3 Minuten?"},
+      {s:"draussen",t:"Finde einen Stein, der besonders aussieht. Warum wohl?"},
+      {s:"draussen",t:"Beobachte Ameisen oder Käfer: Wohin laufen sie?"},
+      {s:"warten",t:"Zähle rückwärts von 100 in 7er-Schritten: 100, 93, 86 …"},
+      {s:"warten",t:"Finde im Raum 5 Dinge mit Ecken und 5 runde Dinge."},
+      {s:"warten",t:"Merke dir 5 Dinge, schließ die Augen – zähl sie auf!"},
+      {s:"warten",t:"Höre 1 Minute ganz genau hin: Wie viele Geräusche erkennst du?"}
+    ];
+    var sit="alle",cur=null,lastT=null;
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+    function draw(){var pool=MISS.filter(function(m){return (sit==="alle"||m.s===sit)&&m.t!==lastT;});
+      cur=pool[Math.floor(Math.random()*pool.length)];lastT=cur.t;render();}
+    function render(){var el=$("prof-stage");if(!el)return;
+      var r=profRank(),kn=G.know||{},tot=0,areas=0;KNOW_CATS.forEach(function(c){tot+=(kn[c.k]||0);if((kn[c.k]||0)>0)areas++;});
+      var h='<div class="pv-card"><div class="pv-head">🔬 FORSCHER-AUSWEIS 🔬</div>'+
+        '<div class="pv-main"><div class="pv-photo">👨‍🔬</div><div class="pv-info">'+
+        '<div class="pv-name">'+r[0]+' '+r[1]+'<br><b>Vincent</b></div>'+
+        '<div class="pv-rankbar">Wissenslevel '+((AI.level&&AI.level())||1)+'</div></div>'+
+        '<div class="pv-seal">🐔<small>Hildes<br>Siegel</small></div></div>'+
+        '<div class="pv-stats"><span>🌟 '+tot+' Sterne</span><span>🧭 '+areas+'/'+KNOW_CATS.length+' Gebiete</span><span>🏅 '+(G.badges||[]).length+' Abzeichen</span><span>🏆 '+(G.bossWins||0)+' Boss-Siege</span><span>📓 '+(G.fbook||[]).length+' erforscht</span><span>🧪 '+(G.profM||0)+' Einsätze</span></div></div>';
+      h+='<div class="pv-trick"><b>🧠 Der Professor-Trick</b> (für kribbelige Momente):<br>1️⃣ STOPP. Einmal tief atmen.<br>2️⃣ Frag dich: „Was würde Professor Vincent jetzt tun?“<br>3️⃣ Hol dir unten einen Einsatz – Forscher haben keine Zeit für Blödsinn! 😄</div>';
+      h+='<div class="dd-sec">🧪 Professor-Einsätze</div><div class="ck-needs" style="justify-content:flex-start">';
+      SITS.forEach(function(s2){h+='<button class="ck-need pv-sit'+(sit===s2[2]?" on":"")+'" data-s="'+s2[2]+'">'+s2[0]+' '+s2[1]+'</button>';});
+      h+='</div>';
+      if(cur)h+='<div class="pv-miss"><div class="pv-mt">📋 Dein Einsatz, '+r[1]+' Vincent:</div><div class="pv-mx">'+esc(cur.t)+'</div>'+
+        '<div class="inv-btns"><button class="hbtn next" id="pv-done">✅ Geschafft! +1 🥚</button><button class="hbtn" id="pv-parent">👨‍👩 Eltern bestätigen +2 ⭐</button></div>'+
+        '<button class="hbtn" id="pv-other" style="width:100%;margin-top:8px">🎲 Anderen Einsatz ziehen</button></div>';
+      else h+='<button class="inv-mic" id="pv-draw">🎲 Einsatz ziehen!</button>';
+      el.innerHTML=h;
+      el.querySelectorAll(".pv-sit").forEach(function(b){b.onclick=function(){sit=b.getAttribute("data-s");if(cur)draw();else render();};});
+      var d=$("pv-draw");if(d)d.onclick=draw;
+      var o=$("pv-other");if(o)o.onclick=draw;
+      var dn=$("pv-done");if(dn)dn.onclick=function(){G.profM=(G.profM||0)+1;doSave();addEgg(1);cur=null;render();
+        say("Einsatz erledigt – saubere Forscher-Arbeit, "+profRank()[1]+" Vincent! 🧪",true);};
+      var pp=$("pv-parent");if(pp)pp.onclick=function(){if(!adultGate())return;
+        if(!window.confirm("Hat Professor Vincent den Einsatz erledigt?"))return;
+        G.profM=(G.profM||0)+1;doSave();DEEDS.award("Professor-Einsatz 🧪",2);cur=null;render();
+        say("Bestätigt! Ein echter Professor bei der Arbeit. 🎓",true);};
+    }
+    function start(){cur=null;render();
+      say("Willkommen, "+profRank()[1]+" Vincent! Hier ist dein Ausweis – und wenn es kribbelig wird: Zieh dir einen Einsatz! 🎓",true);}
+    return {start:start};
+  })();
+
   /* ===================== ENGLISH MIT HILDE ===================== */
   var ENG=(function(){
     var W=[
@@ -3701,7 +3796,7 @@
   $("gear").onclick=function(){
     if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
-      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];Story.init();Story.render();renderDecos();renderFlock();refresh();}
+      try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
 
