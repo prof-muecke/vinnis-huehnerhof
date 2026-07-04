@@ -830,9 +830,19 @@
   .stat.bump{animation:statbump .45s ease}
   @keyframes statbump{35%{transform:scale(1.14)}70%{transform:scale(.97)}}
   .modsec[data-sec="action"] .sec-h{background:linear-gradient(#ffe9d9,#ffe0ca)}
-  .modsec[data-sec="wissen"] .sec-h{background:linear-gradient(#ece5fb,#e3d9f7)}
+  .modsec[data-sec="entdecken"] .sec-h{background:linear-gradient(#fff2d4,#ffeabc)}
+  .modsec[data-sec="denken"] .sec-h{background:linear-gradient(#ece5fb,#e3d9f7)}
   .modsec[data-sec="zahlen"] .sec-h{background:linear-gradient(#dff3e6,#d3edda)}
+  .modsec[data-sec="stark"] .sec-h{background:linear-gradient(#e3f0fb,#d7e8f8)}
   .modsec[data-sec="hof"] .sec-h{background:linear-gradient(#fdf2d8,#f9ebc6)}
+  #recent-sec .sec-h{background:linear-gradient(#fbe7ef,#f8dce8)}
+  /* kompakte Kachel-Ansicht */
+  .sec-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:9px;padding-top:10px}
+  .modcard{flex-direction:column;text-align:center;gap:7px;padding:12px 6px 10px;border-radius:18px}
+  .modtitle{font-size:13.5px;line-height:1.15}
+  .modsub{display:none}
+  .modicon{width:52px;height:52px;flex:0 0 52px;font-size:27px;border-radius:16px}
+  @media (min-width:640px){.sec-cards{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}}
   #home::-webkit-scrollbar,.stagepad::-webkit-scrollbar{width:8px}
   #home::-webkit-scrollbar-thumb,.stagepad::-webkit-scrollbar-thumb{background:rgba(154,140,110,.4);border-radius:8px}
   #home::-webkit-scrollbar-track,.stagepad::-webkit-scrollbar-track{background:transparent}
@@ -938,50 +948,64 @@
       <div class="questcard" id="questcard"></div>
       <div class="bosscard" id="bosscard"></div>
       <div class="modcards">
+        <div class="modsec" id="recent-sec" style="display:none">
+          <button class="sec-h"><span class="sec-i">⚡</span> Zuletzt gespielt <span class="chev">▾</span></button>
+          <div class="sec-cards" id="recent-cards"></div>
+        </div>
         <div class="modsec" data-sec="action">
           <button class="sec-h"><span class="sec-i">🎮</span> Spiele &amp; Action <span class="chev">▾</span></button>
           <div class="sec-cards">
-            <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt – wie weit kommst du?</div></div></button>
-            <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus – jeder Schritt eine Rechenaufgabe</div></div></button>
-            <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor bauen</div><div class="modsub">Zusammenbauen, Motor verstehen & mit Zahlen fahren</div></div></button>
-            <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus &amp; Cool bleiben</div><div class="modsub">Konzentration &amp; Impuls-Bremse trainieren – deine Superkraft</div></div></button>
+            <button class="modcard mc-game" data-go="game"><div class="modicon">🎮</div><div><div class="modtitle">Hühner-Challenge</div><div class="modsub">Endlos-Modus: alle Spiele gemischt</div></div></button>
+            <button class="modcard mc-corn" data-go="corn"><div class="modicon">🌽</div><div><div class="modtitle">Körner-Jagd</div><div class="modsub">Sammle Körner, weiche dem Fuchs aus</div></div></button>
+            <button class="modcard mc-tractor" data-go="tractor"><div class="modicon">🚜</div><div><div class="modtitle">Traktor</div><div class="modsub">Bauen, verstehen, fahren</div></div></button>
           </div>
         </div>
-        <div class="modsec" data-sec="wissen">
-          <button class="sec-h"><span class="sec-i">🧠</span> Wissen &amp; Köpfchen <span class="chev">▾</span></button>
+        <div class="modsec" data-sec="entdecken">
+          <button class="sec-h"><span class="sec-i">🦉</span> Wissen &amp; Entdecken <span class="chev">▾</span></button>
           <div class="sec-cards">
-            <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Natur, Welt, Logik – von Hilde erdacht</div></div></button>
-            <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde – sie antwortet und fragt zurück</div></div></button>
-            <button class="modcard mc-invent" data-go="invent"><div class="modicon">🛠️</div><div><div class="modtitle">Erfinder-Werkstatt</div><div class="modsub">DU bist der Lehrer: Stell Fragen und erwische Hildes Fehler!</div></div></button>
-            <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen: 5 Stationen, eine spannende Geschichte</div></div></button>
-            <button class="modcard mc-eng" data-go="eng"><div class="modicon">🇬🇧</div><div><div class="modtitle">English mit Hilde</div><div class="modsub">Erste englische Wörter – hören, sprechen, raten</div></div></button>
-            <button class="modcard mc-forscher" data-go="forscher"><div class="modicon">🚀</div><div><div class="modtitle">Forscher-Quests</div><div class="modsub">Erforsche echte Rätsel der Welt – erkläre sie den Eltern für +10 ⭐</div></div></button>
-            <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben für schlaue Köpfe</div></div></button>
-            <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen, Zahlen-Muster & Knobeleien</div></div></button>
-            <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen, beobachten, verstehen</div></div></button>
+            <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Weltwissen von Hilde</div></div></button>
+            <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen in 5 Stationen</div></div></button>
+            <button class="modcard mc-forscher" data-go="forscher"><div class="modicon">🚀</div><div><div class="modtitle">Forscher-Quests</div><div class="modsub">Echte Rätsel für +10 ⭐</div></div></button>
+            <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde</div></div></button>
+            <button class="modcard mc-invent" data-go="invent"><div class="modicon">🛠️</div><div><div class="modtitle">Erfinder-Werkstatt</div><div class="modsub">Erwische Hildes Fehler</div></div></button>
+          </div>
+        </div>
+        <div class="modsec" data-sec="denken">
+          <button class="sec-h"><span class="sec-i">🧠</span> Denken &amp; Sprache <span class="chev">▾</span></button>
+          <div class="sec-cards">
+            <button class="modcard mc-iq" data-go="iq"><div class="modicon">🧠</div><div><div class="modtitle">Denksport</div><div class="modsub">Knifflige IQ-Aufgaben</div></div></button>
+            <button class="modcard mc-pat" data-go="pattern"><div class="modicon">🧩</div><div><div class="modtitle">Muster & Logik</div><div class="modsub">Reihen & Knobeleien</div></div></button>
+            <button class="modcard mc-lab" data-go="lab"><div class="modicon">🔬</div><div><div class="modtitle">Hilde-Labor</div><div class="modsub">Vorhersagen & staunen</div></div></button>
             <button class="modcard mc-code" data-go="code"><div class="modicon">🤖</div><div><div class="modtitle">Roboter-Hilde</div><div class="modsub">Programmieren mit Bausteinen</div></div></button>
-            <button class="modcard mc-read" data-go="read"><div class="modicon">🔤</div><div><div class="modtitle">Lesen & Buchstaben</div><div class="modsub">Wörter bauen und hören</div></div></button>
+            <button class="modcard mc-read" data-go="read"><div class="modicon">🔤</div><div><div class="modtitle">Lesen</div><div class="modsub">Wörter bauen und hören</div></div></button>
+            <button class="modcard mc-eng" data-go="eng"><div class="modicon">🇬🇧</div><div><div class="modtitle">English</div><div class="modsub">Erste englische Wörter</div></div></button>
           </div>
         </div>
         <div class="modsec" data-sec="zahlen">
-          <button class="sec-h"><span class="sec-i">💰</span> Zahlen, Geld &amp; Zeit <span class="chev">▾</span></button>
+          <button class="sec-h"><span class="sec-i">💰</span> Zahlen &amp; Geld <span class="chev">▾</span></button>
           <div class="sec-cards">
-            <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Zahlen, Plus, Minus, Mal & mehr</div></div></button>
-            <button class="modcard mc-clk" data-go="clock"><div class="modicon">⏰</div><div><div class="modtitle">Uhr & Zeit</div><div class="modsub">Die analoge Uhr lesen lernen</div></div></button>
-            <button class="modcard mc-store" data-go="store"><div class="modicon">🏪</div><div><div class="modtitle">Kaufmannsladen</div><div class="modsub">Mit Geld bezahlen & rechnen lernen</div></div></button>
-            <button class="modcard mc-market" data-go="market"><div class="modicon">📈</div><div><div class="modtitle">Hühnermarkt</div><div class="modsub">Angebot & Nachfrage – warum Preise sich ändern</div></div></button>
-            <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Mit Münzen spekulieren: günstig kaufen, teuer verkaufen</div></div></button>
+            <button class="modcard mc-math" data-go="math"><div class="modicon">🥚</div><div><div class="modtitle">Eier rechnen</div><div class="modsub">Plus, Minus, Mal & mehr</div></div></button>
+            <button class="modcard mc-clk" data-go="clock"><div class="modicon">⏰</div><div><div class="modtitle">Uhr & Zeit</div><div class="modsub">Die Uhr lesen lernen</div></div></button>
+            <button class="modcard mc-store" data-go="store"><div class="modicon">🏪</div><div><div class="modtitle">Kaufmannsladen</div><div class="modsub">Mit Geld bezahlen</div></div></button>
+            <button class="modcard mc-market" data-go="market"><div class="modicon">📈</div><div><div class="modtitle">Hühnermarkt</div><div class="modsub">Angebot & Nachfrage</div></div></button>
+            <button class="modcard mc-boerse" data-go="boerse"><div class="modicon">💹</div><div><div class="modtitle">Hühner-Börse</div><div class="modsub">Günstig kaufen, teuer verkaufen</div></div></button>
+          </div>
+        </div>
+        <div class="modsec" data-sec="stark">
+          <button class="sec-h"><span class="sec-i">🦸</span> Ruhe &amp; Stärke <span class="chev">▾</span></button>
+          <div class="sec-cards">
+            <button class="modcard mc-focus" data-go="focus"><div class="modicon">🦸</div><div><div class="modtitle">Fokus & Cool</div><div class="modsub">Deine Superkraft trainieren</div></div></button>
+            <button class="modcard mc-night" data-go="night"><div class="modicon">🌙</div><div><div class="modtitle">Gute-Nacht</div><div class="modsub">Staun-Geschichten zum Einschlafen</div></div></button>
           </div>
         </div>
         <div class="modsec" data-sec="hof">
           <button class="sec-h"><span class="sec-i">🏡</span> Mein Hof <span class="chev">▾</span></button>
           <div class="sec-cards">
-            <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck mit Eiern freischalten</div></div></button>
-            <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">In die Scheune</div><div class="modsub">Schau, was im Stall los ist</div></div></button>
-            <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Meine Fortschritte</div><div class="modsub">Deine Wissenskarte: wo wächst dein Weltwissen?</div></div></button>
-            <button class="modcard mc-deeds" data-go="deeds"><div class="modicon">⭐</div><div><div class="modtitle">Taten & Wünsche</div><div class="modsub">Punkte aus dem echten Leben – tauschen & Wünsche erfüllen</div></div></button>
-            <button class="modcard mc-night" data-go="night"><div class="modicon">🌙</div><div><div class="modtitle">Gute-Nacht-Wissen</div><div class="modsub">Ruhige Staun-Geschichten zum Einschlafen</div></div></button>
-            <button class="modcard mc-parent" data-go="parent"><div class="modicon">📖</div><div><div class="modtitle">Für Eltern</div><div class="modsub">Wochenrückblick: Was Vinni gerade lernt</div></div></button>
+            <button class="modcard mc-deeds" data-go="deeds"><div class="modicon">⭐</div><div><div class="modtitle">Taten & Wünsche</div><div class="modsub">Punkte aus dem echten Leben</div></div></button>
+            <button class="modcard mc-shop" data-go="shop"><div class="modicon">🛒</div><div><div class="modtitle">Hof ausbauen</div><div class="modsub">Hühner & Schmuck freischalten</div></div></button>
+            <button class="modcard mc-barn" data-go="barn"><div class="modicon">🛖</div><div><div class="modtitle">Scheune</div><div class="modsub">Schau in den Stall</div></div></button>
+            <button class="modcard mc-stats" data-go="stats"><div class="modicon">🗺️</div><div><div class="modtitle">Fortschritte</div><div class="modsub">Deine Wissenskarte</div></div></button>
+            <button class="modcard mc-parent" data-go="parent"><div class="modicon">📖</div><div><div class="modtitle">Für Eltern</div><div class="modsub">Wochenrückblick & Sicherung</div></div></button>
           </div>
         </div>
       </div>
@@ -1685,6 +1709,14 @@
       })(s,dx,dy,rot,dur);
     }
   }
+  function renderRecent(){try{var box=$("recent-cards"),secEl=$("recent-sec");if(!box||!secEl)return;
+    var rec=[];try{rec=JSON.parse(window.localStorage.getItem("vinni_recent")||"[]");}catch(e){}
+    rec=rec.filter(function(n){return !!document.querySelector('.modsec:not(#recent-sec) .modcard[data-go="'+n+'"]');}).slice(0,4);
+    if(!rec.length){secEl.style.display="none";return;}
+    box.innerHTML="";
+    rec.forEach(function(n){var src=document.querySelector('.modsec:not(#recent-sec) .modcard[data-go="'+n+'"]');
+      var c=src.cloneNode(true);c.onclick=function(){show(n);};box.appendChild(c);});
+    secEl.style.display="";}catch(e){}}
   var cereT=null;
   function ceremony(emoji,title,sub){try{var c=$("cere");if(!c)return;
     $("cere-emoji").textContent=emoji;$("cere-title").textContent=title;$("cere-sub").textContent=sub||"";
@@ -1716,6 +1748,7 @@
     try{if(typeof NIGHT!=="undefined"&&NIGHT&&NIGHT.stop)NIGHT.stop();}catch(_n1){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
+    if(name!=="home"&&name!=="parent"&&SCR[name]){try{var _rc=JSON.parse(window.localStorage.getItem("vinni_recent")||"[]");_rc=_rc.filter(function(x){return x!==name;});_rc.unshift(name);window.localStorage.setItem("vinni_recent",JSON.stringify(_rc.slice(0,6)));}catch(_rr){}}
     try{
     if(name==="math"&&!inited.math){inited.math=true;M.start();}
     if(name==="code"&&!inited.code){inited.code=true;C.start();}
@@ -1755,7 +1788,7 @@
     if(name==="deeds")DEEDS.start();
     if(name==="forscher")RESEARCH.start();
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
   }
 
@@ -3632,6 +3665,7 @@
   weekInit();
   renderQuests();
   BOSS.renderCard();
+  renderRecent();
   (function(){var sp=$("splash");if(!sp)return;setTimeout(function(){sp.classList.add("done");setTimeout(function(){if(sp.parentNode)sp.remove();},600);},1150);})();
   (function(){var farm=document.querySelector(".farm");if(!farm)return;
     for(var i=0;i<4;i++){var d=document.createElement("span");d.className="amb amb-dust";
