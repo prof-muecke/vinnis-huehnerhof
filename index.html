@@ -75,6 +75,27 @@
   .home-deco .deco{filter:drop-shadow(0 3px 2px rgba(0,0,0,.18))}
   .home-flock{position:absolute;inset:0;pointer-events:none}
 
+  /* Foto-Modus: der echte Huehnerhof */
+  .farm.photo{background:url('foto-stall.jpg') center 42%/cover no-repeat;cursor:pointer}
+  .farm.photo .sun,.farm.photo .cloud,.farm.photo .fence,.farm.photo .coop,.farm.photo .meadow,.farm.photo .feeder,.farm.photo .amb,.farm.photo .butterfly{display:none}
+  .farm.photo:before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,0) 55%,rgba(0,0,0,.24));pointer-events:none}
+  body.sky-evening .farm.photo:before{background:linear-gradient(rgba(255,150,60,.18),rgba(40,25,60,.3))}
+  body.sky-night .farm.photo:before{background:rgba(14,26,64,.58)}
+  .farm.photo .run-label{background:rgba(20,30,20,.6)}
+  .farm-toggle{position:absolute;top:8px;right:8px;z-index:6;border:2px solid #fff;border-radius:12px;background:rgba(255,255,255,.88);
+    font-family:inherit;font-size:16px;padding:4px 9px;cursor:pointer;box-shadow:var(--soft)}
+
+  /* Foto-Galerie in der Scheune */
+  #barn{overflow-y:auto}
+  .fgal-wrap{flex:0 0 auto;margin:0 12px 14px;background:var(--paper);border:3px solid #fff;border-radius:18px;box-shadow:var(--soft);padding:10px 12px}
+  .fgal-title{font-weight:900;font-size:15px;margin-bottom:8px}
+  .fgal{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .fgal img{height:104px;border-radius:12px;border:2px solid #fff;box-shadow:var(--soft);cursor:pointer;flex:0 0 auto}
+  #fotobox{position:fixed;inset:0;z-index:90;background:rgba(8,10,8,.93);display:none;align-items:center;justify-content:center;padding:14px}
+  #fotobox.on{display:flex}
+  #fotobox img{max-width:100%;max-height:84%;border-radius:16px;border:3px solid #fff;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  #fotobox .fb-hint{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-weight:800;font-size:14px;opacity:.85}
+
   .modcards{padding:12px 14px 18px;display:flex;flex-direction:column;gap:11px}
   .modcard{display:flex;align-items:center;gap:14px;background:var(--paper);border:3px solid #fff;border-radius:20px;
     padding:14px;box-shadow:var(--shadow);cursor:pointer;text-align:left;font-family:inherit;transition:transform .07s}
@@ -978,6 +999,7 @@
 <div id="sky"><span class="skycloud" style="top:7%;font-size:46px;animation-duration:65s">☁️</span><span class="skycloud" style="top:20%;font-size:30px;animation-duration:90s;animation-delay:-30s">☁️</span><span class="skycloud" style="top:4%;font-size:24px;animation-duration:110s;animation-delay:-70s">☁️</span><span class="skybird" style="top:12%;animation-duration:42s">🕊️</span><span class="skybird" style="top:17%;font-size:12px;animation-duration:58s;animation-delay:-25s">🐦</span><span class="skymoon">🌙</span><span class="skystar" style="left:14%;top:9%">✨</span><span class="skystar" style="left:38%;top:5%;animation-delay:-.9s">⭐</span><span class="skystar" style="left:62%;top:12%;animation-delay:-1.6s">✨</span><svg class="skyhills" viewBox="0 0 1000 140" preserveAspectRatio="none" aria-hidden="true"><path d="M0 92 Q 150 34 320 80 T 640 72 T 1000 86 L1000 140 0 140 Z" fill="#b9e0a2" opacity=".7"/><path d="M0 112 Q 220 62 460 100 T 1000 104 L1000 140 0 140 Z" fill="#a6d68c" opacity=".75"/><g fill="#7fb968" opacity=".6"><ellipse cx="38" cy="88" rx="16" ry="12"/><ellipse cx="64" cy="94" rx="12" ry="9"/><ellipse cx="952" cy="92" rx="14" ry="11"/><ellipse cx="978" cy="98" rx="11" ry="8"/></g></svg></div>
 <div id="fx"></div>
 <div id="splash"><div class="sp-chick">🐔</div><div class="sp-title">Vinnis Hühnerhof</div><div class="sp-sub">🌽 🥚 ⭐</div></div>
+<div id="fotobox"><img id="fotobox-img" alt=""><div class="fb-hint">Tippen zum Schließen</div></div>
 <div class="cere" id="cere"><div class="cere-rays"></div><div class="cere-box"><div class="cere-emoji" id="cere-emoji">🏆</div><div class="cere-title" id="cere-title"></div><div class="cere-sub" id="cere-sub"></div></div></div>
 <div id="app">
   <div class="header">
@@ -1001,6 +1023,7 @@
       </div>
       <div class="ki-row" style="padding:0 14px 4px"><span id="home-ki-status" class="ki-status"></span><button id="home-ki-btn" class="ki-btn">⚙️ KI-Modus</button></div>
       <div class="farm">
+        <button class="farm-toggle" id="farm-toggle" title="Foto oder Zeichnung">🎨</button>
         <div class="sun"></div>
         <div class="cloud" style="left:-40px">☁️</div>
         <div class="cloud" style="left:-40px;top:34px;font-size:22px;animation-duration:36s;animation-delay:-14s">☁️</div>
@@ -1338,6 +1361,16 @@
         <div class="barn-flock" id="barn-flock"></div>
         <div class="barn-count" id="barn-count"></div>
       </div>
+      <div class="fgal-wrap">
+        <div class="fgal-title">📷 Eure echten Hühner vom Hofladen</div>
+        <div class="fgal" id="fgal">
+          <img src="foto-stall.jpg" alt="Euer Hühnermobil auf der Wiese" loading="lazy">
+          <img src="foto-portrait.jpg" alt="Eine Henne ganz nah" loading="lazy">
+          <img src="foto-huehner1.jpg" alt="Hühner im hohen Gras" loading="lazy">
+          <img src="foto-huehner3.jpg" alt="Neugierige Hühner" loading="lazy">
+          <img src="foto-huehner2.jpg" alt="Hühner in der Blumenwiese" loading="lazy">
+        </div>
+      </div>
     </div>
 
     <!-- STATS -->
@@ -1563,13 +1596,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1)};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -3445,6 +3478,7 @@
       else{cx2.fillStyle=p.col;cx2.fillRect(p.x-p.s/2,p.y-p.s/2,p.s,p.s);}
       cx2.globalAlpha=1;});}
     /* ---------- Szene ---------- */
+    var FOTO=new Image();FOTO.src="foto-stall.jpg";
     function initCanvas(){cv=$("pt-cv");if(!cv)return;
       var dpr=Math.min(2,window.devicePixelRatio||1);
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
@@ -3475,6 +3509,11 @@
           cx2.globalAlpha=0.4+0.5*Math.abs(Math.sin(t*1.5+s2));cx2.fillRect(sx,sy,1.8,1.8);}
         cx2.globalAlpha=1;cx2.font="22px serif";cx2.fillText("🌍",30,32);cx2.fillText("🛸",W*0.4+Math.sin(t*0.6)*14,26);
         cx2.fillStyle="#494064";cx2.fillRect(0,H-26,W,26);}
+      else if(FOTO.complete&&FOTO.naturalWidth){
+        var fsc=Math.max(W/FOTO.naturalWidth,H/FOTO.naturalHeight),fw=FOTO.naturalWidth*fsc,fh=FOTO.naturalHeight*fsc;
+        cx2.drawImage(FOTO,(W-fw)/2,(H-fh)*0.3,fw,fh);
+        g=cx2.createLinearGradient(0,H-44,0,H);g.addColorStop(0,"rgba(120,180,90,0)");g.addColorStop(1,"rgba(96,150,70,.72)");
+        cx2.fillStyle=g;cx2.fillRect(0,H-44,W,44);}
       else{g=cx2.createLinearGradient(0,0,0,H);g.addColorStop(0,"#bfe6fa");g.addColorStop(.55,"#cfeaba");g.addColorStop(1,"#8ecb6a");
         cx2.fillStyle=g;cx2.fillRect(0,0,W,H);
         cx2.font="24px serif";cx2.fillText("☀️",34,32);
@@ -4359,6 +4398,19 @@
   $("homebtn").onclick=function(){show("home");};
   var _ds=$("deedstat");if(_ds)_ds.onclick=function(){show("deeds");};
   var homeCoop=document.querySelector("#home .coop");if(homeCoop){homeCoop.style.cursor="pointer";homeCoop.onclick=function(){show("barn");};}
+  (function(){var farm=document.querySelector("#home .farm");if(!farm)return;
+    var tg=$("farm-toggle"),lbl=farm.querySelector(".run-label");
+    function apply(){var on=G.photoFarm!==0;farm.classList.toggle("photo",on);
+      if(tg)tg.textContent=on?"🎨":"📷";
+      if(lbl)lbl.textContent=on?"Euer echter Hühnerhof":"Außengehege";}
+    if(tg)tg.onclick=function(ev){ev.stopPropagation();G.photoFarm=(G.photoFarm===0)?1:0;doSave();apply();SFX.pop();};
+    farm.addEventListener("click",function(e){if(tg&&(e.target===tg||tg.contains(e.target)))return;
+      if(farm.classList.contains("photo"))show("barn");});
+    apply();})();
+  (function(){var fb=$("fotobox"),fi=$("fotobox-img"),gal=$("fgal");
+    if(gal)gal.addEventListener("click",function(e){var im=e.target.closest("img");if(!im)return;
+      fi.src=im.src;fi.alt=im.alt;fb.classList.add("on");SFX.pop();});
+    if(fb)fb.onclick=function(){fb.classList.remove("on");fi.removeAttribute("src");};})();
   $("m-tip").onclick=function(){M.hint();};$("m-breathe").onclick=openBreathe;
   $("c-tip").onclick=function(){C.hint();};
   $("e-tip").onclick=function(){E.hint();};$("e-breathe").onclick=openBreathe;$("e-deeper").onclick=function(){E.deeper();};
