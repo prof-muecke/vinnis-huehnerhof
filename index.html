@@ -81,9 +81,20 @@
   .farm.photo:before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,0) 55%,rgba(0,0,0,.24));pointer-events:none}
   body.sky-evening .farm.photo:before{background:linear-gradient(rgba(255,150,60,.18),rgba(40,25,60,.3))}
   body.sky-night .farm.photo:before{background:rgba(14,26,64,.58)}
+  body.sky-night .bird.pbird img{filter:brightness(.72) saturate(.85)}
+  body.sky-evening .bird.pbird img{filter:brightness(.9) sepia(.12)}
   .farm.photo .run-label{background:rgba(20,30,20,.6)}
   .farm-toggle{position:absolute;top:8px;right:8px;z-index:6;border:2px solid #fff;border-radius:12px;background:rgba(255,255,255,.88);
     font-family:inherit;font-size:16px;padding:4px 9px;cursor:pointer;box-shadow:var(--soft)}
+
+  /* echte, freigestellte Huehner als animierte Sprites */
+  .bird.pbird{width:74px;height:60px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.3))}
+  .bird.pbird img{width:100%;height:100%;object-fit:contain;object-position:bottom;pointer-events:none;
+    animation:ppeck 3.4s ease-in-out infinite}
+  @keyframes pwalk{0%{transform:translateX(0) scaleX(1)}42%{transform:translateX(36px) scaleX(1)}
+    50%{transform:translateX(36px) scaleX(-1)}92%{transform:translateX(0) scaleX(-1)}100%{transform:translateX(0) scaleX(1)}}
+  @keyframes ppeck{0%,54%,100%{transform:translateY(0)}60%{transform:translateY(2.5px)}66%{transform:translateY(0)}
+    72%{transform:translateY(2.5px)}78%{transform:translateY(0)}}
 
   /* Foto-Galerie in der Scheune */
   #barn{overflow-y:auto}
@@ -1613,11 +1624,25 @@
     if(c)document.body.classList.add(c);}
   skyTime();setInterval(skyTime,600000);
 
+  var PBIRDS=[{f:"sprite-huhn1.png",walk:true},{f:"sprite-huhn2.png",walk:true},{f:"sprite-huhn3.png",walk:false}];
   function birdEl(ch,isNew){
     var d=document.createElement("div");d.className="bird"+(isNew?" new":"");
     d.style.left=(4+Math.random()*54)+"%";
-    var br=BREEDS[ch.breed]||BREEDS.weiss;d.innerHTML=chick(br.v,br.rooster);
     d.title=ch.name;d.onclick=function(){toast("🐔 "+ch.name);};
+    if(G.photoFarm!==0){
+      d.classList.add("pbird");
+      var pk=PBIRDS[Math.floor(Math.random()*PBIRDS.length)];
+      d.style.width=(64+Math.random()*18)+"px";
+      var im=document.createElement("img");im.src=pk.f;im.alt=ch.name;im.draggable=false;
+      im.style.animationDelay=(-Math.random()*3.4).toFixed(1)+"s";
+      d.appendChild(im);
+      var wdur=(9+Math.random()*5).toFixed(1);
+      setTimeout(function(){d.classList.remove("new");
+        if(pk.walk&&Math.random()<0.7)d.style.animation="pwalk "+wdur+"s ease-in-out "+(-Math.random()*9).toFixed(1)+"s infinite";
+        else if(Math.random()<0.5)d.style.transform="scaleX(-1)";},isNew?560:0);
+      return d;
+    }
+    var br=BREEDS[ch.breed]||BREEDS.weiss;d.innerHTML=chick(br.v,br.rooster);
     var dur=(4+Math.random()*3.2).toFixed(1),del=(Math.random()*4).toFixed(1);
     setTimeout(function(){d.classList.remove("new");d.style.animation="life "+dur+"s ease-in-out "+del+"s infinite";},isNew?560:0);
     return d;
@@ -1840,7 +1865,13 @@
     var bf=$("bk-file");if(bf)bf.onchange=backupLoad;
   }
   function renderBarn(){
-    $("barn-roost").innerHTML='<div class="roost-bar"></div><div class="roost-hen" style="left:18%">'+chick(VAR.braun,false)+'</div><div class="roost-hen" style="left:52%">'+chick(VAR.weiss,true)+'</div>';
+    if(G.photoFarm!==0){
+      $("barn-roost").innerHTML='<div class="roost-bar"></div>'+
+        '<div class="roost-hen" style="left:18%"><img src="sprite-huhn1.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:bottom"></div>'+
+        '<div class="roost-hen" style="left:52%"><img src="sprite-huhn2.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:bottom;transform:scaleX(-1)"></div>';
+    } else {
+      $("barn-roost").innerHTML='<div class="roost-bar"></div><div class="roost-hen" style="left:18%">'+chick(VAR.braun,false)+'</div><div class="roost-hen" style="left:52%">'+chick(VAR.weiss,true)+'</div>';
+    }
     var fl=$("barn-flock");fl.innerHTML="";
     G.chickens.slice(-10).forEach(function(c){fl.appendChild(birdEl(c,false));});
     $("barn-count").textContent="Hier wohnen "+G.chickens.length+" Hühner.";
@@ -3479,6 +3510,7 @@
       cx2.globalAlpha=1;});}
     /* ---------- Szene ---------- */
     var FOTO=new Image();FOTO.src="foto-stall.jpg";
+    var SPR=new Image();SPR.src="sprite-huhn1.png";
     function initCanvas(){cv=$("pt-cv");if(!cv)return;
       var dpr=Math.min(2,window.devicePixelRatio||1);
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
@@ -3556,7 +3588,11 @@
       cx2.save();cx2.translate(x,y-bob);
       if(spinT>0){cx2.rotate(t*20);}
       else if(moving&&target<old){cx2.scale(-1,1);}
-      cx2.font="30px serif";cx2.textAlign="center";cx2.fillText("🐔",0,0);cx2.restore();
+      if(G.photoFarm!==0&&SPR.complete&&SPR.naturalWidth){
+        var sh2=36,sw2=sh2*SPR.naturalWidth/SPR.naturalHeight;
+        cx2.drawImage(SPR,-sw2/2,-sh2+6,sw2,sh2);
+      } else {cx2.font="30px serif";cx2.textAlign="center";cx2.fillText("🐔",0,0);}
+      cx2.restore();
       if(st.pos==="party"&&st.phase!=="suck"){var lv=Math.floor(st.loot);
         var fs=13+Math.min(14,lv*0.25);
         cx2.font="900 "+Math.round(fs)+"px Nunito,sans-serif";
@@ -4402,7 +4438,9 @@
     var tg=$("farm-toggle"),lbl=farm.querySelector(".run-label");
     function apply(){var on=G.photoFarm!==0;farm.classList.toggle("photo",on);
       if(tg)tg.textContent=on?"🎨":"📷";
-      if(lbl)lbl.textContent=on?"Euer echter Hühnerhof":"Außengehege";}
+      if(lbl)lbl.textContent=on?"Euer echter Hühnerhof":"Außengehege";
+      renderFlock();
+      var bn=$("barn");if(bn&&bn.classList.contains("on"))renderBarn();}
     if(tg)tg.onclick=function(ev){ev.stopPropagation();G.photoFarm=(G.photoFarm===0)?1:0;doSave();apply();SFX.pop();};
     farm.addEventListener("click",function(e){if(tg&&(e.target===tg||tg.contains(e.target)))return;
       if(farm.classList.contains("photo"))show("barn");});
