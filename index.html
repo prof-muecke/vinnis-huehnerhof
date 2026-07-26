@@ -1607,13 +1607,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm,inventSeen:G.inventSeen}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1)};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1),inventSeen:_ld.inventSeen||[]};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -3151,7 +3151,10 @@
   /* ===================== ERFINDER-WERKSTATT ===================== */
   var INVENT=(function(){
     var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    var rec=null,busy=false,cur=null,used=[];
+    var rec=null,busy=false,cur=null,aiQ=[],fetching=false;
+    function lvl(){return 1+Math.floor((G.brain||0)/6);}
+    function seenList(){if(!G.inventSeen)G.inventSeen=[];return G.inventSeen;}
+    function markSeen(t){var a=seenList();if(a.indexOf(t)<0)a.push(t);if(a.length>240)a.splice(0,a.length-240);doSave();}
     var STMTS=[
       {s:"Der Blauwal ist das größte Tier der Welt.",ok:true,topic:"Tiere",why:"Stimmt – er ist sogar größer, als die Dinosaurier waren."},
       {s:"Die Sonne ist ein Planet.",ok:false,topic:"Weltall",why:"Die Sonne ist ein Stern – sie leuchtet von selbst."},
@@ -3172,7 +3175,46 @@
       {s:"Die Hälfte von 10 ist 4.",ok:false,topic:"Mathe",why:"Die Hälfte von 10 ist 5."},
       {s:"Vögel stammen von Dinosauriern ab.",ok:true,topic:"Tiere",why:"Dein Huhn ist ein echter Dino-Verwandter!"},
       {s:"Eis ist wärmer als Wasser.",ok:false,topic:"Physik",why:"Eis ist gefrorenes, kaltes Wasser."},
-      {s:"Rom ist die Hauptstadt von Italien.",ok:true,topic:"Erde & Länder",why:"Genau – dort steht das alte Kolosseum."}
+      {s:"Rom ist die Hauptstadt von Italien.",ok:true,topic:"Erde & Länder",why:"Genau – dort steht das alte Kolosseum."},
+      {s:"Ein Oktopus hat drei Herzen.",ok:true,topic:"Tiere",why:"Zwei pumpen Blut zu den Kiemen, eins durch den Körper."},
+      {s:"Licht ist schneller als Schall.",ok:true,topic:"Physik",why:"Deshalb siehst du den Blitz, bevor du den Donner hörst."},
+      {s:"Honig kann tausende Jahre haltbar bleiben.",ok:true,topic:"Natur",why:"Sogar im alten Ägypten fand man noch essbaren Honig."},
+      {s:"Ein Schaltjahr hat 366 Tage.",ok:true,topic:"Zeit",why:"Alle vier Jahre bekommt der Februar einen Extra-Tag."},
+      {s:"Alle vier Seiten eines Quadrats sind gleich lang.",ok:true,topic:"Formen",why:"Genau das macht ein Quadrat zum Quadrat."},
+      {s:"Der Eiffelturm steht in Paris.",ok:true,topic:"Erde & Länder",why:"Er wurde 1889 für eine Weltausstellung gebaut."},
+      {s:"Fledermäuse finden ihren Weg mit Schall.",ok:true,topic:"Tiere",why:"Echoortung: Sie hören, wo ihre Rufe zurückprallen."},
+      {s:"Das größte Organ des Menschen ist die Haut.",ok:true,topic:"Körper",why:"Sie schützt dich am ganzen Körper – etwa 2 Quadratmeter!"},
+      {s:"Der Jupiter ist der größte Planet im Sonnensystem.",ok:true,topic:"Weltall",why:"In ihn würde die Erde über 1000-mal hineinpassen."},
+      {s:"Bienen tanzen, um anderen den Weg zu Blumen zu zeigen.",ok:true,topic:"Tiere",why:"Der Schwänzeltanz verrät Richtung und Entfernung."},
+      {s:"Ein Regenbogen entsteht, wenn Sonnenlicht auf Regentropfen trifft.",ok:true,topic:"Natur",why:"Die Tropfen zerlegen das Licht in seine Farben."},
+      {s:"9 mal 9 ist 81.",ok:true,topic:"Mathe",why:"Genau – das kleine Einmaleins."},
+      {s:"Dein Skelett besteht aus mehr als 200 Knochen.",ok:true,topic:"Körper",why:"Etwa 206 – Babys haben sogar noch mehr."},
+      {s:"Der Amazonas ist der wasserreichste Fluss der Welt.",ok:true,topic:"Erde & Länder",why:"Kein Fluss führt mehr Wasser als der Amazonas."},
+      {s:"Ein Viertel von 100 ist 25.",ok:true,topic:"Mathe",why:"100 geteilt durch 4 ist 25."},
+      {s:"Delfine sind Säugetiere.",ok:true,topic:"Tiere",why:"Sie atmen Luft und säugen ihre Jungen."},
+      {s:"Ein Jahrhundert hat 100 Jahre.",ok:true,topic:"Zeit",why:"Und zehn Jahrhunderte sind ein Jahrtausend."},
+      {s:"Der Mount Everest ist der höchste Berg Europas.",ok:false,topic:"Erde & Länder",why:"Er steht in Asien, im Himalaja."},
+      {s:"Ein Tausendfüßler hat genau 1000 Beine.",ok:false,topic:"Tiere",why:"Die meisten haben viel weniger – der Name übertreibt."},
+      {s:"Goldfische vergessen alles nach 3 Sekunden.",ok:false,topic:"Tiere",why:"Goldfische können sich Monate an Dinge erinnern."},
+      {s:"Die Chinesische Mauer kann man mit bloßem Auge vom Mond sehen.",ok:false,topic:"Erde & Länder",why:"Vom Mond aus ist sie viel zu schmal zum Erkennen."},
+      {s:"Der Donner kommt immer vor dem Blitz.",ok:false,topic:"Physik",why:"Erst der Blitz – Licht ist schneller als Schall."},
+      {s:"Kamele speichern Wasser in ihren Höckern.",ok:false,topic:"Tiere",why:"In den Höckern ist Fett – ihr Energievorrat."},
+      {s:"6 mal 7 ist 44.",ok:false,topic:"Mathe",why:"6 mal 7 ist 42."},
+      {s:"Ein Kreis hat drei Ecken.",ok:false,topic:"Formen",why:"Ein Kreis hat gar keine Ecken."},
+      {s:"Im Winter ist die Erde am weitesten von der Sonne entfernt.",ok:false,topic:"Weltall",why:"Die schiefe Erdachse macht die Jahreszeiten – nicht der Abstand."},
+      {s:"Menschen benutzen nur 10 Prozent ihres Gehirns.",ok:false,topic:"Körper",why:"Wir benutzen unser ganzes Gehirn – nur nicht alles gleichzeitig."},
+      {s:"Strauße stecken bei Gefahr den Kopf in den Sand.",ok:false,topic:"Tiere",why:"Sie rennen weg oder treten zu – der Kopf bleibt oben."},
+      {s:"Die Antarktis ist der heißeste Ort der Erde.",ok:false,topic:"Erde & Länder",why:"Sie ist der kälteste Kontinent der Erde."},
+      {s:"Der Stundenzeiger dreht sich an einem Tag genau einmal im Kreis.",ok:false,topic:"Zeit",why:"Zweimal – je einmal am Vormittag und am Nachmittag."},
+      {s:"Die Venus ist der Planet, der der Sonne am nächsten ist.",ok:false,topic:"Weltall",why:"Merkur ist der sonnennächste Planet."},
+      {s:"Wale sind Fische.",ok:false,topic:"Tiere",why:"Wale sind Säugetiere – sie atmen Luft wie wir."},
+      {s:"100 geteilt durch 4 ist 20.",ok:false,topic:"Mathe",why:"100 geteilt durch 4 ist 25."},
+      {s:"Regenwürmer haben ein Skelett aus Knochen.",ok:false,topic:"Tiere",why:"Regenwürmer haben gar keine Knochen."},
+      {s:"Das Wort „Hund“ ist ein Verb.",ok:false,topic:"Sprache",why:"„Hund“ ist ein Nomen – Verben sind Tu-Wörter."},
+      {s:"Beethoven war ein berühmter Maler.",ok:false,topic:"Musik",why:"Beethoven war ein berühmter Komponist."},
+      {s:"Aus Raupen werden Vögel.",ok:false,topic:"Natur",why:"Aus Raupen werden Schmetterlinge."},
+      {s:"Spinnen haben sechs Beine.",ok:false,topic:"Tiere",why:"Spinnen haben acht Beine."},
+      {s:"Ein rechter Winkel hat 100 Grad.",ok:false,topic:"Formen",why:"Ein rechter Winkel hat genau 90 Grad."}
     ];
     function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
     function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
@@ -3185,6 +3227,7 @@
       if(micOk)h+='<button class="inv-mic" id="inv-mic">🎤 Frage sprechen</button>';
       else if(!SR)h+='<div class="inv-note">🎤 Sprechen geht auf diesem Gerät leider nicht – aber „Stimmt das?“ macht genauso schlau:</div>';
       else h+='<div class="inv-note">Mit KI-Schlüssel (⚙️ KI-Modus auf dem Hof) kannst du Hilde ALLES fragen. Oder spiele gleich:</div>';
+      h+='<div class="inv-note">🧠 Wissens-Stufe '+lvl()+(aiKey()?' – ✨ die KI denkt sich immer neue Behauptungen für dich aus!':' – ohne KI-Schlüssel gibt es '+STMTS.length+' feste Behauptungen.')+'</div>';
       h+='<button class="hbtn inv-alt" id="inv-stmt">🎲 Stimmt das? – Hilde behauptet etwas</button>';
       stage(h);
       var m=$("inv-mic");if(m)m.onclick=listen;
@@ -3216,10 +3259,28 @@
         judge();
       }).catch(function(){toast("Das hat nicht geklappt – probier es gleich nochmal");intro();});
     }
-    function stmt(){var pool=STMTS.filter(function(x){return used.indexOf(x.s)<0;});if(!pool.length){used=[];pool=STMTS.slice();}
-      var s=pool[Math.floor(Math.random()*pool.length)];used.push(s.s);
-      cur={wrong:!s.ok,answer:s.s,correct:s.why,topic:s.topic,stmt:true};
+    function present(x){markSeen(x.s);
+      cur={wrong:!x.ok,answer:x.s,correct:x.why,topic:x.topic,stmt:true};
       judge();}
+    function localStmt(){var seen=seenList(),pool=STMTS.filter(function(x){return seen.indexOf(x.s)<0;});
+      if(!pool.length){G.inventSeen=seen.filter(function(t){return !STMTS.some(function(x){return x.s===t;});});doSave();pool=STMTS.slice();}
+      present(pool[Math.floor(Math.random()*pool.length)]);}
+    function fetchStmts(cb){if(fetching){if(cb)cb(false);return;}fetching=true;
+      var seen=seenList().slice(-40);
+      var p="Du erfindest Behauptungen für das Kinderspiel „Stimmt das?“. Vinni ist 7 Jahre alt, hochbegabt und deutschsprachig. Erzeuge GENAU 6 kurze Behauptungen (je höchstens 15 Wörter) auf Schwierigkeits-Stufe "+lvl()+" von 10 (Stufe 1 = einfaches Grundschulwissen, Stufe 10 = anspruchsvolles Weltwissen für sehr neugierige Kinder). Etwa die Hälfte ist wahr, die andere Hälfte enthält genau EINEN klaren Sachfehler (deutlich falsch, aber nicht albern). Mische die Themen bunt: Tiere, Weltall, Physik, Technik, Körper, Mathe, Erde & Länder, Geschichte, Natur, Musik, Sprache, Zeit. Wiederhole KEINE dieser schon benutzten Behauptungen und nichts inhaltlich Ähnliches: "+JSON.stringify(seen)+". Antworte AUSSCHLIESSLICH mit reinem JSON-Array: [{\"s\":\"Behauptung\",\"ok\":true,\"topic\":\"Thema in 1-2 Wörtern\",\"why\":\"kindgerechte Erklärung der Wahrheit in 1 Satz\"}]";
+      fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:900,messages:[{role:"user",content:p}]})})
+      .then(function(r){return r.json();}).then(function(d){
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim().replace(/```json/gi,"").replace(/```/g,"");
+        var f=t.indexOf("["),l=t.lastIndexOf("]");if(f>=0&&l>f)t=t.slice(f,l+1);
+        var arr=JSON.parse(t),seen2=seenList();
+        arr.forEach(function(x){if(x&&x.s&&typeof x.ok==="boolean"&&x.why&&seen2.indexOf(String(x.s))<0)aiQ.push({s:String(x.s),ok:x.ok,topic:String(x.topic||"Wissen"),why:String(x.why)});});
+        fetching=false;if(cb)cb(aiQ.length>0);
+      }).catch(function(){fetching=false;if(cb)cb(false);});}
+    function stmt(){
+      if(!aiKey()){localStmt();return;}
+      if(aiQ.length){var x=aiQ.shift();if(aiQ.length<2)fetchStmts(null);present(x);return;}
+      stage(SPIN);
+      fetchStmts(function(ok){if(ok&&aiQ.length)present(aiQ.shift());else localStmt();});}
     function judge(){busy=false;
       speak(cur.answer);
       stage('<div class="inv-hilde">🐔 Hilde '+(cur.stmt?"behauptet":"antwortet")+':</div><div class="inv-ans">„'+esc(cur.answer)+'“</div><div class="inv-txt">Was sagst du als Lehrer?</div>'+
