@@ -3355,18 +3355,12 @@
 
   /* ===================== MARBLE WISSENS-UNIVERSUM ===================== */
   var MARBLE=(function(){
-    var D=null,loading=false,prereqs=null,v={m:"subjects",si:0,di:0,ti:0},qz=null,trBusy={};
-    var TRKEY="vinni_marble_tr";
+    var D=null,loading=false,prereqs=null,v={m:"subjects",si:0,di:0,ti:0},qz=null;
     function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
     function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
     function lvl(){return 1+Math.floor((G.brain||0)/6);}
     function stage(h){var el=$("mb-stage");if(el)el.innerHTML=h;}
     var SPIN='<div class="loading" style="padding:14px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#8f7ae5" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div id="mb-spintxt">Einen Moment …</div></div>';
-    function trStore(){try{var c=JSON.parse(window.localStorage.getItem(TRKEY)||"null");if(c&&c.map&&c.order)return c;}catch(e){}return {order:[],map:{}};}
-    function trGet(id){return trStore().map[id]||null;}
-    function trPut(id,val){var c=trStore();if(!c.map[id])c.order.push(id);c.map[id]=val;
-      while(c.order.length>250){var o=c.order.shift();delete c.map[o];}
-      try{window.localStorage.setItem(TRKEY,JSON.stringify(c));}catch(e){}}
     function api(prompt,maxTok,cb,fail){
       fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:maxTok,messages:[{role:"user",content:prompt}]})})
       .then(function(r){return r.json();}).then(function(d){
@@ -3387,7 +3381,7 @@
     function isOpen(ti){var pr=prereqs[ti];if(!pr)return true;
       for(var k=0;k<pr.length;k++){if(pr[k].h&&!isDone(pr[k].p))return false;}return true;}
     function stateIcon(ti){return isDone(ti)?"✅":(isOpen(ti)?"📖":"🔒");}
-    function tname(t){var tr=trGet(t.i);return tr&&tr.n?tr.n:t.n;}
+    function tname(t){return t.nd||t.n;}
     function domTopics(di){var a=[];D.topics.forEach(function(t,i){if(t.d===di)a.push(i);});
       a.sort(function(x,y){var tx=D.topics[x],ty=D.topics[y];return (tx.a0-ty.a0)||(ty.c-tx.c);});return a;}
     function counts(fn){var n=0,d0=0;D.topics.forEach(function(t,i){if(fn(t,i)){n++;if(done()[t.i])d0++;}});return [d0,n];}
@@ -3405,7 +3399,7 @@
       D.subjects.forEach(function(sj,si){var cs=counts(function(t){return D.domains[t.d].s===si;});
         h+='<button class="mb-card" data-si="'+si+'"><div class="mb-em">'+sj.em+'</div><div class="mb-name">'+esc(sj.de)+'</div><div class="mb-cnt">'+cs[0]+' / '+cs[1]+'</div>'+bar(cs[0],cs[1])+'</button>';});
       h+='</div>';
-      if(!aiKey())h+='<div class="mb-note">⚙️ Tipp: Mit dem KI-Modus (Knopf auf dem Hof) übersetzt Hilde jedes Thema auf Deutsch und stellt dir die Meister-Prüfung!</div>';
+      if(!aiKey())h+='<div class="mb-note">⚙️ Tipp: Schalte den KI-Modus (Knopf auf dem Hof) an, damit Hilde dir die Meister-Prüfungen stellen kann!</div>';
       h+='<div class="mb-src">📚 Quelle: '+esc(D.source)+'</div></div>';
       stage(h);
       document.querySelectorAll("#mb-stage .mb-card").forEach(function(b){b.onclick=function(){v={m:"domains",si:+b.getAttribute("data-si"),di:0,ti:0};render();};});
@@ -3414,8 +3408,7 @@
       if(qs.length<2){box.innerHTML="";return;}
       var hits=[];
       for(var i=0;i<D.topics.length&&hits.length<12;i++){var t=D.topics[i];
-        var tr=trGet(t.i);
-        if(t.n.toLowerCase().indexOf(qs)>=0||(tr&&tr.n&&tr.n.toLowerCase().indexOf(qs)>=0)||D.domains[t.d].de.toLowerCase().indexOf(qs)>=0)hits.push(i);}
+        if(t.n.toLowerCase().indexOf(qs)>=0||(t.nd&&t.nd.toLowerCase().indexOf(qs)>=0)||D.domains[t.d].de.toLowerCase().indexOf(qs)>=0)hits.push(i);}
       var h="";hits.forEach(function(ti){var t=D.topics[ti];
         h+='<button class="mb-row" data-ti="'+ti+'"><span class="st">'+stateIcon(ti)+'</span><span class="nm">'+esc(tname(t))+'<div class="mb-cnt">'+D.domains[t.d].em+' '+esc(D.domains[t.d].de)+'</div></span><span class="age">ab '+t.a0+'</span></button>';});
       box.innerHTML=h||'<div class="mb-note">Nichts gefunden – probier ein anderes Wort.</div>';
@@ -3434,24 +3427,15 @@
       h+='</div>';stage(h);
       $("mb-b2").onclick=function(){v.m="domains";render();};
       document.querySelectorAll("#mb-stage .mb-row").forEach(function(b){b.onclick=function(){openTopic(+b.getAttribute("data-ti"));};});}
-    function openTopic(ti){var t=D.topics[ti];v={m:"topic",si:D.domains[t.d].s,di:t.d,ti:ti};render();
-      if(aiKey()&&!trGet(t.i))translate(ti);}
-    function translate(ti){var t=D.topics[ti];if(trBusy[t.i])return;trBusy[t.i]=1;
-      var p="Übersetze dieses Lernthema für Vinni (7 Jahre, hochbegabt, deutschsprachig) kindgerecht ins Deutsche. Thema: "+JSON.stringify({name:t.n,beschreibung:t.ds,lernziele:t.e})+". Fachbegriffe korrekt übersetzen, Ansprache 'du'. Wenn es um englische Sprache/Laute geht, lass die englischen Beispielwörter englisch und erkläre auf Deutsch. Antworte NUR mit JSON: {\"n\":\"deutscher Titel\",\"ds\":\"deutsche Beschreibung\",\"e\":[\"deutsches Lernziel\",...]}";
-      api(p,700,function(txt){delete trBusy[t.i];
-        try{var o=jparse(txt,false);if(o&&o.n&&o.ds){trPut(t.i,{n:String(o.n),ds:String(o.ds),e:(o.e||[]).map(String)});
-          if(v.m==="topic"&&v.ti===ti)render();}}catch(e){}
-      },function(){delete trBusy[t.i];});}
-    function rTopic(){var ti=v.ti,t=D.topics[ti],dm=D.domains[t.d],tr=trGet(t.i);
+    function openTopic(ti){var t=D.topics[ti];v={m:"topic",si:D.domains[t.d].s,di:t.d,ti:ti};render();}
+    function rTopic(){var ti=v.ti,t=D.topics[ti],dm=D.domains[t.d];
       var open=isOpen(ti),fin=isDone(ti);
-      var h='<div class="card"><div class="mb-head"><button class="mb-back" id="mb-b3">⬅</button><div class="mb-title">'+esc(tr?tr.n:t.n)+'</div></div>'
-        +'<div class="mb-crumb">'+dm.em+' '+esc(dm.de)+' · Alter '+t.a0+'–'+t.a1+'</div>';
+      var h='<div class="card"><div class="mb-head"><button class="mb-back" id="mb-b3">⬅</button><div class="mb-title">'+esc(t.nd||t.n)+'</div></div>'
+        +'<div class="mb-crumb">'+dm.em+' '+esc(dm.de)+' · Alter '+t.a0+'–'+t.a1+(t.nd?' · 🌐 '+esc(t.n):'')+'</div>';
       if(fin)h+='<div class="mb-badge">✅ Gemeistert!</div>';
-      h+='<div class="mb-note" style="font-size:13.5px;color:var(--ink)">'+esc(tr?tr.ds:t.ds)+'</div>';
-      if(!tr&&aiKey())h+='<div class="mb-note">🐔 Hilde übersetzt das Thema gerade für dich …</div>';
-      else if(!tr&&!aiKey())h+='<div class="mb-note">🌐 Noch auf Englisch – mit KI-Modus übersetzt Hilde alles für dich.</div>';
+      h+='<div class="mb-note" style="font-size:13.5px;color:var(--ink)">'+esc(t.dsd||t.ds)+'</div>';
       h+='<div class="mb-sec">🎯 Das kannst du danach:</div>';
-      (tr&&tr.e&&tr.e.length?tr.e:t.e).forEach(function(ev){h+='<div class="mb-ev">'+esc(ev)+'</div>';});
+      (t.ed&&t.ed.length?t.ed:t.e).forEach(function(ev){h+='<div class="mb-ev">'+esc(ev)+'</div>';});
       var pr=prereqs[ti]||[];
       if(pr.length){h+='<div class="mb-sec">🧩 Vorher lernen:</div>';
         pr.forEach(function(e){var pt=D.topics[e.p];
@@ -3464,17 +3448,17 @@
       $("mb-b3").onclick=function(){v.m="topics";render();};
       document.querySelectorAll("#mb-stage .mb-pr").forEach(function(el){el.onclick=function(){openTopic(+el.getAttribute("data-ti"));};});
       var qb=$("mb-quiz");if(qb)qb.onclick=function(){quiz(ti);};}
-    function quiz(ti){var t=D.topics[ti],dm=D.domains[t.d],tr=trGet(t.i);
+    function quiz(ti){var t=D.topics[ti],dm=D.domains[t.d];
       stage('<div class="card">'+SPIN+'</div>');var sp=$("mb-spintxt");if(sp)sp.textContent="Hilde denkt sich deine Prüfung aus …";
-      var p="Du bist Hilde, ein kluges Huhn. Vinni (7 Jahre, hochbegabt, deutschsprachig) will dieses Lernthema meistern (Schwierigkeits-Stufe "+lvl()+" von 10): "+JSON.stringify({fach:D.subjects[dm.s].en,bereich:dm.en,name:t.n,beschreibung:t.ds,lernziele:t.e})+". Erzeuge auf Deutsch: eine spannende, lehrreiche Mini-Erklärung (3-4 Sätze, die das Thema wirklich beibringt) und GENAU 3 Multiple-Choice-Fragen, die die Lernziele prüfen (kindgerecht, aber nicht zu leicht; falsche Optionen plausibel). Beim Fach English: Übe die englischen Wörter mit deutschen Erklärungen. Antworte NUR mit JSON: {\"intro\":\"...\",\"qs\":[{\"q\":\"Frage\",\"o\":[\"A\",\"B\",\"C\"],\"c\":0,\"why\":\"kurze Erklärung\"}]}";
+      var p="Du bist Hilde, ein kluges Huhn. Vinni (7 Jahre, hochbegabt, deutschsprachig) will dieses Lernthema meistern (Schwierigkeits-Stufe "+lvl()+" von 10): "+JSON.stringify({fach:D.subjects[dm.s].en,bereich:dm.en,name:t.n,deutscherName:t.nd||t.n,beschreibung:t.dsd||t.ds,lernziele:t.ed&&t.ed.length?t.ed:t.e})+". Erzeuge auf Deutsch: eine spannende, lehrreiche Mini-Erklärung (3-4 Sätze, die das Thema wirklich beibringt) und GENAU 3 Multiple-Choice-Fragen, die die Lernziele prüfen (kindgerecht, aber nicht zu leicht; falsche Optionen plausibel). Beim Fach English: Übe die englischen Wörter mit deutschen Erklärungen. Antworte NUR mit JSON: {\"intro\":\"...\",\"qs\":[{\"q\":\"Frage\",\"o\":[\"A\",\"B\",\"C\"],\"c\":0,\"why\":\"kurze Erklärung\"}]}";
       api(p,1100,function(txt){var o;
         try{o=jparse(txt,false);}catch(e){o=null;}
         if(!o||!o.qs||o.qs.length<3){toast("Das hat nicht geklappt – probier es nochmal");rTopic();return;}
         qz={ti:ti,qs:o.qs.slice(0,3),i:0,ok:0,intro:String(o.intro||"")};
         rIntro();
       },function(){toast("Keine Verbindung – probier es gleich nochmal");rTopic();});}
-    function rIntro(){var t=D.topics[qz.ti],tr=trGet(t.i);
-      stage('<div class="card"><div class="mb-crumb">🧪 Meister-Prüfung</div><div class="mb-title">'+esc(tr?tr.n:t.n)+'</div>'
+    function rIntro(){var t=D.topics[qz.ti];
+      stage('<div class="card"><div class="mb-crumb">🧪 Meister-Prüfung</div><div class="mb-title">'+esc(t.nd||t.n)+'</div>'
         +'<div class="mb-note" style="font-size:14px;color:var(--ink)">'+esc(qz.intro)+'</div>'
         +'<button class="mb-cta" id="mb-go">Los geht’s! ▶</button></div>');
       $("mb-go").onclick=rQ;}
