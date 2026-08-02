@@ -3364,8 +3364,9 @@
     function api(prompt,maxTok,cb,fail){
       fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:maxTok,messages:[{role:"user",content:prompt}]})})
       .then(function(r){return r.json();}).then(function(d){
+        if(d&&d.error){fail(String(d.error.message||d.error.type||"API-Fehler").slice(0,200));return;}
         var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim().replace(/```json/gi,"").replace(/```/g,"");
-        cb(t);}).catch(fail);}
+        cb(t);}).catch(function(){fail("Keine Verbindung – bitte Internet prüfen.");});}
     function jparse(t,arr){var a=arr?"[":"{",b=arr?"]":"}";var f=t.indexOf(a),l=t.lastIndexOf(b);if(f>=0&&l>f)t=t.slice(f,l+1);return JSON.parse(t);}
     function load(cb){if(D){cb();return;}
       if(loading)return;loading=true;
@@ -3434,8 +3435,9 @@
         +'<div class="mb-crumb">'+dm.em+' '+esc(dm.de)+' · Alter '+t.a0+'–'+t.a1+(t.nd?' · 🌐 '+esc(t.n):'')+'</div>';
       if(fin)h+='<div class="mb-badge">✅ Gemeistert!</div>';
       h+='<div class="mb-note" style="font-size:13.5px;color:var(--ink)">'+esc(t.dsd||t.ds)+'</div>';
-      h+='<div class="mb-sec">🎯 Das kannst du danach:</div>';
-      (t.ed&&t.ed.length?t.ed:t.e).forEach(function(ev){h+='<div class="mb-ev">'+esc(ev)+'</div>';});
+      var evs=(t.ed&&t.ed.length?t.ed:t.e)||[];
+      if(evs.length){h+='<div class="mb-sec">🎯 Das kannst du danach:</div>';
+        evs.forEach(function(ev){h+='<div class="mb-ev">'+esc(ev)+'</div>';});}
       var pr=prereqs[ti]||[];
       if(pr.length){h+='<div class="mb-sec">🧩 Vorher lernen:</div>';
         pr.forEach(function(e){var pt=D.topics[e.p];
@@ -3450,13 +3452,21 @@
       var qb=$("mb-quiz");if(qb)qb.onclick=function(){quiz(ti);};}
     function quiz(ti){var t=D.topics[ti],dm=D.domains[t.d];
       stage('<div class="card">'+SPIN+'</div>');var sp=$("mb-spintxt");if(sp)sp.textContent="Hilde denkt sich deine Prüfung aus …";
-      var p="Du bist Hilde, ein kluges Huhn. Vinni (7 Jahre, hochbegabt, deutschsprachig) will dieses Lernthema meistern (Schwierigkeits-Stufe "+lvl()+" von 10): "+JSON.stringify({fach:D.subjects[dm.s].en,bereich:dm.en,name:t.n,deutscherName:t.nd||t.n,beschreibung:t.dsd||t.ds,lernziele:t.ed&&t.ed.length?t.ed:t.e})+". Erzeuge auf Deutsch: eine spannende, lehrreiche Mini-Erklärung (3-4 Sätze, die das Thema wirklich beibringt) und GENAU 3 Multiple-Choice-Fragen, die die Lernziele prüfen (kindgerecht, aber nicht zu leicht; falsche Optionen plausibel). Beim Fach English: Übe die englischen Wörter mit deutschen Erklärungen. Antworte NUR mit JSON: {\"intro\":\"...\",\"qs\":[{\"q\":\"Frage\",\"o\":[\"A\",\"B\",\"C\"],\"c\":0,\"why\":\"kurze Erklärung\"}]}";
-      api(p,1100,function(txt){var o;
+      var p="Du bist Hilde, ein kluges Huhn. Vinni (7 Jahre, hochbegabt, deutschsprachig) will dieses Lernthema meistern (Schwierigkeits-Stufe "+lvl()+" von 10): "+JSON.stringify({fach:D.subjects[dm.s].en,bereich:dm.en,name:t.n,deutscherName:t.nd||t.n,beschreibung:t.dsd||t.ds,lernziele:t.ed&&t.ed.length?t.ed:t.e})+". Erzeuge auf Deutsch: eine spannende, lehrreiche Mini-Erklärung (3-4 Sätze, die das Thema wirklich beibringt) und GENAU 3 Multiple-Choice-Fragen, die die Lernziele prüfen (kindgerecht, aber nicht zu leicht; falsche Optionen plausibel). Beim Fach English: Übe die englischen Wörter mit deutschen Erklärungen. Halte alles kompakt (why: höchstens 12 Wörter). Gib NUR das JSON aus, ohne Text davor oder danach: {\"intro\":\"...\",\"qs\":[{\"q\":\"Frage\",\"o\":[\"A\",\"B\",\"C\"],\"c\":0,\"why\":\"kurze Erklärung\"}]}";
+      (function run(att){api(p,1500,function(txt){var o;
         try{o=jparse(txt,false);}catch(e){o=null;}
-        if(!o||!o.qs||o.qs.length<3){toast("Das hat nicht geklappt – probier es nochmal");rTopic();return;}
+        if(!o||!o.qs||o.qs.length<3){
+          if(att<2){run(att+1);return;}
+          qfail(ti,"Die KI-Antwort kam unvollständig an. Das passiert manchmal – versuch es einfach nochmal!");return;}
         qz={ti:ti,qs:o.qs.slice(0,3),i:0,ok:0,intro:String(o.intro||"")};
         rIntro();
-      },function(){toast("Keine Verbindung – probier es gleich nochmal");rTopic();});}
+      },function(msg){qfail(ti,msg);});})(1);}
+    function qfail(ti,msg){SFX.wrong();
+      stage('<div class="card" style="text-align:center"><div style="font-size:46px">🙈</div><div class="mb-title">Das hat nicht geklappt</div>'
+        +'<div class="mb-note" style="text-align:left">'+esc(msg||"Keine Verbindung zur KI.")+'</div>'
+        +'<button class="mb-cta" id="mb-rt2">🔄 Nochmal versuchen</button>'
+        +'<button class="mb-cta" id="mb-bk2" style="background:linear-gradient(#9aa7b5,#7d8b9a)">⬅ Zum Thema</button></div>');
+      $("mb-rt2").onclick=function(){quiz(ti);};$("mb-bk2").onclick=function(){rTopic();};}
     function rIntro(){var t=D.topics[qz.ti];
       stage('<div class="card"><div class="mb-crumb">🧪 Meister-Prüfung</div><div class="mb-title">'+esc(t.nd||t.n)+'</div>'
         +'<div class="mb-note" style="font-size:14px;color:var(--ink)">'+esc(qz.intro)+'</div>'
