@@ -3011,10 +3011,20 @@
     function key(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
     function active(){return !!key();}
     function status(el){if(!el)return;el.textContent=active()?"🔌 KI-Modus AN – gilt für alle Spiele":"💡 KI-Modus AUS · ⚙️ aktivieren für unendliche Fragen";}
+    function testKey(){toast("🔎 Teste die KI-Verbindung …");
+      callAPI({model:"claude-sonnet-4-6",max_tokens:8,messages:[{role:"user",content:"Sag OK"}]})
+      .then(function(d){
+        if(d&&d.error)toast("❌ KI-Fehler: "+String(d.error.message||d.error.type).slice(0,140));
+        else if(d&&d.content)toast("✅ KI-Verbindung funktioniert!");
+        else toast("❌ Unerwartete Antwort der KI");
+      }).catch(function(){toast("❌ Keine Verbindung – Internet prüfen");});}
     function setup(cb){
-      if(active()){if(window.confirm("KI-Modus für ALLE Module ausschalten? (Schlüssel entfernen)")){try{window.localStorage.removeItem("vinni_ai_key");}catch(e){}toast("KI-Modus aus");}if(cb)cb();return;}
+      if(active()){
+        if(window.confirm("KI-Modus für ALLE Module ausschalten? (Schlüssel entfernen)\n\n»Abbrechen« = Schlüssel nur TESTEN")){try{window.localStorage.removeItem("vinni_ai_key");}catch(e){}toast("KI-Modus aus");}
+        else testKey();
+        if(cb)cb();return;}
       var v=null;try{v=window.prompt("Für Erwachsene:\n\nAnthropic API-Schlüssel einfügen – der KI-Modus gilt dann für ALLE Module (Wissen, Challenge, Körner-Jagd, Frag Hilde …).\n\nWird NUR lokal auf diesem Gerät gespeichert.\n\nLeer lassen zum Abbrechen.");}catch(e){v=null;}
-      if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}toast("KI-Modus AN ✨ – für alle Spiele");}
+      if(v&&v.trim()){try{window.localStorage.setItem("vinni_ai_key",v.trim());}catch(e){}toast("KI-Modus AN ✨ – für alle Spiele");testKey();}
       if(cb)cb();
     }
     function callAPI(body){var k=key(),h={"Content-Type":"application/json"};if(k){h["x-api-key"]=k;h["anthropic-version"]="2023-06-01";h["anthropic-dangerous-direct-browser-access"]="true";}return fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:h,body:JSON.stringify(body)}).then(function(r){return r.json();});}
