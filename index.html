@@ -382,6 +382,41 @@
   @keyframes crankspin{to{transform:rotate(360deg)}}
   .eng-pin{position:absolute;left:50%;top:3px;width:8px;height:8px;border-radius:50%;background:#3f9d6b;transform:translateX(-50%)}
 
+  /* Marble Wissens-Universum */
+  .mb-head{display:flex;align-items:center;gap:8px;margin:0 0 10px;flex-wrap:wrap}
+  .mb-back{border:2px solid #fff;background:var(--paper);border-radius:12px;font-family:inherit;font-weight:900;font-size:14px;padding:7px 11px;cursor:pointer;box-shadow:var(--soft)}
+  .mb-title{font-weight:900;font-size:18px}
+  .mb-crumb{font-weight:800;font-size:12px;color:var(--ink-soft);margin-bottom:6px}
+  .mb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .mb-card{background:#fffdf6;border:3px solid #fff;border-radius:16px;box-shadow:var(--soft);padding:12px;cursor:pointer;font-family:inherit;text-align:left}
+  .mb-card:active{transform:translateY(2px)}
+  .mb-em{font-size:28px}
+  .mb-name{font-weight:900;font-size:14px;margin-top:4px;line-height:1.2}
+  .mb-cnt{font-weight:800;font-size:11px;color:var(--ink-soft);margin-top:3px}
+  .mb-bar{height:8px;background:#eee4cf;border-radius:6px;overflow:hidden;margin-top:6px}
+  .mb-fill{height:100%;background:linear-gradient(90deg,#8f7ae5,#5a9fd4);border-radius:6px}
+  .mb-row{display:flex;align-items:center;gap:10px;background:#fffdf6;border:3px solid #fff;border-radius:14px;box-shadow:var(--soft);padding:10px 12px;margin-bottom:8px;cursor:pointer;font-family:inherit;text-align:left;width:100%}
+  .mb-row .st{font-size:19px;flex:0 0 26px;text-align:center}
+  .mb-row .nm{font-weight:900;font-size:14px;flex:1;line-height:1.25}
+  .mb-row .age{font-weight:800;font-size:11px;color:#7a5a14;background:#fff3cf;border:1px solid #f0d089;border-radius:9px;padding:2px 7px;white-space:nowrap}
+  .mb-row.lock{opacity:.6}
+  .mb-row.done{border-color:#cdeec4;background:#f6fbf1}
+  .mb-sec{font-weight:900;font-size:13px;color:var(--ink-soft);margin:12px 0 6px}
+  .mb-ev{background:#f2f7ee;border:2px solid #dcead2;border-radius:12px;padding:8px 10px;font-weight:700;font-size:13px;margin-bottom:6px;line-height:1.3}
+  .mb-pr{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;padding:6px 2px;cursor:pointer}
+  .mb-note{font-weight:700;font-size:12px;color:var(--ink-soft);line-height:1.4;margin-top:8px}
+  .mb-cta{width:100%;margin-top:12px;border:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:16px;color:#fff;background:linear-gradient(#8f7ae5,#6a55c9);border-radius:14px;padding:13px;box-shadow:var(--shadow)}
+  .mb-cta:active{transform:translateY(2px)}
+  .mb-cta.gold{background:linear-gradient(var(--yolk),var(--yolk-deep))}
+  .mb-search{width:100%;border:2px solid #e6d9bd;border-radius:12px;padding:9px 12px;font-family:inherit;font-weight:700;font-size:14px;margin-top:10px;background:#fff}
+  .mb-src{font-weight:700;font-size:10.5px;color:var(--ink-soft);margin-top:12px;line-height:1.4}
+  .mb-q{font-weight:900;font-size:16px;line-height:1.35;margin-bottom:10px}
+  .mb-opt{display:block;width:100%;margin-bottom:8px;border:3px solid #fff;background:#fffdf6;border-radius:14px;box-shadow:var(--soft);font-family:inherit;font-weight:800;font-size:14px;text-align:left;padding:11px 13px;cursor:pointer;line-height:1.3}
+  .mb-opt.hit{background:#e4f6da;border-color:#9fd18a}
+  .mb-opt.miss{background:#fbe4e0;border-color:#eba79c}
+  .mb-badge{display:inline-block;font-weight:900;font-size:12px;color:#2f7d32;background:#e4f6da;border:1px solid #9fd18a;border-radius:10px;padding:3px 9px;margin-bottom:8px}
+  .mc-marble .modicon{background:#eae4fb}
+
   /* barn / Scheune */
   .barn-scene{flex:1;position:relative;margin:8px 12px 12px;border-radius:18px;overflow:hidden;border:3px solid #7a5a36;min-height:240px;
     background:linear-gradient(#caa06a 0%,#bd9258 52%,#a8763f 53%,#caa06a 55%,#d8b87e 57%,#e7cf9a 100%)}
@@ -1089,6 +1124,7 @@
           <button class="sec-h"><span class="sec-i">🦉</span> Wissen &amp; Entdecken <span class="chev">▾</span></button>
           <div class="sec-cards">
             <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Weltwissen von Hilde</div></div></button>
+            <button class="modcard mc-marble" data-go="marble"><div class="modicon">🌌</div><div><div class="modtitle">Wissens-Universum</div><div class="modsub">1590 Themen – das ganze Schulwissen als Karte</div></div></button>
             <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen in 5 Stationen</div></div></button>
             <button class="modcard mc-forscher" data-go="forscher"><div class="modicon">🚀</div><div><div class="modtitle">Forscher-Quests</div><div class="modsub">Echte Rätsel für +10 ⭐</div></div></button>
             <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde</div></div></button>
@@ -1197,6 +1233,13 @@
     <div class="screen" id="invent">
       <div class="hilde-row"><div class="hilde" id="invent-hilde"></div><div class="bubble" id="invent-bubble">Hier bist du der Lehrer!</div></div>
       <div class="stagepad"><div class="card" id="inv-stage"></div></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- MARBLE WISSENS-UNIVERSUM -->
+    <div class="screen" id="marble">
+      <div class="hilde-row"><div class="hilde" id="marble-hilde"></div><div class="bubble" id="marble-bubble">Das ganze Schulwissen als Landkarte – such dir ein Thema!</div></div>
+      <div class="stagepad"><div id="mb-stage"></div></div>
       <div style="height:12px"></div>
     </div>
 
@@ -1607,13 +1650,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm,inventSeen:G.inventSeen}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm,inventSeen:G.inventSeen,marble:G.marble}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1),inventSeen:_ld.inventSeen||[]};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1),inventSeen:_ld.inventSeen||[],marble:_ld.marble||{done:{}}};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1878,7 +1921,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"],marble:["marble-bubble","marble-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1980,6 +2023,7 @@
     if(name==="prof")PROF.start();
     if(name==="duel")DUEL.start();
     if(name==="party")PARTY.start();
+    if(name==="marble")MARBLE.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -3307,6 +3351,164 @@
     function start(){intro();say("Willkommen in der Erfinder-Werkstatt! Hier stellst DU die Fragen – und passt auf, dass ich keine Fehler mache. 🛠️");}
     function stop(){try{if(rec)rec.stop();}catch(e){}try{window.speechSynthesis.cancel();}catch(e){}}
     return {start:start,stop:stop};
+  })();
+
+  /* ===================== MARBLE WISSENS-UNIVERSUM ===================== */
+  var MARBLE=(function(){
+    var D=null,loading=false,prereqs=null,v={m:"subjects",si:0,di:0,ti:0},qz=null,trBusy={};
+    var TRKEY="vinni_marble_tr";
+    function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function lvl(){return 1+Math.floor((G.brain||0)/6);}
+    function stage(h){var el=$("mb-stage");if(el)el.innerHTML=h;}
+    var SPIN='<div class="loading" style="padding:14px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#8f7ae5" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div id="mb-spintxt">Einen Moment …</div></div>';
+    function trStore(){try{var c=JSON.parse(window.localStorage.getItem(TRKEY)||"null");if(c&&c.map&&c.order)return c;}catch(e){}return {order:[],map:{}};}
+    function trGet(id){return trStore().map[id]||null;}
+    function trPut(id,val){var c=trStore();if(!c.map[id])c.order.push(id);c.map[id]=val;
+      while(c.order.length>250){var o=c.order.shift();delete c.map[o];}
+      try{window.localStorage.setItem(TRKEY,JSON.stringify(c));}catch(e){}}
+    function api(prompt,maxTok,cb,fail){
+      fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:maxTok,messages:[{role:"user",content:prompt}]})})
+      .then(function(r){return r.json();}).then(function(d){
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim().replace(/```json/gi,"").replace(/```/g,"");
+        cb(t);}).catch(fail);}
+    function jparse(t,arr){var a=arr?"[":"{",b=arr?"]":"}";var f=t.indexOf(a),l=t.lastIndexOf(b);if(f>=0&&l>f)t=t.slice(f,l+1);return JSON.parse(t);}
+    function load(cb){if(D){cb();return;}
+      if(loading)return;loading=true;
+      stage('<div class="card">'+SPIN+'</div>');var sp=$("mb-spintxt");if(sp)sp.textContent="Lade das Wissens-Universum …";
+      fetch("marble.json").then(function(r){if(!r.ok)throw new Error("http");return r.json();}).then(function(j){
+        D=j;prereqs={};D.deps.forEach(function(e){(prereqs[e[0]]=prereqs[e[0]]||[]).push({p:e[1],h:e[2]});});
+        loading=false;cb();
+      }).catch(function(){loading=false;
+        stage('<div class="card"><div class="mb-title">🌌 Wissens-Universum</div><div class="mb-note">Zum ersten Laden brauche ich kurz Internet. Danach funktioniert alles auch offline!</div><button class="mb-cta" id="mb-retry">🔄 Nochmal versuchen</button></div>');
+        var b=$("mb-retry");if(b)b.onclick=function(){load(render);};});}
+    function done(){if(!G.marble)G.marble={done:{}};if(!G.marble.done)G.marble.done={};return G.marble.done;}
+    function isDone(ti){return !!done()[D.topics[ti].i];}
+    function isOpen(ti){var pr=prereqs[ti];if(!pr)return true;
+      for(var k=0;k<pr.length;k++){if(pr[k].h&&!isDone(pr[k].p))return false;}return true;}
+    function stateIcon(ti){return isDone(ti)?"✅":(isOpen(ti)?"📖":"🔒");}
+    function tname(t){var tr=trGet(t.i);return tr&&tr.n?tr.n:t.n;}
+    function domTopics(di){var a=[];D.topics.forEach(function(t,i){if(t.d===di)a.push(i);});
+      a.sort(function(x,y){var tx=D.topics[x],ty=D.topics[y];return (tx.a0-ty.a0)||(ty.c-tx.c);});return a;}
+    function counts(fn){var n=0,d0=0;D.topics.forEach(function(t,i){if(fn(t,i)){n++;if(done()[t.i])d0++;}});return [d0,n];}
+    function bar(d0,n){return '<div class="mb-bar"><div class="mb-fill" style="width:'+(n?Math.round(100*d0/n):0)+'%"></div></div>';}
+    function render(){qz=null;
+      if(v.m==="subjects")rSubjects();
+      else if(v.m==="domains")rDomains();
+      else if(v.m==="topics")rTopics();
+      else rTopic();}
+    function rSubjects(){var c=counts(function(){return true;});
+      var h='<div class="card"><div class="mb-title">🌌 Wissens-Universum</div>'
+        +'<div class="mb-cnt">'+c[0]+' von '+c[1]+' Themen gemeistert · Wissens-Stufe '+lvl()+'</div>'+bar(c[0],c[1])
+        +'<input class="mb-search" id="mb-search" placeholder="🔍 Thema suchen … (z. B. Vulkan)" autocomplete="off"><div id="mb-sres"></div>'
+        +'<div class="mb-grid">';
+      D.subjects.forEach(function(sj,si){var cs=counts(function(t){return D.domains[t.d].s===si;});
+        h+='<button class="mb-card" data-si="'+si+'"><div class="mb-em">'+sj.em+'</div><div class="mb-name">'+esc(sj.de)+'</div><div class="mb-cnt">'+cs[0]+' / '+cs[1]+'</div>'+bar(cs[0],cs[1])+'</button>';});
+      h+='</div>';
+      if(!aiKey())h+='<div class="mb-note">⚙️ Tipp: Mit dem KI-Modus (Knopf auf dem Hof) übersetzt Hilde jedes Thema auf Deutsch und stellt dir die Meister-Prüfung!</div>';
+      h+='<div class="mb-src">📚 Quelle: '+esc(D.source)+'</div></div>';
+      stage(h);
+      document.querySelectorAll("#mb-stage .mb-card").forEach(function(b){b.onclick=function(){v={m:"domains",si:+b.getAttribute("data-si"),di:0,ti:0};render();};});
+      var inp=$("mb-search");if(inp)inp.oninput=function(){search(inp.value);};}
+    function search(qs){var box=$("mb-sres");if(!box)return;qs=(qs||"").trim().toLowerCase();
+      if(qs.length<2){box.innerHTML="";return;}
+      var hits=[];
+      for(var i=0;i<D.topics.length&&hits.length<12;i++){var t=D.topics[i];
+        var tr=trGet(t.i);
+        if(t.n.toLowerCase().indexOf(qs)>=0||(tr&&tr.n&&tr.n.toLowerCase().indexOf(qs)>=0)||D.domains[t.d].de.toLowerCase().indexOf(qs)>=0)hits.push(i);}
+      var h="";hits.forEach(function(ti){var t=D.topics[ti];
+        h+='<button class="mb-row" data-ti="'+ti+'"><span class="st">'+stateIcon(ti)+'</span><span class="nm">'+esc(tname(t))+'<div class="mb-cnt">'+D.domains[t.d].em+' '+esc(D.domains[t.d].de)+'</div></span><span class="age">ab '+t.a0+'</span></button>';});
+      box.innerHTML=h||'<div class="mb-note">Nichts gefunden – probier ein anderes Wort.</div>';
+      box.querySelectorAll(".mb-row").forEach(function(b){b.onclick=function(){openTopic(+b.getAttribute("data-ti"));};});}
+    function rDomains(){var sj=D.subjects[v.si];
+      var h='<div class="card"><div class="mb-head"><button class="mb-back" id="mb-b1">⬅</button><div class="mb-title">'+sj.em+' '+esc(sj.de)+'</div></div>';
+      D.domains.forEach(function(dm,di){if(dm.s!==v.si)return;var cs=counts(function(t){return t.d===di;});
+        h+='<button class="mb-row" data-di="'+di+'"><span class="st">'+dm.em+'</span><span class="nm">'+esc(dm.de)+bar(cs[0],cs[1])+'</span><span class="age">'+cs[0]+'/'+cs[1]+'</span></button>';});
+      h+='</div>';stage(h);
+      $("mb-b1").onclick=function(){v.m="subjects";render();};
+      document.querySelectorAll("#mb-stage .mb-row").forEach(function(b){b.onclick=function(){v={m:"topics",si:v.si,di:+b.getAttribute("data-di"),ti:0};render();};});}
+    function rTopics(){var dm=D.domains[v.di],list=domTopics(v.di);
+      var h='<div class="card"><div class="mb-head"><button class="mb-back" id="mb-b2">⬅</button><div class="mb-title">'+dm.em+' '+esc(dm.de)+'</div></div><div class="mb-crumb">'+esc(D.subjects[dm.s].de)+' · 📖 offen · 🔒 erst Voraussetzungen meistern</div>';
+      list.forEach(function(ti){var t=D.topics[ti];
+        h+='<button class="mb-row '+(isDone(ti)?"done":(isOpen(ti)?"":"lock"))+'" data-ti="'+ti+'"><span class="st">'+stateIcon(ti)+'</span><span class="nm">'+esc(tname(t))+'</span><span class="age">ab '+t.a0+'</span></button>';});
+      h+='</div>';stage(h);
+      $("mb-b2").onclick=function(){v.m="domains";render();};
+      document.querySelectorAll("#mb-stage .mb-row").forEach(function(b){b.onclick=function(){openTopic(+b.getAttribute("data-ti"));};});}
+    function openTopic(ti){var t=D.topics[ti];v={m:"topic",si:D.domains[t.d].s,di:t.d,ti:ti};render();
+      if(aiKey()&&!trGet(t.i))translate(ti);}
+    function translate(ti){var t=D.topics[ti];if(trBusy[t.i])return;trBusy[t.i]=1;
+      var p="Übersetze dieses Lernthema für Vinni (7 Jahre, hochbegabt, deutschsprachig) kindgerecht ins Deutsche. Thema: "+JSON.stringify({name:t.n,beschreibung:t.ds,lernziele:t.e})+". Fachbegriffe korrekt übersetzen, Ansprache 'du'. Wenn es um englische Sprache/Laute geht, lass die englischen Beispielwörter englisch und erkläre auf Deutsch. Antworte NUR mit JSON: {\"n\":\"deutscher Titel\",\"ds\":\"deutsche Beschreibung\",\"e\":[\"deutsches Lernziel\",...]}";
+      api(p,700,function(txt){delete trBusy[t.i];
+        try{var o=jparse(txt,false);if(o&&o.n&&o.ds){trPut(t.i,{n:String(o.n),ds:String(o.ds),e:(o.e||[]).map(String)});
+          if(v.m==="topic"&&v.ti===ti)render();}}catch(e){}
+      },function(){delete trBusy[t.i];});}
+    function rTopic(){var ti=v.ti,t=D.topics[ti],dm=D.domains[t.d],tr=trGet(t.i);
+      var open=isOpen(ti),fin=isDone(ti);
+      var h='<div class="card"><div class="mb-head"><button class="mb-back" id="mb-b3">⬅</button><div class="mb-title">'+esc(tr?tr.n:t.n)+'</div></div>'
+        +'<div class="mb-crumb">'+dm.em+' '+esc(dm.de)+' · Alter '+t.a0+'–'+t.a1+'</div>';
+      if(fin)h+='<div class="mb-badge">✅ Gemeistert!</div>';
+      h+='<div class="mb-note" style="font-size:13.5px;color:var(--ink)">'+esc(tr?tr.ds:t.ds)+'</div>';
+      if(!tr&&aiKey())h+='<div class="mb-note">🐔 Hilde übersetzt das Thema gerade für dich …</div>';
+      else if(!tr&&!aiKey())h+='<div class="mb-note">🌐 Noch auf Englisch – mit KI-Modus übersetzt Hilde alles für dich.</div>';
+      h+='<div class="mb-sec">🎯 Das kannst du danach:</div>';
+      (tr&&tr.e&&tr.e.length?tr.e:t.e).forEach(function(ev){h+='<div class="mb-ev">'+esc(ev)+'</div>';});
+      var pr=prereqs[ti]||[];
+      if(pr.length){h+='<div class="mb-sec">🧩 Vorher lernen:</div>';
+        pr.forEach(function(e){var pt=D.topics[e.p];
+          h+='<div class="mb-pr" data-ti="'+e.p+'">'+(isDone(e.p)?"✅":(e.h?"🔒":"💡"))+' <span style="text-decoration:underline">'+esc(tname(pt))+'</span>'+(e.h?"":" <span class=\"mb-cnt\">(Tipp)</span>")+'</div>';});}
+      if(fin)h+='<button class="mb-cta gold" id="mb-quiz">🔁 Prüfung wiederholen</button>';
+      else if(!open)h+='<div class="mb-note">🔒 Meistere zuerst die Themen mit Schloss – dann öffnet sich dieses!</div>';
+      else if(aiKey())h+='<button class="mb-cta" id="mb-quiz">🧪 Meister-Prüfung starten (3 Fragen)</button>';
+      else h+='<div class="mb-note">⚙️ Für die Meister-Prüfung den KI-Modus auf dem Hof anschalten.</div>';
+      h+='</div>';stage(h);
+      $("mb-b3").onclick=function(){v.m="topics";render();};
+      document.querySelectorAll("#mb-stage .mb-pr").forEach(function(el){el.onclick=function(){openTopic(+el.getAttribute("data-ti"));};});
+      var qb=$("mb-quiz");if(qb)qb.onclick=function(){quiz(ti);};}
+    function quiz(ti){var t=D.topics[ti],dm=D.domains[t.d],tr=trGet(t.i);
+      stage('<div class="card">'+SPIN+'</div>');var sp=$("mb-spintxt");if(sp)sp.textContent="Hilde denkt sich deine Prüfung aus …";
+      var p="Du bist Hilde, ein kluges Huhn. Vinni (7 Jahre, hochbegabt, deutschsprachig) will dieses Lernthema meistern (Schwierigkeits-Stufe "+lvl()+" von 10): "+JSON.stringify({fach:D.subjects[dm.s].en,bereich:dm.en,name:t.n,beschreibung:t.ds,lernziele:t.e})+". Erzeuge auf Deutsch: eine spannende, lehrreiche Mini-Erklärung (3-4 Sätze, die das Thema wirklich beibringt) und GENAU 3 Multiple-Choice-Fragen, die die Lernziele prüfen (kindgerecht, aber nicht zu leicht; falsche Optionen plausibel). Beim Fach English: Übe die englischen Wörter mit deutschen Erklärungen. Antworte NUR mit JSON: {\"intro\":\"...\",\"qs\":[{\"q\":\"Frage\",\"o\":[\"A\",\"B\",\"C\"],\"c\":0,\"why\":\"kurze Erklärung\"}]}";
+      api(p,1100,function(txt){var o;
+        try{o=jparse(txt,false);}catch(e){o=null;}
+        if(!o||!o.qs||o.qs.length<3){toast("Das hat nicht geklappt – probier es nochmal");rTopic();return;}
+        qz={ti:ti,qs:o.qs.slice(0,3),i:0,ok:0,intro:String(o.intro||"")};
+        rIntro();
+      },function(){toast("Keine Verbindung – probier es gleich nochmal");rTopic();});}
+    function rIntro(){var t=D.topics[qz.ti],tr=trGet(t.i);
+      stage('<div class="card"><div class="mb-crumb">🧪 Meister-Prüfung</div><div class="mb-title">'+esc(tr?tr.n:t.n)+'</div>'
+        +'<div class="mb-note" style="font-size:14px;color:var(--ink)">'+esc(qz.intro)+'</div>'
+        +'<button class="mb-cta" id="mb-go">Los geht’s! ▶</button></div>');
+      $("mb-go").onclick=rQ;}
+    function rQ(){var q=qz.qs[qz.i];
+      var h='<div class="card"><div class="mb-crumb">Frage '+(qz.i+1)+' von 3</div><div class="mb-q">'+esc(q.q)+'</div>';
+      q.o.forEach(function(o,i){h+='<button class="mb-opt" data-i="'+i+'">'+esc(o)+'</button>';});
+      h+='<div id="mb-fb"></div></div>';stage(h);
+      document.querySelectorAll("#mb-stage .mb-opt").forEach(function(b){b.onclick=function(){answer(+b.getAttribute("data-i"));};});}
+    function answer(i){var q=qz.qs[qz.i],hit=(i===q.c);
+      document.querySelectorAll("#mb-stage .mb-opt").forEach(function(b,bi){b.disabled=true;
+        if(bi===q.c)b.classList.add("hit");else if(bi===i)b.classList.add("miss");});
+      if(hit){qz.ok++;SFX.right();}else SFX.wrong();
+      var fb=$("mb-fb");if(fb)fb.innerHTML='<div class="mb-note" style="font-size:13px">'+(hit?"✅ Richtig! ":"❌ ")+esc(q.why||"")+'</div><button class="mb-cta" id="mb-next">'+(qz.i<2?"Weiter ▶":"Ergebnis 🏁")+'</button>';
+      $("mb-next").onclick=function(){qz.i++;if(qz.i<3)rQ();else finish();};}
+    function finish(){var ti=qz.ti,ok=qz.ok,t=D.topics[ti],dm=D.domains[t.d];
+      if(ok>=2){var first=!done()[t.i];
+        if(first){done()[t.i]=1;doSave();addEgg(3);bumpBrain(dm.cat);}
+        var all=domTopics(t.d).every(isDone);
+        say("Thema gemeistert! Du baust dir ein echtes Wissens-Universum. 🌌",true);
+        if(all&&first)setTimeout(function(){ceremony(dm.em,"Bereich komplett!",esc(dm.de)+" – alle Themen gemeistert!");},600);
+        stage('<div class="card" style="text-align:center"><div style="font-size:52px">🏆</div><div class="mb-title">'+ok+' von 3 richtig – gemeistert!</div>'
+          +(first?'<div class="mb-note">+3 🥚 und dein Wissens-Gehirn wächst!</div>':'<div class="mb-note">Schon gemeistert – super Wiederholung!</div>')
+          +'<button class="mb-cta gold" id="mb-nx">Nächstes Thema ▶</button><button class="mb-cta" id="mb-bk" style="background:linear-gradient(#9aa7b5,#7d8b9a)">Zur Themenliste</button></div>');
+        $("mb-bk").onclick=function(){v.m="topics";render();};
+        $("mb-nx").onclick=function(){var list=domTopics(t.d),nx=-1;
+          for(var k=0;k<list.length;k++){if(!isDone(list[k])&&isOpen(list[k])){nx=list[k];break;}}
+          if(nx>=0)openTopic(nx);else{v.m="topics";render();}};}
+      else{say("Fast! Lies das Thema nochmal – dann klappt die Prüfung. 💪");
+        stage('<div class="card" style="text-align:center"><div style="font-size:52px">🤗</div><div class="mb-title">'+ok+' von 3 – knapp!</div><div class="mb-note">Schau dir das Thema nochmal an, dann schaffst du es sicher.</div>'
+          +'<button class="mb-cta" id="mb-rt">📖 Thema nochmal lesen</button></div>');
+        $("mb-rt").onclick=function(){rTopic();};}}
+    function start(){load(function(){render();});
+      say("Willkommen im Wissens-Universum! 1590 Themen aus dem Marble-Curriculum warten auf dich. 🌌",true);}
+    return {start:start};
   })();
 
   /* ===================== WISSENS-EXPEDITIONEN ===================== */
