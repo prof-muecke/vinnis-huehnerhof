@@ -1,7 +1,7 @@
 /* Vinnis Hühnerhof – Service Worker
    Macht die App offline nutzbar und installierbar.
    Bei jeder neuen Version unten die CACHE-Nummer hochzählen (v1 -> v2 ...). */
-var CACHE = 'vinni-huehnerhof-v63';
+var CACHE = 'vinni-huehnerhof-v64';
 var ASSETS = [
   './',
   'index.html',
