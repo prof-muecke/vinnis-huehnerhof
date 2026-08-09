@@ -413,6 +413,42 @@
   .mb-opt.miss{background:#fbe4e0;border-color:#eba79c}
   .mb-badge{display:inline-block;font-weight:900;font-size:12px;color:#2f7d32;background:#e4f6da;border:1px solid #9fd18a;border-radius:10px;padding:3px 9px;margin-bottom:8px}
   .mc-marble .modicon{background:#eae4fb}
+  .mc-detektiv .modicon{background:#e7e0f5}
+  /* Feriendetektiv */
+  .dk-title{font-weight:900;font-size:19px}
+  .dk-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .dk-back{border:2px solid #fff;background:var(--paper);border-radius:12px;font-family:inherit;font-weight:900;font-size:14px;padding:7px 11px;cursor:pointer;box-shadow:var(--soft)}
+  .dk-crumb{font-weight:800;font-size:12px;color:var(--ink-soft)}
+  .dk-note{font-weight:700;font-size:13px;color:var(--ink-soft);line-height:1.4;margin:8px 0}
+  .dk-rank{font-weight:800;font-size:13px;color:#5a4a86;background:#efe9fb;border:1px solid #d8caf0;border-radius:12px;padding:7px 11px;margin:8px 0}
+  .dk-sec{font-weight:900;font-size:13px;color:var(--ink-soft);margin:14px 0 6px}
+  .dk-intro{font-weight:700;font-size:14px;color:var(--ink);line-height:1.42;background:#fbf9f2;border:2px solid #efe7d4;border-radius:14px;padding:11px 13px;margin:8px 0}
+  .dk-caserow,.dk-susp,.dk-clue,.dk-accuse{width:100%}
+  .dk-caserow{display:flex;align-items:center;gap:10px;background:#fffdf6;border:3px solid #fff;border-radius:14px;box-shadow:var(--soft);padding:11px 12px;margin-bottom:8px;cursor:pointer;font-family:inherit;text-align:left}
+  .dk-caserow .ce{font-size:24px;flex:0 0 30px;text-align:center}
+  .dk-caserow .cn{font-weight:900;font-size:15px;flex:1;line-height:1.25}
+  .dk-caserow.done{border-color:#cdeec4;background:#f6fbf1}
+  .dk-sub{font-weight:700;font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .dk-susp{display:flex;align-items:flex-start;gap:10px;background:#fbf9f2;border:2px solid #efe7d4;border-radius:12px;padding:9px 11px;margin-bottom:6px}
+  .dk-susp.small{padding:7px 10px}
+  .dk-susp .se{font-size:22px;flex:0 0 26px;text-align:center}
+  .dk-steptitle{font-weight:900;font-size:17px;margin:4px 0 8px}
+  .dk-q{font-weight:800;font-size:15.5px;line-height:1.4;background:#f3eefb;border:2px solid #ddd0f2;border-radius:14px;padding:11px 13px;margin-bottom:10px}
+  .dk-input{width:100%;border:2px solid #e6d9bd;border-radius:12px;padding:11px 13px;font-family:inherit;font-weight:700;font-size:16px;background:#fff}
+  .dk-opt{display:block;width:100%;margin-bottom:8px;border:3px solid #fff;background:#fffdf6;border-radius:14px;box-shadow:var(--soft);font-family:inherit;font-weight:800;font-size:15px;text-align:left;padding:12px 13px;cursor:pointer;line-height:1.3}
+  .dk-opt:active{transform:translateY(2px)}
+  .dk-cta{width:100%;margin-top:11px;border:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:16px;color:#fff;background:linear-gradient(#8f7ae5,#6a55c9);border-radius:14px;padding:13px;box-shadow:var(--shadow)}
+  .dk-cta:active{transform:translateY(2px)}
+  .dk-cta.gold{background:linear-gradient(var(--yolk),var(--yolk-deep))}
+  .dk-ok{font-weight:900;font-size:15px;color:var(--good-deep);margin-top:10px}
+  .dk-miss{font-weight:800;font-size:14px;color:#c0553f;background:#fbe9e4;border:2px solid #f0c9bd;border-radius:12px;padding:9px 11px;margin-top:10px}
+  .dk-clue{font-weight:800;font-size:13.5px;color:#3f7d32;background:#eef7e8;border:2px solid #cbe6bd;border-radius:12px;padding:9px 11px;margin:6px 0;line-height:1.35}
+  .dk-tools{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .dk-tool{border:2px solid #e0d6c2;background:#fbf9f2;border-radius:12px;font-family:inherit;font-weight:800;font-size:13px;padding:8px 12px;cursor:pointer}
+  .dk-accuse{display:block;text-align:left;background:#fff;border:3px solid #f0d089;border-radius:14px;font-family:inherit;font-weight:900;font-size:15px;padding:12px 13px;margin-bottom:8px;cursor:pointer;box-shadow:var(--soft)}
+  .dk-accuse:active{transform:translateY(2px)}
+  .dk-accuse .se{font-size:20px}
+  .dk-reply{font-weight:800;font-size:15px;line-height:1.4;background:#fff8e2;border:2px solid #f0d089;border-radius:14px;padding:11px 13px;margin-top:10px;color:#6a4e00}
 
   /* barn / Scheune */
   .barn-scene{flex:1;position:relative;margin:8px 12px 12px;border-radius:18px;overflow:hidden;border:3px solid #7a5a36;min-height:240px;
@@ -1121,6 +1157,7 @@
           <div class="sec-cards">
             <button class="modcard mc-exp" data-go="explore"><div class="modicon">🦉</div><div><div class="modtitle">Fragen & Wissen</div><div class="modsub">Weltwissen von Hilde</div></div></button>
             <button class="modcard mc-marble" data-go="marble"><div class="modicon">🌌</div><div><div class="modtitle">Wissens-Universum</div><div class="modsub">1590 Themen – das ganze Schulwissen als Karte</div></div></button>
+            <button class="modcard mc-detektiv" data-go="detektiv"><div class="modicon">🕵️</div><div><div class="modtitle">Feriendetektiv</div><div class="modsub">Kriminalfälle lösen – Rätselreihe &amp; Täter überführen</div></div></button>
             <button class="modcard mc-exped" data-go="exped"><div class="modicon">🧭</div><div><div class="modtitle">Expeditionen</div><div class="modsub">Wissens-Reisen in 5 Stationen</div></div></button>
             <button class="modcard mc-forscher" data-go="forscher"><div class="modicon">🚀</div><div><div class="modtitle">Forscher-Quests</div><div class="modsub">Echte Rätsel für +10 ⭐</div></div></button>
             <button class="modcard mc-ask" data-go="ask"><div class="modicon">🎤</div><div><div class="modtitle">Frag Hilde</div><div class="modsub">Sprich mit Hilde</div></div></button>
@@ -1236,6 +1273,13 @@
     <div class="screen" id="marble">
       <div class="hilde-row"><div class="hilde" id="marble-hilde"></div><div class="bubble" id="marble-bubble">Das ganze Schulwissen als Landkarte – such dir ein Thema!</div></div>
       <div class="stagepad"><div id="mb-stage"></div></div>
+      <div style="height:12px"></div>
+    </div>
+
+    <!-- FERIENDETEKTIV -->
+    <div class="screen" id="detektiv">
+      <div class="hilde-row"><div class="hilde" id="detektiv-hilde"></div><div class="bubble" id="detektiv-bubble">Ein neuer Fall wartet auf dich, Detektiv!</div></div>
+      <div class="stagepad"><div id="dk-stage"></div></div>
       <div style="height:12px"></div>
     </div>
 
@@ -1646,13 +1690,13 @@
   /* ---------- global state + speichern ---------- */
   var SAVEKEY="vinni_huehnerhof_v1";
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
-  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm,inventSeen:G.inventSeen,marble:G.marble}));}catch(e){}}
+  function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm,inventSeen:G.inventSeen,marble:G.marble,detektiv:G.detektiv}));}catch(e){}}
   var _ld=loadSave()||{};
   var G={eggs:_ld.eggs||0,mLevel:_ld.mLevel||1,cLi:_ld.cLi||0,eDiff:_ld.eDiff||2,pLevel:_ld.pLevel||1,uLevel:_ld.uLevel||1,sLevel:_ld.sLevel||1,wLevel:_ld.wLevel||1,rLevel:_ld.rLevel||1,iqLevel:_ld.iqLevel||1,tLevel:_ld.tLevel||1,tBuilt:_ld.tBuilt||false,
     chickens:_ld.chickens||makeDefault(_ld.flock||0),
     unlocked:_ld.unlocked||["weiss","braun"],
     decos:_ld.decos||[],story:_ld.story||null,
-    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1),inventSeen:_ld.inventSeen||[],marble:_ld.marble||{done:{}}};
+    eRevisit:_ld.eRevisit||[],eMastered:_ld.eMastered||[],eSeen:_ld.eSeen||[],gameBest:_ld.gameBest||0,coins:_ld.coins||0,boerse:_ld.boerse||null,focusBest:_ld.focusBest||0,waitBest:_ld.waitBest||0,cornBest:_ld.cornBest||0,brain:_ld.brain||0,know:_ld.know||{},daily:_ld.daily||null,badges:_ld.badges||[],bossStars:_ld.bossStars||0,bossWins:_ld.bossWins||0,week:_ld.week||null,exped:_ld.exped||0,deeds:_ld.deeds||null,wishes:_ld.wishes||[],checkin:_ld.checkin||[],routines:_ld.routines||[],fbook:_ld.fbook||[],profRank:_ld.profRank||0,profM:_ld.profM||0,duelName:_ld.duelName||"",strudel:_ld.strudel||null,partyBest:_ld.partyBest||0,partyStars:_ld.partyStars||0,partyTheme:_ld.partyTheme||"hof",partyTut:_ld.partyTut||0,photoFarm:(_ld.photoFarm===0?0:1),inventSeen:_ld.inventSeen||[],marble:_ld.marble||{done:{}},detektiv:_ld.detektiv||{done:{},solved:0}};
   if(!_ld.eggs&&!_ld.chickens&&!_ld.flock){G.chickens=makeDefault(3);}
   function setStat(id,val){var el=$(id);if(!el)return;var s=String(val);
     if(el.textContent!==s){el.textContent=s;var p=el.closest?el.closest(".stat"):null;
@@ -1917,7 +1961,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"],marble:["marble-bubble","marble-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"],marble:["marble-bubble","marble-hilde"],detektiv:["detektiv-bubble","detektiv-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -2020,6 +2064,7 @@
     if(name==="duel")DUEL.start();
     if(name==="party")PARTY.start();
     if(name==="marble")MARBLE.start();
+    if(name==="detektiv")DETEKTIV.start();
     if(name==="shop")SHOP.open();
     if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?",false);}
     }catch(_e){surface(_e);}
@@ -3831,6 +3876,261 @@
     function start(){load(function(){render();});
       say("Willkommen im Wissens-Universum! 1590 Themen aus dem Marble-Curriculum warten auf dich. 🌌",true);}
     return {start:start};
+  })();
+
+  /* ===================== FERIENDETEKTIV (Kriminalfälle) ===================== */
+  var DETEKTIV=(function(){
+    var st=null;           // aktueller Fall-Zustand
+    function aiKey(){try{return (window.localStorage.getItem("vinni_ai_key")||"").trim();}catch(e){return "";}}
+    function lvl(){return 1+Math.floor((G.brain||0)/6);}
+    function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+    function stage(h){var el=$("dk-stage");if(el)el.innerHTML=h;}
+    function say0(t){say(t,true);}
+    var SPIN='<div class="loading" style="padding:14px 0"><div class="spinner"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#e7dcc6" stroke-width="6"/><circle cx="25" cy="25" r="20" fill="none" stroke="#7a5cc0" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 50"/></svg></div><div id="dk-spintxt">Professor Vincent überlegt …</div></div>';
+
+    /* ---------- Antwort-Prüfung ---------- */
+    function norm(s){s=String(s).toLowerCase().trim();
+      s=s.replace(/[.!?,;:]/g,"").replace(/\s+/g," ");
+      s=s.replace(/^(der|die|das|ein|eine|im|in der|in dem|beim|am)\s+/,"");
+      return s;}
+    function numEq(a,b){return String(a).replace(/\s/g,"").replace(".",",")===String(b).replace(/\s/g,"").replace(".",",");}
+    function checkText(inp,step){var n=norm(inp);if(!n)return false;
+      var list=[step.ans].concat(step.accept||[]);
+      for(var i=0;i<list.length;i++){var t=norm(list[i]);if(n===t||n.indexOf(t)>=0||t.indexOf(n)>=0)return true;}
+      return false;}
+
+    /* ---------- Eingebaute Fälle (offline) ---------- */
+    var CASES=[
+      {id:"ei",title:"Der Fall des goldenen Eis",emoji:"🥚",lvl:1,
+       intro:"Beim großen Sommer-Hoffest steht das goldene Ei glänzend in einer Vitrine. Um 14 Uhr ist es noch da – doch kurz darauf ist die Vitrine leer! Professor Vincent, übernimm den Fall und finde den Dieb. Nur wer alle Rätsel löst, deckt jeden Hinweis auf.",
+       suspects:[
+         {n:"Bäcker Bruno",e:"👨‍🍳",d:"war beim Fest in der Backstube und verkaufte Kuchen. Mag Zimt, trägt weiße Handschuhe."},
+         {n:"Gärtnerin Greta",e:"👩‍🌾",d:"kümmerte sich um die Blumen. Mag Sonnenblumen, trägt grüne Handschuhe."},
+         {n:"Jongleur Jonas",e:"🤹",d:"unterhielt die Gäste überall auf dem Hof. Mag Erdbeeren, ist Linkshänder."}
+       ],
+       steps:[
+         {t:"Das Zahlenschloss",icon:"🔒",type:"text",
+          q:"Die Vitrine war mit einem 3-stelligen Zahlenschloss gesichert – nicht aufgebrochen! Auf einem Zettel des Diebes steht der Code verschlüsselt: „Erste Ziffer: so viele Beine hat eine Spinne. Zweite Ziffer: so viele Ecken hat ein Dreieck. Dritte Ziffer: die Hälfte von acht.“ Wie lautet der Code?",
+          ans:"834",accept:["8 3 4"],hint:"Eine Spinne hat 8 Beine, ein Dreieck 3 Ecken, und 8 geteilt durch 2 ist 4.",
+          clue:"🔓 Das Schloss war unversehrt – der Dieb kannte den Code. Und: Die Tür der Backstube war von außen verriegelt. Bäcker Bruno saß fest und kann NICHT der Dieb sein!"},
+         {t:"Die Geheimschrift",icon:"🔤",type:"text",
+          q:"Der Dieb verlor eine Notiz. Jeder Buchstabe ist um EINEN Schritt im Alphabet verschoben (aus A wird B, aus B wird C …). Entschlüssle das Wort: FSECFFSF – welches Wort ist gemeint?",
+          ans:"erdbeere",accept:["erdbeeren"],hint:"Gehe jeden Buchstaben EINEN Schritt ZURÜCK: F→E, S→R, E→D, C→B …",
+          clue:"🍓 Am goldenen Ei klebte ein frischer Erdbeer-Fleck. Von den Verdächtigen liebt nur einer Erdbeeren – Gärtnerin Greta mag Sonnenblumen, Bäcker Bruno mag Zimt."},
+         {t:"Die Fußspuren",icon:"👣",type:"text",
+          q:"Vom Tatort führen gleichmäßige Fußspuren zum Brunnen: 12 Meter weit in genau 8 Schritten. Wie lang war ein Schritt? (Es ist eine Zahl mit Komma.)",
+          ans:"1,5",accept:["1.5","1,5 meter","1,5m"],hint:"Teile 12 Meter durch 8 Schritte: 12 ÷ 8 = 1,5.",
+          clue:"✋ Am Brunnenrand fand sich ein LINKER Handabdruck – der Dieb ist Linkshänder. Jongleur Jonas ist Linkshänder."},
+         {t:"Der Zeitplan",icon:"⏰",type:"text",
+          q:"Das Ei war um 14:00 Uhr noch da und um 14:45 Uhr verschwunden. Wie viele Minuten hatte der Dieb höchstens Zeit?",
+          ans:"45",accept:["45 minuten"],hint:"Von 14:00 bis 14:45 vergehen 45 Minuten.",
+          clue:"⏱️ Genau in diesen 45 Minuten goss Gärtnerin Greta vor allen Gästen die Blumen – sie hat ein wasserdichtes Alibi!"}
+       ],
+       finalQ:"Wer hat das goldene Ei gestohlen?",culprit:2,
+       solveWhy:"Bäcker Bruno saß in der verriegelten Backstube. Gärtnerin Greta goss vor allen Gästen. Der Erdbeer-Fleck und der linke Handabdruck passen nur zu einer Person.",
+       outro:"🏆 Fall gelöst! Jongleur Jonas gesteht: Er wollte das goldene Ei nur kurz für seine Show ausleihen und hat sich nicht getraut, es zurückzubringen. Dank deiner scharfen Kombination ist das Ei wieder da. Ausgezeichnete Arbeit, Detektiv Vincent!"},
+
+      {id:"kasse",title:"Der Fall der verschwundenen Ferienkasse",emoji:"💰",lvl:3,
+       intro:"Für den großen Ferienausflug haben alle zusammen 60 Euro gespart – in einer Kasse im Schrank. Am Morgen ist die Kasse leer! Vier Verdächtige, vier Alibis, und nur ein Täter. Dieser Fall ist kniffliger, Professor Vincent. Verknüpfe jeden Hinweis genau.",
+       suspects:[
+         {n:"Maler Mika",e:"🧑‍🎨",d:"strich den ganzen Tag den Zaun. Hände voller Farbe."},
+         {n:"Mechaniker Mo",e:"🧑‍🔧",d:"schraubte am Traktor. Arbeitet in der Werkstatt."},
+         {n:"Köchin Klara",e:"👩‍🍳",d:"kochte für alle in der Küche."},
+         {n:"Angler Anton",e:"🎣",d:"wollte den ganzen Tag am See angeln."}
+       ],
+       steps:[
+         {t:"Der Schrank-Code",icon:"🔐",type:"text",
+          q:"Der Schrank hat einen 4-stelligen Code. Hinweise: Die erste Ziffer ist 2, die letzte ist 4. Die beiden mittleren Ziffern sind gleich groß. Und die Quersumme (alle vier Ziffern addiert) ergibt 12. Wie lautet der Code?",
+          ans:"2334",hint:"2 + ? + ? + 4 = 12. Die beiden gleichen Ziffern ergeben zusammen 6 – jede ist also 3.",
+          clue:"🛢️ Der Schrankgriff war voller ÖL-Spuren. Maler Mikas Hände waren voller Farbe, nicht Öl."},
+         {t:"Die Caesar-Geheimschrift",icon:"🔡",type:"text",
+          q:"Eine Notiz des Diebes ist verschlüsselt – jeder Buchstabe DREI Schritte nach vorn verschoben. Entschlüssle den Treffpunkt: ZHUNVWDWW",
+          ans:"werkstatt",hint:"Gehe jeden Buchstaben DREI Schritte im Alphabet ZURÜCK: Z→W, H→E, U→R, N→K …",
+          clue:"🔧 Der geheime Treffpunkt war die WERKSTATT. Wer arbeitet dort? Mechaniker Mo."},
+         {t:"Das Geld-Rätsel",icon:"💶",type:"text",
+          q:"Die 60 Euro bestanden nur aus Fünf-Euro- und Zehn-Euro-Scheinen – zusammen genau 8 Scheine. Wie viele Zehn-Euro-Scheine waren es?",
+          ans:"4",accept:["vier","4 zehner","4 scheine"],hint:"Wären alle 8 Scheine Fünfer, wären es nur 40 Euro. Es fehlen 20 Euro; jeder Zehner statt Fünfer bringt 5 Euro mehr – also 20 ÷ 5 = 4 Zehner.",
+          clue:"👀 Ein Zeuge sah den Dieb am Morgen mit genau 4 Zehn-Euro-Scheinen in der Hand."},
+         {t:"Der Alibi-Widerspruch",icon:"🕵️",type:"choice",
+          q:"Genau EINER lügt. Angler Anton sagt: „Ich war den ganzen Tag am See angeln.“ Mechaniker Mo sagt: „Das stimmt nicht – Anton war gar nicht am See, er war bei mir.“ Köchin Klara sagt: „Anton hat die Wahrheit gesagt.“ Wer lügt?",
+          opts:["Angler Anton","Mechaniker Mo","Köchin Klara"],c:1,
+          hint:"Anton und Klara sagen beide dasselbe (Anton war am See). Wenn nur EINER lügt, können nicht beide gleichzeitig falsch liegen – also lügt der, der etwas anderes behauptet.",
+          clue:"🎣 Mechaniker Mo hat gelogen, um zu vertuschen, dass er selbst nicht am angegebenen Ort war."}
+       ],
+       finalQ:"Wer hat die Ferienkasse gestohlen?",culprit:1,
+       solveWhy:"Öl-Spuren am Griff (nicht Farbe), der Treffpunkt Werkstatt, die 4 Zehn-Euro-Scheine und die Lüge über Anton – jeder Hinweis zeigt auf dieselbe Person.",
+       outro:"🏆 Fall gelöst! Mechaniker Mo gibt alles zu: Er wollte sich heimlich ein neues Werkzeug kaufen. Das Geld ist wieder da, der Ausflug ist gerettet! Vier Hinweise, eine Lösung – du denkst wie ein echter Meisterdetektiv, Professor Vincent."}
+    ];
+
+    /* ---------- API ---------- */
+    function api(prompt,maxTok,cb,fail){
+      fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":aiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:maxTok,messages:[{role:"user",content:prompt}]})})
+      .then(function(r){return r.json();}).then(function(d){
+        if(d&&d.error){fail(String(d.error.message||d.error.type||"API-Fehler").slice(0,180));return;}
+        var t=(d.content||[]).map(function(b){return b.text||"";}).join("").trim().replace(/```json/gi,"").replace(/```/g,"");
+        cb(t);}).catch(function(){fail("Keine Verbindung – bitte Internet prüfen.");});}
+    function jobj(t){var f=t.indexOf("{"),l=t.lastIndexOf("}");if(f>=0&&l>f)t=t.slice(f,l+1);return JSON.parse(t);}
+
+    /* ---------- Fortschritt ---------- */
+    function prog(){if(!G.detektiv)G.detektiv={done:{},solved:0};if(!G.detektiv.done)G.detektiv.done={};return G.detektiv;}
+    function rank(){var n=prog().solved||0;if(n>=10)return "Chef-Detektiv";if(n>=6)return "Meisterdetektiv";if(n>=3)return "Detektiv";if(n>=1)return "Nachwuchs-Detektiv";return "Detektiv-Anwärter";}
+
+    /* ---------- Menü ---------- */
+    function start(){menu();say("Willkommen in der Detektei, "+rank()+" Vincent! Ein neuer Fall wartet. 🕵️",true);}
+    function menu(){
+      var p=prog();
+      var h='<div class="card"><div class="dk-title">🕵️ Feriendetektiv</div>'
+        +'<div class="dk-note">Löse eine Rätselreihe, sammle Hinweise und überführe den Täter. Alles steckt im Fall – du musst nichts nachschlagen.</div>'
+        +'<div class="dk-rank">🎖️ Dein Rang: <b>'+esc(rank())+'</b> · '+ (p.solved||0) +' Fälle gelöst</div>';
+      if(aiKey())h+='<button class="dk-cta gold" id="dk-new">✨ Neuen Fall von Professor Vincent (KI)</button>';
+      else h+='<div class="dk-note">⚙️ Mit dem KI-Modus (Knopf auf dem Hof) denkt sich Professor Vincent immer neue Fälle aus – und du kannst Verdächtige selbst befragen!</div>';
+      h+='<div class="dk-sec">📁 Akten-Fälle</div>';
+      CASES.forEach(function(c,i){var done=p.done[c.id];
+        h+='<button class="dk-caserow'+(done?" done":"")+'" data-i="'+i+'"><span class="ce">'+c.emoji+'</span><span class="cn">'+esc(c.title)+'<div class="dk-sub">'+(done?"✅ gelöst · nochmal spielen":"Schwierigkeit "+c.lvl+" · "+c.suspects.length+" Verdächtige · "+c.steps.length+" Rätsel")+'</div></span></button>';});
+      h+='</div>';stage(h);
+      var nb=$("dk-new");if(nb)nb.onclick=newCase;
+      document.querySelectorAll("#dk-stage .dk-caserow").forEach(function(b){b.onclick=function(){openCase(CASES[+b.getAttribute("data-i")]);};});
+    }
+
+    /* ---------- KI: neuen Fall erzeugen ---------- */
+    function newCase(){
+      stage('<div class="card">'+SPIN+'</div>');var sp=$("dk-spintxt");if(sp)sp.textContent="Professor Vincent tüftelt einen neuen Fall aus …";
+      var p="Erfinde einen spannenden Kinder-Kriminalfall für Vinni (7 Jahre, hochbegabt, deutschsprachig) auf Schwierigkeits-Stufe "+lvl()+" von 10. Der Fall spielt in einer freundlichen Hof-/Ferienwelt, ohne Gewalt oder Angst (z. B. etwas ist verschwunden oder vertauscht). "
+        +"Erzeuge: eine kurze packende Vorgeschichte; 3 bis 4 Verdächtige (Name, ein Emoji, kurze Beschreibung mit einem verräterischen Merkmal); und eine KETTE aus 4 bis 5 Rätsel-Schritten. Jeder Schritt hat einen Titel, ein Emoji, ein WIRKLICH lösbares Rätsel (Zahlencode, Rechnung mit klarer Zahl-Antwort, Geheimschrift wie Buchstaben-Verschiebung, Logik-/Alibi-Rätsel), einen Tipp und einen HINWEIS, der nach dem Lösen einen Verdächtigen aus- oder einschließt. Am Ende MUSS anhand der Hinweise EINDEUTIG genau ein Täter überführbar sein. Die Rätsel müssen aus sich heraus lösbar sein, ohne externes Wissen nachzuschlagen. "
+        +"Antworte AUSSCHLIESSLICH mit reinem JSON in genau dieser Form: {\"title\":\"Der Fall …\",\"emoji\":\"🔎\",\"intro\":\"…\",\"suspects\":[{\"n\":\"Name\",\"e\":\"😀\",\"d\":\"Beschreibung\"}],\"steps\":[{\"t\":\"Titel\",\"icon\":\"🔒\",\"type\":\"text\",\"q\":\"Frage\",\"ans\":\"Antwort\",\"accept\":[\"Alternativantwort\"],\"hint\":\"Tipp\",\"clue\":\"Hinweis nach dem Lösen\"}],\"finalQ\":\"Wer war es?\",\"culprit\":0,\"solveWhy\":\"kurze Begründung\",\"outro\":\"Auflösung und Lob\"}. "
+        +"Für Multiple-Choice-Schritte nutze stattdessen \"type\":\"choice\" mit \"opts\":[\"A\",\"B\",\"C\"] und \"c\":Index der richtigen Option. \"culprit\" ist der Index (ab 0) des Täters in der suspects-Liste. Halte Antworten (ans) kurz und eindeutig.";
+      api(p,2600,function(txt){var o;
+        try{o=jobj(txt);}catch(e){o=null;}
+        if(!validCase(o)){qfail("Der Fall kam unvollständig an. Das passiert manchmal – versuch es einfach nochmal!");return;}
+        o.id="ki_"+(prog().solved||0)+"_"+((o.title||"").length);
+        openCase(o);
+      },function(msg){qfail(msg);});}
+    function validCase(o){return o&&o.intro&&o.suspects&&o.suspects.length>=2&&o.steps&&o.steps.length>=3
+      &&typeof o.culprit==="number"&&o.culprit>=0&&o.culprit<o.suspects.length
+      &&o.steps.every(function(s){return s&&s.q&&s.clue&&(s.type==="choice"?(s.opts&&s.opts.length>=2&&typeof s.c==="number"):(typeof s.ans!=="undefined"));});}
+    function qfail(msg){SFX.wrong();
+      stage('<div class="card" style="text-align:center"><div style="font-size:46px">🙈</div><div class="dk-title">Das hat nicht geklappt</div>'
+        +'<div class="dk-note" style="text-align:left">'+esc(msg||"Keine Verbindung zur KI.")+'</div>'
+        +'<button class="dk-cta" id="dk-rt">🔄 Nochmal versuchen</button>'
+        +'<button class="dk-cta" id="dk-bk" style="background:linear-gradient(#9aa7b5,#7d8b9a)">⬅ Zur Detektei</button></div>');
+      $("dk-rt").onclick=newCase;$("dk-bk").onclick=menu;}
+
+    /* ---------- Fall spielen ---------- */
+    function openCase(c){st={c:c,i:0,clues:[],tries:0,accuseTries:0};
+      var h='<div class="card"><div class="dk-head"><button class="dk-back" id="dk-b0">⬅</button><div class="dk-title">'+c.emoji+' '+esc(c.title)+'</div></div>'
+        +'<div class="dk-intro">'+esc(c.intro)+'</div>'
+        +'<div class="dk-sec">🧑‍🤝‍🧑 Verdächtige</div>';
+      c.suspects.forEach(function(s){h+='<div class="dk-susp"><span class="se">'+s.e+'</span><span><b>'+esc(s.n)+'</b><div class="dk-sub">'+esc(s.d||"")+'</div></span></div>';});
+      h+='<button class="dk-cta gold" id="dk-go">🔍 Ermittlung starten</button></div>';
+      stage(h);
+      $("dk-b0").onclick=menu;$("dk-go").onclick=function(){runStep();};
+      say("Neuer Fall: "+c.title+". Lies genau – jedes Detail zählt!",true);}
+
+    function akteHtml(){var c=st.c,h='<div class="dk-sec">🗂️ Deine Ermittlungsakte</div>';
+      if(!st.clues.length)h+='<div class="dk-note">Noch keine Hinweise – löse die Rätsel!</div>';
+      st.clues.forEach(function(cl){h+='<div class="dk-clue">'+esc(cl)+'</div>';});
+      h+='<div class="dk-sec">🧑‍🤝‍🧑 Verdächtige</div>';
+      c.suspects.forEach(function(s){h+='<div class="dk-susp small"><span class="se">'+s.e+'</span><span><b>'+esc(s.n)+'</b><div class="dk-sub">'+esc(s.d||"")+'</div></span></div>';});
+      return h;}
+
+    function runStep(){var c=st.c,s=c.steps[st.i];st.tries=0;
+      var h='<div class="card"><div class="dk-head"><button class="dk-back" id="dk-bs">⬅</button><div class="dk-crumb">Rätsel '+(st.i+1)+' von '+c.steps.length+'</div></div>'
+        +'<div class="dk-steptitle">'+(s.icon||"🔎")+' '+esc(s.t||("Rätsel "+(st.i+1)))+'</div>'
+        +'<div class="dk-q">'+esc(s.q)+'</div>';
+      if(s.type==="choice"){h+='<div id="dk-opts">';s.opts.forEach(function(o,i){h+='<button class="dk-opt" data-i="'+i+'">'+esc(o)+'</button>';});h+='</div>';}
+      else{h+='<input class="dk-input" id="dk-in" placeholder="Deine Lösung …" autocomplete="off"><button class="dk-cta" id="dk-check">Prüfen 🔎</button>';}
+      h+='<div id="dk-fb"></div>';
+      h+='<div class="dk-tools"><button class="dk-tool" id="dk-akte">🗂️ Akte</button>';
+      if(aiKey())h+='<button class="dk-tool" id="dk-fragen">🗣️ Verdächtigen befragen</button>';
+      h+='</div></div>';
+      stage(h);
+      $("dk-bs").onclick=function(){openCase(c);};
+      $("dk-akte").onclick=function(){toolPanel(akteHtml());};
+      var fq=$("dk-fragen");if(fq)fq.onclick=interrogateMenu;
+      if(s.type==="choice"){document.querySelectorAll("#dk-opts .dk-opt").forEach(function(b){b.onclick=function(){answer(+b.getAttribute("data-i")===s.c);};});}
+      else{var inp=$("dk-in");$("dk-check").onclick=function(){answer(checkText(inp.value,s)||numEq(inp.value,s.ans));};
+        inp.addEventListener("keydown",function(e){if(e.key==="Enter")$("dk-check").click();});}
+    }
+    function answer(ok){var c=st.c,s=c.steps[st.i],fb=$("dk-fb");
+      if(ok){SFX.right();st.clues.push(s.clue);
+        if(fb)fb.innerHTML='<div class="dk-ok">✅ Richtig! Neuer Hinweis in der Akte:</div><div class="dk-clue">'+esc(s.clue)+'</div>'
+          +'<button class="dk-cta gold" id="dk-next">'+(st.i<c.steps.length-1?"Nächstes Rätsel ▶":"Zur Anklage ⚖️")+'</button>';
+        say("Ein Hinweis mehr! Gut kombiniert.",true);
+        $("dk-next").onclick=function(){st.i++;if(st.i<c.steps.length)runStep();else accuse();};
+        document.querySelectorAll("#dk-opts .dk-opt, #dk-in, #dk-check").forEach(function(el){el.disabled=true;});
+      } else {st.tries++;SFX.wrong();
+        var tip=st.tries>=2?('<div class="dk-note">💡 Tipp: '+esc(s.hint)+'</div>'):'';
+        if(fb)fb.innerHTML='<div class="dk-miss">❌ Noch nicht ganz – schau nochmal genau hin.</div>'+tip;
+      }
+    }
+    function toolPanel(inner){
+      var h='<div class="card"><div class="dk-head"><button class="dk-back" id="dk-tb">⬅ Zurück zum Rätsel</button></div>'+inner+'</div>';
+      stage(h);$("dk-tb").onclick=function(){runStep();};}
+
+    /* ---------- Verdächtige befragen (KI) ---------- */
+    function interrogateMenu(){var c=st.c;
+      var h='<div class="card"><div class="dk-head"><button class="dk-back" id="dk-ib">⬅ Zurück</button><div class="dk-title">🗣️ Befragung</div></div>'
+        +'<div class="dk-note">Wen möchtest du befragen? Stell eine clevere Frage – aber Vorsicht, der Täter sagt vielleicht nicht die Wahrheit!</div>';
+      c.suspects.forEach(function(s,i){h+='<button class="dk-caserow" data-i="'+i+'"><span class="ce">'+s.e+'</span><span class="cn">'+esc(s.n)+'</span></button>';});
+      h+='</div>';stage(h);
+      $("dk-ib").onclick=function(){runStep();};
+      document.querySelectorAll("#dk-stage .dk-caserow").forEach(function(b){b.onclick=function(){askForm(+b.getAttribute("data-i"));};});}
+    function askForm(si){var c=st.c,s=c.suspects[si];
+      var h='<div class="card"><div class="dk-head"><button class="dk-back" id="dk-ab">⬅</button><div class="dk-title">'+s.e+' '+esc(s.n)+'</div></div>'
+        +'<div class="dk-note">Stelle '+esc(s.n)+' eine Frage:</div>'
+        +'<input class="dk-input" id="dk-qin" placeholder="z. B. Wo warst du um 14 Uhr?" autocomplete="off"><button class="dk-cta" id="dk-qsend">Fragen 🗣️</button>'
+        +'<div id="dk-ans"></div></div>';
+      stage(h);
+      $("dk-ab").onclick=interrogateMenu;
+      var inp=$("dk-qin");
+      function send(){var q=inp.value.trim();if(!q)return;
+        $("dk-ans").innerHTML=SPIN;var sp=$("dk-spintxt");if(sp)sp.textContent=s.n+" überlegt …";
+        var isCulprit=(si===c.culprit);
+        var p="Du spielst die Figur „"+s.n+"“ in einem Kinder-Krimi. Beschreibung: "+(s.d||"")+". Der ganze Fall (nur für dich, nicht verraten): "+JSON.stringify({intro:c.intro,verdaechtige:c.suspects.map(function(x){return x.n;}),taeter:c.suspects[c.culprit].n})+". "
+          +(isCulprit?"DU BIST HEIMLICH DER TÄTER. Antworte ausweichend, wirke etwas nervös, sage aber NIE direkt, dass du es warst, und gestehe nicht. Du darfst kleine Ausreden erfinden.":"Du bist UNSCHULDIG und sagst ehrlich, was du weißt – du kennst den Täter aber nicht sicher.")
+          +" Vinni (Detektiv, 7 Jahre) fragt dich: \""+q+"\". Antworte kurz (1 bis 2 Sätze), kindgerecht, in der Ich-Form als "+s.n+". Verrate NIEMALS direkt, wer der Täter ist. Antworte NUR mit reinem JSON: {\"reply\":\"deine Antwort\"}";
+        api(p,300,function(txt){var o;try{o=jobj(txt);}catch(e){o=null;}
+          var r=(o&&o.reply)?String(o.reply):"…";
+          $("dk-ans").innerHTML='<div class="dk-reply">'+s.e+' „'+esc(r)+'“</div>';
+          try{var u=new SpeechSynthesisUtterance(r);u.lang="de-DE";window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){}
+          inp.value="";
+        },function(msg){$("dk-ans").innerHTML='<div class="dk-note">'+esc(msg)+'</div>';});}
+      $("dk-qsend").onclick=send;inp.addEventListener("keydown",function(e){if(e.key==="Enter")send();});}
+
+    /* ---------- Anklage ---------- */
+    function accuse(){var c=st.c;
+      var h='<div class="card"><div class="dk-title">⚖️ Die Anklage</div>'
+        +'<div class="dk-q">'+esc(c.finalQ||"Wer war es?")+'</div>'
+        +'<div class="dk-note">Alle Hinweise liegen in deiner Akte. Überlege genau – wen klagst du an?</div>'
+        +'<button class="dk-tool" id="dk-akte2" style="margin:6px 0 10px">🗂️ Akte ansehen</button>';
+      c.suspects.forEach(function(s,i){h+='<button class="dk-accuse" data-i="'+i+'"><span class="se">'+s.e+'</span> '+esc(s.n)+'</button>';});
+      h+='<div id="dk-af"></div></div>';stage(h);
+      $("dk-akte2").onclick=function(){toolPanelAccuse();};
+      document.querySelectorAll("#dk-stage .dk-accuse").forEach(function(b){b.onclick=function(){decide(+b.getAttribute("data-i"));};});}
+    function toolPanelAccuse(){
+      var h='<div class="card"><div class="dk-head"><button class="dk-back" id="dk-tb2">⬅ Zurück zur Anklage</button></div>'+akteHtml()+'</div>';
+      stage(h);$("dk-tb2").onclick=accuse;}
+    function decide(i){var c=st.c;
+      if(i===c.culprit){solved();}
+      else{st.accuseTries++;SFX.wrong();
+        var fb=$("dk-af");if(fb)fb.innerHTML='<div class="dk-miss">❌ '+esc(c.suspects[i].n)+' hat ein Alibi. Schau nochmal in die Akte – welche Hinweise passen NUR auf eine Person?</div>';
+        say("Hmm, die Beweise passen nicht zu "+c.suspects[i].n+". Denk nochmal nach!");}
+    }
+    function solved(){var c=st.c,first=!prog().done[c.id];
+      prog().done[c.id]=1;if(first)prog().solved=(prog().solved||0)+1;
+      addEgg(5);bumpBrain("logik");bumpBrain("logik");doSave();
+      SFX.right();
+      stage('<div class="card" style="text-align:center"><div style="font-size:54px">🏆</div>'
+        +'<div class="dk-title">Fall gelöst!</div>'
+        +'<div class="dk-clue" style="text-align:left">'+esc(c.solveWhy||"")+'</div>'
+        +'<div class="dk-intro" style="text-align:left">'+esc(c.outro||"")+'</div>'
+        +'<div class="dk-note">+5 🥚 · dein Detektiv-Verstand wächst!</div>'
+        +'<button class="dk-cta gold" id="dk-again">Nächster Fall ▶</button></div>');
+      $("dk-again").onclick=menu;
+      say("Fall gelöst, "+rank()+" Vincent! Brillante Ermittlung.",true);
+      setTimeout(function(){ceremony("🕵️","Fall gelöst!",c.title);},500);}
+
+    return {start:start,say0:function(){}};
   })();
 
   /* ===================== WISSENS-EXPEDITIONEN ===================== */
