@@ -1072,6 +1072,55 @@
     .gear{padding:4px;font-size:16px}
   }
   @media (prefers-reduced-motion:reduce){.skybird,.butterfly,.meadow span,.sun,.kj-cell.kj-foe{animation:none}}
+  /* ---------- Profile / Konten ---------- */
+  .prof-chip{font-family:inherit;cursor:pointer;border:2px solid #fff;border-radius:16px;background:var(--paper);
+    padding:6px 11px;font-size:15px;font-weight:800;color:#5a4632;display:flex;align-items:center;gap:6px;line-height:1;
+    box-shadow:0 2px 8px rgba(54,41,31,.14)}
+  .prof-chip .pc-emoji{font-size:18px}
+  @media (max-width:420px){.prof-chip{padding:5px 8px;font-size:14px}.prof-chip .pc-name{display:none}}
+  .prof-sheet{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+    background:rgba(40,30,22,.42);padding:18px}
+  .prof-sheet.show{display:flex}
+  .prof-box{background:var(--paper);border-radius:24px;padding:20px 18px 16px;max-width:360px;width:100%;
+    box-shadow:0 22px 60px rgba(54,41,31,.32);max-height:88%;overflow:auto}
+  .prof-box h2{margin:0 0 4px;font-size:20px;color:#4a3826}
+  .prof-box .ps-sub{margin:0 0 14px;font-size:13.5px;color:#7a6a55;line-height:1.35}
+  .ps-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+  .ps-item{display:flex;align-items:center;gap:12px;border:2px solid #ecdfc9;border-radius:18px;padding:11px 12px;
+    background:#fff;cursor:pointer;text-align:left;font-family:inherit;width:100%}
+  .ps-item.active{border-color:#f0a83e;background:#fff8ea}
+  .ps-item .ps-av{font-size:30px;flex:0 0 auto}
+  .ps-item .ps-name{font-size:17px;font-weight:800;color:#4a3826}
+  .ps-item .ps-role{font-size:12.5px;color:#8a795f}
+  .ps-item .ps-del{margin-left:auto;border:none;background:transparent;font-size:18px;cursor:pointer;opacity:.55;padding:4px}
+  .ps-item .ps-del:hover{opacity:1}
+  .ps-add{width:100%;border:2px dashed #d9c7a8;border-radius:18px;background:#fdf7ec;padding:12px;font-family:inherit;
+    font-size:15px;font-weight:700;color:#7a6244;cursor:pointer}
+  .ps-close{width:100%;margin-top:10px;border:none;border-radius:16px;background:#efe4d2;padding:12px;
+    font-family:inherit;font-size:15px;font-weight:800;color:#5a4632;cursor:pointer}
+  /* Starter-Modus: Hof bleibt, aber nur die drei Übungen zeigen */
+  body.starter #story-card,body.starter #questcard,body.starter #bosscard,
+  body.starter .modcards>.modsec:not(.starter-only){display:none!important}
+  body.starter #starter-hub{display:block!important}
+  body:not(.starter) .starter-only{display:none!important}
+  #starter-hub .sec-h{background:linear-gradient(#fff2d4,#ffe6b8)}
+  .sec-cards.big{grid-template-columns:1fr;gap:12px}
+  @media (min-width:520px){.sec-cards.big{grid-template-columns:repeat(3,1fr)}}
+  .bigcard{flex-direction:row!important;text-align:left!important;gap:14px!important;padding:16px 16px!important;align-items:center}
+  .bigcard .modicon{width:60px;height:60px;flex:0 0 60px;font-size:32px}
+  .bigcard .modtitle{font-size:19px}
+  .bigcard .modsub{display:block!important;font-size:13px;color:#8a795f;margin-top:2px}
+  @media (min-width:520px){.bigcard{flex-direction:column!important;text-align:center!important}}
+  /* ---------- Schreiben-Modul ---------- */
+  .wr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .wr-arrow{font-family:inherit;border:2px solid #ecdfc9;background:#fff;border-radius:14px;padding:8px 14px;
+    font-size:20px;cursor:pointer;color:#6b563c;line-height:1}
+  .wr-arrow:active{transform:scale(.94)}
+  .wr-word{font-size:19px;font-weight:800;color:#4a3826;text-align:center;flex:1}
+  .wr-canvaswrap{display:flex;justify-content:center}
+  #wr-canvas{width:min(320px,80vw);height:min(320px,80vw);touch-action:none;border-radius:20px;
+    background:#fffdf7;border:3px solid #f0e2c8;box-shadow:inset 0 2px 10px rgba(120,100,70,.12)}
+  .wr-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 </style>
 </head>
 <body>
@@ -1083,6 +1132,7 @@
 <div id="app">
   <div class="header">
     <button class="homebtn" id="homebtn">🏡 Hof</button>
+    <button class="prof-chip" id="prof-chip" title="Konto wechseln"><span class="pc-emoji" id="pc-emoji">🐔</span><span class="pc-name" id="pc-name">Vinni</span></button>
     <div class="spacer"></div>
     <div class="stat">🥚 <span id="eggs">0</span> <small>Eier</small></div>
     <div class="stat">🐔 <span id="flock">0</span> <small>Hühner</small></div>
@@ -1090,6 +1140,17 @@
     <div class="stat statbtn" id="deedstat" title="Taten-Punkte aus dem echten Leben">⭐ <span id="deedpts">0</span></div>
     <button class="gear" id="sndbtn" title="Töne an/aus">🔊</button>
     <button class="gear" id="gear" title="Für Erwachsene: Fortschritt zurücksetzen">⚙️</button>
+  </div>
+
+  <!-- Konten-Auswahl -->
+  <div class="prof-sheet" id="prof-sheet">
+    <div class="prof-box">
+      <h2>👨‍👩‍👦 Wer spielt?</h2>
+      <p class="ps-sub">Jedes Kind hat seinen eigenen Hof mit eigenem Fortschritt. Tippe auf einen Namen, um zu wechseln.</p>
+      <div class="ps-list" id="ps-list"></div>
+      <button class="ps-add" id="ps-add">➕ Neues Kind hinzufügen</button>
+      <button class="ps-close" id="ps-close">Schließen</button>
+    </div>
   </div>
 
   <div class="screens">
@@ -1138,6 +1199,14 @@
       <div class="questcard" id="questcard"></div>
       <div class="bosscard" id="bosscard"></div>
       <div class="modcards">
+        <div class="modsec starter-only" id="starter-hub" style="display:none">
+          <button class="sec-h"><span class="sec-i">🐥</span> Üben &amp; Lernen <span class="chev">▾</span></button>
+          <div class="sec-cards big">
+            <button class="modcard bigcard mc-read" data-go="read"><div class="modicon">🔤</div><div><div class="modtitle">Lesen</div><div class="modsub">Wörter bauen und hören</div></div></button>
+            <button class="modcard bigcard mc-write" data-go="write"><div class="modicon">✏️</div><div><div class="modtitle">Schreiben</div><div class="modsub">Buchstaben & Zahlen nachfahren</div></div></button>
+            <button class="modcard bigcard mc-math" data-go="math"><div class="modicon">🔢</div><div><div class="modtitle">Rechnen</div><div class="modsub">Zählen und zusammenzählen</div></div></button>
+          </div>
+        </div>
         <div class="modsec" id="recent-sec" style="display:none">
           <button class="sec-h"><span class="sec-i">⚡</span> Zuletzt gespielt <span class="chev">▾</span></button>
           <div class="sec-cards" id="recent-cards"></div>
@@ -1486,6 +1555,25 @@
       <div style="height:12px"></div>
     </div>
 
+    <!-- SCHREIBEN (Buchstaben & Zahlen nachfahren) -->
+    <div class="screen" id="write">
+      <div class="hilde-row"><div class="hilde" id="write-hilde"></div><div class="bubble" id="write-bubble">Fahr die graue Linie mit dem Finger nach!</div></div>
+      <div class="stagepad"><div class="card">
+        <div class="wr-head">
+          <button class="wr-arrow" id="wr-prev" aria-label="Zurück">◀︎</button>
+          <div class="wr-word" id="wr-word">A wie Apfel</div>
+          <button class="wr-arrow" id="wr-next" aria-label="Weiter">▶︎</button>
+        </div>
+        <div class="wr-canvaswrap"><canvas id="wr-canvas" width="320" height="320"></canvas></div>
+        <div class="wr-btns">
+          <button class="hbtn" id="wr-say">🔊 Hören</button>
+          <button class="hbtn" id="wr-clear">🧽 Wisch weg</button>
+          <button class="hbtn r-say" id="wr-done">✓ Fertig</button>
+        </div>
+      </div></div>
+      <div style="height:12px"></div>
+    </div>
+
     <!-- GAME / Challenge -->
     <div class="screen" id="game">
       <div class="hilde-row"><div class="hilde" id="game-hilde"></div><div class="bubble" id="game-bubble">Bereit für die große Hühner-Challenge?</div></div>
@@ -1687,8 +1775,27 @@
     };
   })();
 
+  /* ---------- Profile / Konten (Vinni, Valli, …) ---------- */
+  var PROFILES_KEY="vinni_profiles", CURPROF_KEY="vinni_current";
+  var DEFAULT_PROFILES=[
+    {id:"vinni",name:"Vinni",emoji:"🐔",mode:"full"},
+    {id:"valli",name:"Valli",emoji:"🐥",mode:"starter"}
+  ];
+  function loadProfiles(){var a=null;try{var r=window.localStorage.getItem(PROFILES_KEY);if(r)a=JSON.parse(r);}catch(e){}
+    if(!a||!a.length){a=DEFAULT_PROFILES.slice();try{window.localStorage.setItem(PROFILES_KEY,JSON.stringify(a));}catch(e){}}
+    else if(!a.some(function(p){return p.id==="vinni";})){a.unshift(DEFAULT_PROFILES[0]);}
+    return a;}
+  function saveProfiles(){try{window.localStorage.setItem(PROFILES_KEY,JSON.stringify(PROFILES));}catch(e){}}
+  var PROFILES=loadProfiles();
+  var CURID=(function(){try{var c=window.localStorage.getItem(CURPROF_KEY);if(c&&PROFILES.some(function(p){return p.id===c;}))return c;}catch(e){}return "vinni";})();
+  var CURPROF=(function(){for(var i=0;i<PROFILES.length;i++)if(PROFILES[i].id===CURID)return PROFILES[i];return DEFAULT_PROFILES[0];})();
+  var STARTER=(CURPROF.mode==="starter");
+  /* Schlüssel pro Kind trennen – Vinnis alte Daten behalten ihren Original-Schlüssel. */
+  function pfxKey(base){return CURID==="vinni"?base:base+"__"+CURID;}
+  function switchProfile(id){if(id===CURID){return;}try{window.localStorage.setItem(CURPROF_KEY,id);}catch(e){}try{location.reload();}catch(e){}}
+
   /* ---------- global state + speichern ---------- */
-  var SAVEKEY="vinni_huehnerhof_v1";
+  var SAVEKEY=pfxKey("vinni_huehnerhof_v1");
   function loadSave(){try{var r=window.localStorage.getItem(SAVEKEY);if(r)return JSON.parse(r);}catch(e){}return null;}
   function doSave(){try{window.localStorage.setItem(SAVEKEY,JSON.stringify({v:17,eggs:G.eggs,mLevel:G.mLevel,cLi:G.cLi,eDiff:G.eDiff,pLevel:G.pLevel,uLevel:G.uLevel,sLevel:G.sLevel,wLevel:G.wLevel,rLevel:G.rLevel,iqLevel:G.iqLevel,tLevel:G.tLevel,tBuilt:G.tBuilt,chickens:G.chickens,unlocked:G.unlocked,decos:G.decos,story:G.story,eRevisit:G.eRevisit,eMastered:G.eMastered,eSeen:G.eSeen,gameBest:G.gameBest,coins:G.coins,boerse:G.boerse,focusBest:G.focusBest,waitBest:G.waitBest,cornBest:G.cornBest,brain:G.brain,know:G.know,daily:G.daily,badges:G.badges,bossStars:G.bossStars,bossWins:G.bossWins,week:G.week,exped:G.exped,deeds:G.deeds,wishes:G.wishes,checkin:G.checkin,routines:G.routines,fbook:G.fbook,profRank:G.profRank,profM:G.profM,duelName:G.duelName,strudel:G.strudel,partyBest:G.partyBest,partyStars:G.partyStars,partyTheme:G.partyTheme,partyTut:G.partyTut,photoFarm:G.photoFarm,inventSeen:G.inventSeen,marble:G.marble,detektiv:G.detektiv}));}catch(e){}}
   var _ld=loadSave()||{};
@@ -1872,7 +1979,7 @@
   /* ---------- Spielstand sichern & übertragen ---------- */
   function backupSave(){try{doSave();
     var o={app:"vinnis-huehnerhof",v:1,date:new Date().toISOString()};
-    try{o.save=window.localStorage.getItem(SAVEKEY)||null;o.secs=window.localStorage.getItem("vinni_secs")||null;o.sound=window.localStorage.getItem("vinni_sound")||null;}catch(e){}
+    try{o.save=window.localStorage.getItem(SAVEKEY)||null;o.secs=window.localStorage.getItem(pfxKey("vinni_secs"))||null;o.sound=window.localStorage.getItem("vinni_sound")||null;}catch(e){}
     if(!o.save){toast("Noch kein Spielstand vorhanden");return;}
     var blob=new Blob([JSON.stringify(o,null,2)],{type:"application/json"});
     var d=new Date(),name="vinnis-hof-sicherung-"+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+".json";
@@ -1886,7 +1993,7 @@
       JSON.parse(o.save);
       if(!window.confirm("Sicherung laden? Der aktuelle Spielstand auf DIESEM Gerät wird ersetzt."))return;
       window.localStorage.setItem(SAVEKEY,o.save);
-      if(o.secs)window.localStorage.setItem("vinni_secs",o.secs);
+      if(o.secs)window.localStorage.setItem(pfxKey("vinni_secs"),o.secs);
       if(o.sound!=null)window.localStorage.setItem("vinni_sound",o.sound);
       toast("✅ Sicherung geladen");setTimeout(function(){location.reload();},700);
     }catch(e){toast("Das ist keine gültige Sicherungs-Datei");}};
@@ -1961,7 +2068,7 @@
   }
 
   /* ---------- shared Hilde / bubble ---------- */
-  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"],marble:["marble-bubble","marble-hilde"],detektiv:["detektiv-bubble","detektiv-hilde"]};
+  var SCR={home:["home-bubble","home-hilde"],math:["math-bubble","math-hilde"],code:["code-bubble","code-hilde"],tractor:["tractor-bubble","tractor-hilde"],explore:["explore-bubble","explore-hilde"],pattern:["pattern-bubble","pattern-hilde"],iq:["iq-bubble","iq-hilde"],lab:["lab-bubble","lab-hilde"],clock:["clock-bubble","clock-hilde"],store:["store-bubble","store-hilde"],market:["market-bubble","market-hilde"],read:["read-bubble","read-hilde"],barn:["barn-bubble","barn-hilde"],stats:["stats-bubble","stats-hilde"],shop:["shop-bubble","shop-hilde"],game:["game-bubble","game-hilde"],boerse:["boerse-bubble","boerse-hilde"],ask:["ask-bubble","ask-hilde"],focus:["focus-bubble","focus-hilde"],corn:["corn-bubble","corn-hilde"],boss:["boss-bubble","boss-hilde"],parent:["parent-bubble","parent-hilde"],invent:["invent-bubble","invent-hilde"],exped:["exped-bubble","exped-hilde"],eng:["eng-bubble","eng-hilde"],night:["night-bubble","night-hilde"],deeds:["deeds-bubble","deeds-hilde"],forscher:["forscher-bubble","forscher-hilde"],prof:["prof-bubble","prof-hilde"],duel:["duel-bubble","duel-hilde"],party:["party-bubble","party-hilde"],marble:["marble-bubble","marble-hilde"],detektiv:["detektiv-bubble","detektiv-hilde"],write:["write-bubble","write-hilde"]};
   var current="home";
   function say(t,happy){var ids=SCR[current],b=$(ids[0]);b.textContent=t;b.classList.remove("speak");void b.offsetWidth;b.classList.add("speak");if(happy){var h=$(ids[1]);h.classList.remove("happy");void h.offsetWidth;h.classList.add("happy");}}
 
@@ -1982,7 +2089,7 @@
     }
   }
   function renderRecent(){try{var box=$("recent-cards"),secEl=$("recent-sec");if(!box||!secEl)return;
-    var rec=[];try{rec=JSON.parse(window.localStorage.getItem("vinni_recent")||"[]");}catch(e){}
+    var rec=[];try{rec=JSON.parse(window.localStorage.getItem(pfxKey("vinni_recent"))||"[]");}catch(e){}
     rec=rec.filter(function(n){return !!document.querySelector('.modsec:not(#recent-sec) .modcard[data-go="'+n+'"]');}).slice(0,4);
     if(!rec.length){secEl.style.display="none";return;}
     box.innerHTML="";
@@ -2021,7 +2128,7 @@
     try{if(typeof PARTY!=="undefined"&&PARTY&&PARTY.stop&&name!=="party")PARTY.stop();}catch(_p1){}
     Object.keys(SCR).forEach(function(s){$(s).classList.toggle("on",s===name);});
     current=name;$("homebtn").classList.toggle("show",name!=="home");
-    if(name!=="home"&&name!=="parent"&&SCR[name]){try{var _rc=JSON.parse(window.localStorage.getItem("vinni_recent")||"[]");_rc=_rc.filter(function(x){return x!==name;});_rc.unshift(name);window.localStorage.setItem("vinni_recent",JSON.stringify(_rc.slice(0,6)));}catch(_rr){}}
+    if(name!=="home"&&name!=="parent"&&SCR[name]){try{var _rc=JSON.parse(window.localStorage.getItem(pfxKey("vinni_recent"))||"[]");_rc=_rc.filter(function(x){return x!==name;});_rc.unshift(name);window.localStorage.setItem(pfxKey("vinni_recent"),JSON.stringify(_rc.slice(0,6)));}catch(_rr){}}
     try{
     if(name==="math"&&!inited.math){inited.math=true;M.start();}
     if(name==="code"&&!inited.code){inited.code=true;C.start();}
@@ -2065,8 +2172,10 @@
     if(name==="party")PARTY.start();
     if(name==="marble")MARBLE.start();
     if(name==="detektiv")DETEKTIV.start();
+    if(name==="write")WRITE.start();
     if(name==="shop")SHOP.open();
-    if(name==="home"){renderDecos();renderFlock();Story.render();renderQuests();BOSS.renderCard();renderRecent();AI.status($("home-ki-status"));say("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?",false);}
+    if(name==="home"){renderDecos();renderFlock();if(!STARTER){Story.render();renderQuests();BOSS.renderCard();renderRecent();}AI.status($("home-ki-status"));
+      say(STARTER?("Hallo "+CURPROF.name+"! Was möchtest du üben – Lesen, Schreiben oder Rechnen? 🐥"):("Willkommen zurück, "+profRank()[1]+" Vincent! Was als Nächstes?"),false);}
     }catch(_e){surface(_e);}
   }
 
@@ -2594,6 +2703,78 @@
     }
     function speak(w){try{window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(w);u.lang="de-DE";u.rate=0.85;window.speechSynthesis.speak(u);}catch(e){}}
     return {start:function(){next();},say0:function(){},speak:function(){speak(st.word);},hint:function(){speak(st.word);say("💡 Hör dir das Wort an und sprich langsam mit. Es beginnt mit "+st.word[0]+". Tippe die Buchstaben der Reihe nach.");}};
+  })();
+
+  /* ===================== SCHREIBEN (Buchstaben & Zahlen nachfahren) ===================== */
+  var WRITE=(function(){
+    var LETTERS=[
+      {c:"A",w:"Apfel",e:"🍎"},{c:"B",w:"Ball",e:"⚽"},{c:"C",w:"Clown",e:"🤡"},{c:"D",w:"Delfin",e:"🐬"},
+      {c:"E",w:"Elefant",e:"🐘"},{c:"F",w:"Fisch",e:"🐟"},{c:"G",w:"Giraffe",e:"🦒"},{c:"H",w:"Huhn",e:"🐔"},
+      {c:"I",w:"Igel",e:"🦔"},{c:"J",w:"Jojo",e:"🪀"},{c:"K",w:"Katze",e:"🐱"},{c:"L",w:"Löwe",e:"🦁"},
+      {c:"M",w:"Maus",e:"🐭"},{c:"N",w:"Nest",e:"🪺"},{c:"O",w:"Oma",e:"👵"},{c:"P",w:"Pinguin",e:"🐧"},
+      {c:"Q",w:"Quark",e:"🥛"},{c:"R",w:"Rakete",e:"🚀"},{c:"S",w:"Sonne",e:"☀️"},{c:"T",w:"Tiger",e:"🐯"},
+      {c:"U",w:"Uhu",e:"🦉"},{c:"V",w:"Vogel",e:"🐦"},{c:"W",w:"Wurm",e:"🪱"},{c:"X",w:"Xylophon",e:"🎼"},
+      {c:"Y",w:"Yak",e:"🐂"},{c:"Z",w:"Zebra",e:"🦓"}
+    ];
+    var NUMWORDS=["null","eins","zwei","drei","vier","fünf","sechs","sieben","acht","neun"];
+    var NUMS=[];for(var _n=0;_n<=9;_n++)NUMS.push({c:String(_n),w:NUMWORDS[_n],e:(_n===0?"⭕":"🥚".repeat(_n)),num:_n});
+    var items=LETTERS.concat(NUMS);
+    var idx=0,drawing=false,drew=false,cv=null,ctx=null,DPR=1,last=null;
+    function cur(){return items[idx];}
+    function speak(txt){try{window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.lang="de-DE";u.rate=0.85;window.speechSynthesis.speak(u);}catch(e){}}
+    function sayItem(){var o=cur();
+      if(o.num!=null)speak(o.num===0?"Null. Ein leeres Nest.":(o.w+". "+o.num+(o.num===1?" Ei.":" Eier.")));
+      else speak(o.c+" wie "+o.w);}
+    function guide(){ // Zielbuchstabe blass in die Mitte zeichnen
+      if(!ctx)return;var W=cv.width/DPR,H=cv.height/DPR;
+      ctx.clearRect(0,0,W,H);
+      ctx.save();
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.font="700 "+Math.round(H*0.72)+"px Nunito, system-ui, sans-serif";
+      // dicke helle Führungslinie
+      ctx.lineWidth=Math.max(10,H*0.05);ctx.strokeStyle="#ead9bd";ctx.lineJoin="round";
+      ctx.strokeText(cur().c,W/2,H*0.53);
+      ctx.fillStyle="#f7efe0";ctx.fillText(cur().c,W/2,H*0.53);
+      // gestrichelter Rahmen als "Schreibfeld"
+      ctx.restore();
+    }
+    function setup(){cv=$("wr-canvas");if(!cv)return;ctx=cv.getContext("2d");
+      var rect=cv.getBoundingClientRect();DPR=Math.min(2,window.devicePixelRatio||1);
+      var w=Math.round((rect.width||300)),h=Math.round((rect.height||300));
+      cv.width=w*DPR;cv.height=h*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+      ctx.lineCap="round";ctx.lineJoin="round";
+      guide();drew=false;
+      if(!cv._wired){cv._wired=true;
+        var move=function(ev){if(!drawing)return;ev.preventDefault();var p=pos(ev);stroke(p);};
+        var down=function(ev){ev.preventDefault();drawing=true;drew=true;last=pos(ev);dot(last);};
+        var up=function(){drawing=false;last=null;};
+        cv.addEventListener("pointerdown",down);cv.addEventListener("pointermove",move);
+        window.addEventListener("pointerup",up);cv.addEventListener("pointerleave",up);
+      }}
+    function pos(ev){var r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left),y:(ev.clientY-r.top)};}
+    function dot(p){ctx.beginPath();ctx.fillStyle="#ef8a2b";ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fill();}
+    function stroke(p){if(!last){last=p;return;}ctx.beginPath();ctx.strokeStyle="#ef8a2b";ctx.lineWidth=12;
+      ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p;}
+    function renderLabel(){var o=cur();
+      $("wr-word").textContent=(o.num!=null)?(o.c+" – "+o.w+"  "+o.e):(o.c+" wie "+o.w+"  "+o.e);}
+    function show(){renderLabel();setup();sayItem();
+      say("Fahr die graue Form mit dem Finger nach – so schreibt man "+cur().c+". Dann tippe auf „Fertig“. ✏️");}
+    function clear(){guide();drew=false;}
+    function nav(d){idx=(idx+d+items.length)%items.length;show();}
+    function done(){
+      if(!drew){say("Fahr erst die Form mit dem Finger nach, dann bist du fertig. 😊");SFX.pop();return;}
+      addEgg(1);
+      if(cur().num!=null)learn("mathe");else learn("sprache");
+      if(Math.random()<0.2)bumpBrain(cur().num!=null?"mathe":"sprache");
+      doSave();
+      say("Super geschrieben – das "+(cur().num!=null?"Zahl":"Buchstabe")+" „"+cur().c+"“ sitzt! 🎉",true);
+      setTimeout(function(){nav(1);},900);
+    }
+    return {
+      start:function(){setTimeout(show,60);},
+      say0:function(){},
+      _next:function(){nav(1);},_prev:function(){nav(-1);},_say:sayItem,_clear:clear,_done:done
+    };
   })();
 
   /* ===================== IQ (Denksport) MODULE ===================== */
@@ -5293,13 +5474,13 @@
   })();
 
   /* ---------- wire up ---------- */
-  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde","corn-hilde"].forEach(function(id){$(id).innerHTML=chick(VAR.weiss,false);});
+  ["home-hilde","math-hilde","code-hilde","tractor-hilde","explore-hilde","pattern-hilde","iq-hilde","lab-hilde","clock-hilde","store-hilde","market-hilde","read-hilde","write-hilde","barn-hilde","stats-hilde","shop-hilde","game-hilde","boerse-hilde","ask-hilde","focus-hilde","corn-hilde"].forEach(function(id){var _h=$(id);if(_h)_h.innerHTML=chick(VAR.weiss,false);});
   $("breathC").innerHTML=chick(VAR.weiss,false);
   document.querySelectorAll(".modcard").forEach(function(c){c.onclick=function(){show(c.getAttribute("data-go"));};});
-  (function(){var st={};try{st=JSON.parse(window.localStorage.getItem("vinni_secs")||"{}");}catch(e){}
+  (function(){var st={};try{st=JSON.parse(window.localStorage.getItem(pfxKey("vinni_secs"))||"{}");}catch(e){}
     document.querySelectorAll(".modsec").forEach(function(sec){var id=sec.getAttribute("data-sec");
       if(st[id]===0)sec.classList.add("closed");
-      var h=sec.querySelector(".sec-h");if(h)h.onclick=function(){sec.classList.toggle("closed");st[id]=sec.classList.contains("closed")?0:1;try{window.localStorage.setItem("vinni_secs",JSON.stringify(st));}catch(e){}};});})();
+      var h=sec.querySelector(".sec-h");if(h)h.onclick=function(){sec.classList.toggle("closed");st[id]=sec.classList.contains("closed")?0:1;try{window.localStorage.setItem(pfxKey("vinni_secs"),JSON.stringify(st));}catch(e){}};});})();
   weekInit();
   renderQuests();
   BOSS.renderCard();
@@ -5351,11 +5532,67 @@
   $("ask-mic").onclick=function(){ASK.mic();};$("ask-replay").onclick=function(){ASK.replay();};
   $("breathDone").onclick=closeBreathe;
   $("gear").onclick=function(){
-    if(window.confirm("Für Erwachsene: Soll Vinnis Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
+    if(window.confirm("Für Erwachsene: Soll "+CURPROF.name+"s Fortschritt wirklich zurückgesetzt werden? Alle Eier und Hühner gehen verloren.")){
       try{window.localStorage.removeItem(SAVEKEY);}catch(e){}
       try{location.reload();}catch(e){G.eggs=0;G.mLevel=1;G.cLi=0;G.eDiff=2;G.chickens=makeDefault(3);G.unlocked=["weiss","braun"];G.decos=[];G.story=null;G.eRevisit=[];G.eMastered=[];G.eSeen=[];G.gameBest=0;G.coins=0;G.boerse=null;G.focusBest=0;G.waitBest=0;G.cornBest=0;G.brain=0;G.know={};G.daily=null;G.badges=[];G.bossStars=0;G.bossWins=0;G.week=null;G.exped=0;G.deeds=null;G.wishes=[];G.checkin=[];G.routines=[];G.fbook=[];G.profRank=0;G.profM=0;G.duelName="";G.strudel=null;G.partyBest=0;G.partyStars=0;G.partyTheme="hof";G.partyTut=0;Story.init();Story.render();renderDecos();renderFlock();refresh();}
     }
   };
+
+  /* ---------- Schreiben-Modul verdrahten ---------- */
+  (function(){var p=$("wr-prev");if(p)p.onclick=function(){WRITE._prev();};
+    var n=$("wr-next");if(n)n.onclick=function(){WRITE._next();};
+    var s=$("wr-say");if(s)s.onclick=function(){WRITE._say();};
+    var c=$("wr-clear");if(c)c.onclick=function(){WRITE._clear();};
+    var d=$("wr-done");if(d)d.onclick=function(){WRITE._done();};})();
+
+  /* ---------- Konten/Profile verdrahten ---------- */
+  (function(){
+    var chip=$("prof-chip"),sheet=$("prof-sheet");
+    function paintChip(){var e=$("pc-emoji"),nm=$("pc-name");if(e)e.textContent=CURPROF.emoji||"🐔";if(nm)nm.textContent=CURPROF.name||"Vinni";}
+    paintChip();
+    function roleText(p){return p.mode==="starter"?"Lesen · Schreiben · Rechnen":"Voller Hof";}
+    function renderList(){var box=$("ps-list");if(!box)return;box.innerHTML="";
+      PROFILES.forEach(function(p){
+        var it=document.createElement("button");it.className="ps-item"+(p.id===CURID?" active":"");
+        it.innerHTML='<span class="ps-av">'+(p.emoji||"🐔")+'</span>'+
+          '<span><span class="ps-name">'+escT(p.name)+'</span><br><span class="ps-role">'+roleText(p)+(p.id===CURID?" · aktiv":"")+'</span></span>';
+        it.onclick=function(ev){if(ev.target&&ev.target.classList&&ev.target.classList.contains("ps-del"))return;switchProfile(p.id);};
+        if(p.id!=="vinni"){var del=document.createElement("button");del.className="ps-del";del.textContent="🗑️";del.title="Konto löschen";
+          del.onclick=function(ev){ev.stopPropagation();
+            if(!adultGate())return;
+            if(!window.confirm("Konto „"+p.name+"“ und seinen Fortschritt wirklich löschen?"))return;
+            try{window.localStorage.removeItem(pfxKey2(p.id,"vinni_huehnerhof_v1"));
+              window.localStorage.removeItem(pfxKey2(p.id,"vinni_secs"));
+              window.localStorage.removeItem(pfxKey2(p.id,"vinni_recent"));}catch(e){}
+            PROFILES=PROFILES.filter(function(x){return x.id!==p.id;});saveProfiles();
+            if(p.id===CURID){switchProfile("vinni");return;}
+            renderList();};
+          it.appendChild(del);}
+        box.appendChild(it);
+      });}
+    function pfxKey2(id,base){return id==="vinni"?base:base+"__"+id;}
+    function openSheet(){renderList();sheet.classList.add("show");}
+    function closeSheet(){sheet.classList.remove("show");}
+    if(chip)chip.onclick=openSheet;
+    var cl=$("ps-close");if(cl)cl.onclick=closeSheet;
+    if(sheet)sheet.addEventListener("click",function(e){if(e.target===sheet)closeSheet();});
+    var add=$("ps-add");if(add)add.onclick=function(){
+      var name=null;try{name=window.prompt("Name des Kindes:");}catch(e){return;}
+      if(name==null)return;name=String(name).trim().slice(0,14);if(!name){toast("Bitte einen Namen eingeben");return;}
+      var base=name.toLowerCase().replace(/[^a-z0-9]/g,"")||"kind";var id=base,k=1;
+      while(PROFILES.some(function(p){return p.id===id;})){id=base+(++k);}
+      var AV=["🐥","🐤","🦆","🐣","🐰","🦊","🐻","🐼","🦉","🐧"];
+      var emoji=AV[PROFILES.length%AV.length];
+      var mode="full";
+      try{mode=window.confirm("Soll „"+name+"“ im Lern-Modus starten?\n\nOK = Lern-Modus (nur Lesen, Schreiben, Rechnen – gut für die Kleinen)\nAbbrechen = voller Hof (alle Module)")?"starter":"full";}catch(e){}
+      PROFILES.push({id:id,name:name,emoji:emoji,mode:mode});saveProfiles();
+      switchProfile(id);
+    };
+  })();
+
+  /* Starter-Modus (z. B. Valli): Hof bleibt, aber nur Lesen/Schreiben/Rechnen zeigen */
+  if(STARTER){document.body.classList.add("starter");
+    var _hb=$("home-bubble");if(_hb)_hb.textContent="Hallo "+CURPROF.name+"! Was möchtest du üben – Lesen, Schreiben oder Rechnen? 🐥";}
 
   // Hof aus dem Speicher aufbauen
   renderDecos();renderFlock();refresh();Story.init();Story.render();AI.status($("home-ki-status"));doSave();
