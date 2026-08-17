@@ -1018,6 +1018,8 @@
   @keyframes twinkle{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
   .stat.bump{animation:statbump .45s ease}
   @keyframes statbump{35%{transform:scale(1.14)}70%{transform:scale(.97)}}
+  .stat.nudge{animation:statnudge .5s ease}
+  @keyframes statnudge{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
   .modsec[data-sec="action"] .sec-h{background:linear-gradient(#ffe9d9,#ffe0ca)}
   .modsec[data-sec="entdecken"] .sec-h{background:linear-gradient(#fff2d4,#ffeabc)}
   .modsec[data-sec="denken"] .sec-h{background:linear-gradient(#ece5fb,#e3d9f7)}
@@ -1693,6 +1695,11 @@
   function pick(a){return a[Math.floor(Math.random()*a.length)];}
   function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
   function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  /* Antwortmöglichkeiten mischen, damit die richtige Antwort nicht immer an derselben
+     Stelle steht (Vinni soll die Position nicht auswendig lernen können). */
+  function mixChoices(opts,correct){var idx=opts.map(function(_,i){return i;});
+    for(var i=idx.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=idx[i];idx[i]=idx[j];idx[j]=t;}
+    return {opts:idx.map(function(i){return opts[i];}),correct:idx.indexOf(correct)};}
   var gid=0;
   function surface(err){try{var b=$("errbar");if(!b){b=document.createElement("div");b.id="errbar";b.style.cssText="position:fixed;left:0;right:0;top:0;z-index:9999;background:#c0392b;color:#fff;font:600 13px/1.45 system-ui,-apple-system,sans-serif;padding:8px 12px;text-align:center";(document.body||document.documentElement).appendChild(b);}b.textContent="⚠️ "+(((err&&err.message)||err)+"");}catch(e){}}
   window.addEventListener("error",function(ev){surface((ev&&ev.message)||(ev&&ev.error)||"Fehler");});
@@ -1842,6 +1849,10 @@
     (G.badges||[]).forEach(function(cat){var b=KNOW_BADGES[cat];if(!b)return;var s=document.createElement("span");s.className="deco badge";s.style.cssText="position:absolute;"+b.style;s.textContent=b.emoji;layer.appendChild(s);});}
   function addChicken(breed,name){var ch={breed:breed,name:name};G.chickens.push(ch);refresh();doSave();var strip=$("home-flock");strip.appendChild(birdEl(ch,true));var bs=strip.querySelectorAll(".bird");while(bs.length>14){strip.removeChild(bs[0]);bs=strip.querySelectorAll(".bird");}celebrate();if(Story)Story.progress("hatch",1);}
   function addEgg(n){G.eggs+=n;refresh();doSave();celebrate();SFX.pop();flyReward("🥚","eggs");if(Story)Story.progress("egg",n);questTick();}
+  /* Bei falschen Antworten wird (nur bei den großen Profilen, nicht bei den Kleinen) ein Ei abgezogen –
+     so lohnt es sich, erst zu lesen und zu denken. Nie unter 0. */
+  function loseEgg(n){if(STARTER)return 0;n=n||1;var before=G.eggs||0;G.eggs=Math.max(0,before-n);var lost=before-G.eggs;
+    refresh();doSave();if(lost>0){toast("−"+lost+" 🥚 · erst in Ruhe lesen");try{var el=$("eggs"),p=el&&el.closest?el.closest(".stat"):null;if(p){p.classList.remove("nudge");void p.offsetWidth;p.classList.add("nudge");}}catch(e){}}return lost;}
   function spend(n){if(G.eggs<n)return false;G.eggs-=n;refresh();doSave();return true;}
   function addCoin(n){G.coins=(G.coins||0)+n;refresh();doSave();SFX.coin();flyReward("🪙","coins");if(Story)Story.progress("coin",n);}
   function spendCoin(n){if((G.coins||0)<n)return false;G.coins-=n;refresh();doSave();return true;}
@@ -2217,7 +2228,7 @@
     function next(){st.cur=gen();st.input="";st.hints=0;st.wrong=0;$("m-prompt").textContent=st.cur.prompt||"";$("m-eggrow").textContent=st.cur.eggs||"";$("m-eq").textContent=st.cur.eq||"";render();}
     function render(){var box=$("m-ans");if(st.input===""){box.textContent="?";box.classList.add("empty");}else{box.textContent=st.input;box.classList.remove("empty");}$("m-go").disabled=(st.input==="");}
     function ok(){st.streak++;var r=1+Math.floor((st.level-1)/2);addEgg(r);say(pick(praise),true);toast("Richtig! +"+r+" 🥚");if(st.streak>=3&&st.level<st.max){st.level++;st.streak=0;G.mLevel=st.level;doSave();setTimeout(function(){toast("Stufe "+st.level+"! 🎉",true);say("Wusstest du? "+pick(facts),true);},900);setTimeout(next,1700);}else setTimeout(next,850);}
-    function bad(){st.wrong++;st.streak=0;st.input="";render();if(st.wrong===1){say("Fast! Kein Problem – probier es nochmal. 💡 hilft.");toast("Versuch's nochmal 🙂");}else{if(st.level>1){st.level--;G.mLevel=st.level;doSave();}say("Das ist knifflig, oder? Das heißt: dein Gehirn wächst gerade. Atme durch 🌬️ oder nimm 💡.");pulse($("m-breathe"));}}
+    function bad(){st.wrong++;st.streak=0;st.input="";loseEgg(1);render();if(st.wrong===1){say("Fast! Kein Problem – probier es nochmal. 💡 hilft.");}else{if(st.level>1){st.level--;G.mLevel=st.level;doSave();}say("Das ist knifflig, oder? Das heißt: dein Gehirn wächst gerade. Atme durch 🌬️ oder nimm 💡.");pulse($("m-breathe"));}}
     function key(k){if(k==="⌫"){st.input=st.input.slice(0,-1);render();return;}if(k==="✓"){if(st.input==="")return;parseInt(st.input,10)===st.cur.answer?ok():bad();return;}if(st.input.length<5){st.input+=k;render();}}
     function buildPad(){var pad=$("m-pad"),keys=["1","2","3","4","5","6","7","8","9","⌫","0","✓"];keys.forEach(function(k){var b=document.createElement("button");b.className="key";b.textContent=k;if(k==="⌫")b.classList.add("del");if(k==="✓"){b.classList.add("go");b.id="m-go";}b.onclick=function(){key(k);};pad.appendChild(b);});}
     return {start:function(){buildPad();next();},say0:function(){},hint:function(){if(st.cur){say("💡 "+(st.cur.hints[Math.min(st.hints,st.cur.hints.length-1)]||"Zähl langsam nach."));st.hints++;if(st.hints>=3)pulse($("m-breathe"));}}};
@@ -2395,7 +2406,9 @@
       else{st.mode="new";st.target=null;}
       var fallback=(st.mode==="revisit"&&st.target)?function(){return st.target;}:bankPick;
       askAI().catch(fallback).then(function(q){st.cur=q;seenAdd(q.question);renderQ(q);st.busy=false;}).catch(function(){st.cur=(st.mode==="revisit"&&st.target)?st.target:bankPick();renderQ(st.cur);st.busy=false;});}
-    function renderQ(q){$("e-card").innerHTML='<div class="qtopic">'+esc(q.topic||st.topic)+'</div><div class="question">'+esc(q.question)+'</div><div class="options" id="e-opts"></div>';var opts=$("e-opts");q.options.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};opts.appendChild(b);});say("Was meinst du, Vinni?");$("e-next").style.display="none";var dd=$("e-deeper");if(dd)dd.style.display="none";}
+    function renderQ(q){
+      var mx=mixChoices(q.options,q.correct);q.options=mx.opts;q.correct=mx.correct; // Reihenfolge mischen
+      $("e-card").innerHTML='<div class="qtopic">'+esc(q.topic||st.topic)+'</div><div class="question">'+esc(q.question)+'</div><div class="options" id="e-opts"></div>';var opts=$("e-opts");q.options.forEach(function(txt,i){var b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=function(){choose(i,b);};opts.appendChild(b);});say("Was meinst du, Vinni?");$("e-next").style.display="none";var dd=$("e-deeper");if(dd)dd.style.display="none";}
     function choose(i,btn){if(st.answered)return;
       if(i===st.cur.correct){
         st.answered=true;btn.classList.add("right");document.querySelectorAll("#e-opts .opt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});
@@ -2410,7 +2423,7 @@
         }
         doSave();$("e-next").style.display="";st.deepLevel=0;var dd=$("e-deeper");if(dd){dd.textContent="🔍 Tiefer graben";dd.style.display="";}
       }else{
-        btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.firstTry=false;st.streak=0;
+        btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.firstTry=false;st.streak=0;loseEgg(1);
         if(st.mode!=="revisit")revisitAdd(st.cur);
         if(st.wrong>=2){if(st.diff>1){st.diff--;G.eDiff=st.diff;}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡. Du schaffst das.");pulse($("e-breathe"));}
         else{say("Fast! Probier eine andere Antwort. Tipp: "+(st.cur.hint||"Lies die Frage nochmal."));}
@@ -2418,7 +2431,7 @@
       }}
     function buildTopics(){var c=$("e-topics");TOPICS.forEach(function(t){var b=document.createElement("button");b.className="topic"+(t===st.topic?" on":"");b.textContent=t;b.onclick=function(){if(st.busy)return;st.topic=t;document.querySelectorAll("#e-topics .topic").forEach(function(x){x.classList.remove("on");});b.classList.add("on");load();};c.appendChild(b);});}
     function draw(){st.mode="new";st.target=null;return askAI().catch(function(){return bankPick();}).then(function(qq){if(qq&&qq.question)seenAdd(qq.question);return qq;});}
-    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen,localQ:function(){var qq=bankPick();return qq?{q:qq.question,opts:qq.options.slice(),correct:qq.correct,cat:catFor(qq.topic)}:null;}};
+    return {start:function(){buildTopics();renderKiStatus();var kb=$("e-ki-btn");if(kb)kb.onclick=setupKi;$("e-next").onclick=function(){load();};load();},say0:function(){},hint:function(){if(st.cur)say("💡 "+(st.cur.hint||"Lies die Frage nochmal langsam."));},draw:draw,deeper:deepen,localQ:function(){var qq=bankPick();if(!qq)return null;var mx=mixChoices(qq.options,qq.correct);return {q:qq.question,opts:mx.opts,correct:mx.correct,cat:catFor(qq.topic)};}};
   })();
 
   /* ===================== PATTERN / LOGIC MODULE ===================== */
@@ -2473,7 +2486,7 @@
         if(pst.streak>=3&&pst.level<pst.max){pst.level++;pst.streak=0;G.pLevel=pst.level;doSave();setTimeout(function(){toast("Schwerere Muster! ⭐",true);},900);}
         setTimeout(next,950);
       } else {
-        btn.classList.add("wrong");btn.disabled=true;pst.wrong++;pst.streak=0;
+        btn.classList.add("wrong");btn.disabled=true;pst.wrong++;pst.streak=0;loseEgg(1);
         if(pst.wrong>=2){if(pst.level>1){pst.level--;G.pLevel=pst.level;doSave();}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡. Du schaffst das.");pulse($("p-breathe"));}
         else say("Fast! Schau nochmal genau hin. Tipp: "+(pst.cur.hint||"Vergleiche die Bilder in Ruhe."));
       }
@@ -2577,7 +2590,7 @@
         if(ust.streak>=3&&ust.level<ust.max){ust.level++;ust.streak=0;G.uLevel=ust.level;doSave();setTimeout(function(){toast("Schwerere Uhrzeiten! ⭐",true);},900);}
         setTimeout(next,1050);
       } else {
-        btn.classList.add("wrong");btn.disabled=true;ust.wrong++;ust.streak=0;
+        btn.classList.add("wrong");btn.disabled=true;ust.wrong++;ust.streak=0;loseEgg(1);
         if(ust.wrong>=2){if(ust.level>1){ust.level--;G.uLevel=ust.level;doSave();}say("Das ist knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡.");pulse($("u-breathe"));}
         else say("Fast! "+ust.cur.hint);
       }
@@ -2885,7 +2898,7 @@
     function choose(i,btn){
       if(st.answered)return;
       if(i===st.cur.correct){st.answered=true;btn.classList.add("right");document.querySelectorAll("#iq-opts .iqopt").forEach(function(o){if(o!==btn)o.classList.add("dim");o.disabled=true;});st.streak++;var r=1+Math.floor((st.level-1)/2);addEgg(r);say(pick(praise),true);toast("Richtig! +"+r+" 🥚");if(st.streak>=3&&st.level<st.max){st.level++;st.streak=0;G.iqLevel=st.level;doSave();setTimeout(function(){toast("Noch kniffliger! ⭐",true);},900);}setTimeout(next,1100);}
-      else{btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;if(st.wrong>=2){if(st.level>1){st.level--;G.iqLevel=st.level;doSave();}say("Das ist wirklich knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡.");pulse($("iq-breathe"));}else say("Fast! "+st.cur.hint);}
+      else{btn.classList.add("wrong");btn.disabled=true;st.wrong++;st.streak=0;loseEgg(1);if(st.wrong>=2){if(st.level>1){st.level--;G.iqLevel=st.level;doSave();}say("Das ist wirklich knifflig – und das ist okay! Atme durch 🌬️ oder nimm 💡.");pulse($("iq-breathe"));}else say("Fast! "+st.cur.hint);}
     }
     return {start:function(){next();},say0:function(){},hint:function(){if(st.cur)say("💡 "+st.cur.hint);}};
   })();
@@ -3197,7 +3210,7 @@
         var msg="Richtig! ⭐ +"+(10*level());
         if(run.timed){var el=Date.now()-run.qStart,c=el<4000?3:el<8000?2:1;addCoin(c);msg="⚡ Schnell! +"+c+" 🪙  ⭐ +"+(10*level());}
         refreshBar();celebrate();say(pick(PRAISE)+" "+(t.explain||""),true);if(run.streak%5===0){addEgg(3);toast("🔥 "+run.streak+"er-Serie! +3 🥚",true);}else toast(msg);setTimeout(function(){if(current==="game"&&run.answered)next();},950);}
-      else{b.classList.add("wrong");run.streak=0;refreshBar();say("Knapp daneben! "+(t.explain||"")+" Macht nichts – weiter geht's!");$("g-next").style.display="";}}
+      else{b.classList.add("wrong");run.streak=0;loseEgg(1);refreshBar();say("Knapp daneben! "+(t.explain||"")+" Macht nichts – weiter geht's!");$("g-next").style.display="";}}
     function next(){run.answered=false;stopTimer();resetBar();var c=drawCat(),L=level();$("g-opts").innerHTML="";if(c.know){$("g-badge").textContent="🦉 Wissen";$("g-prompt").innerHTML=SPIN;}Promise.resolve().then(function(){return c.g(L);}).then(function(t){if(current!=="game")return;run.cur=t;render(t);}).catch(function(){var t=gMath(1);run.cur=t;render(t);});}
     function start(){stopTimer();kiStatus();var kb=$("g-ki-btn");if(kb)kb.onclick=setupKi;run.score=0;run.streak=0;run.best=(G.gameBest||0);run.answered=false;$("g-timebar").classList.toggle("on",run.timed);resetBar();refreshBar();say(run.timed?"Zeitmodus! Schnell antworten gibt Münzen 🪙 – los!":"Bereit? Ich mische alle Spiele – pass gut auf! 🎮",true);next();}
     return {start:start,next:next,setMode:setMode};
@@ -3261,7 +3274,8 @@
         if(!o||typeof o.question!=="string"||!Array.isArray(o.options)||o.options.length!==3||typeof o.correct!=="number"||o.correct<0||o.correct>2)throw new Error("bad");
         recent.push(o.question);if(recent.length>24)recent.shift();
         if(o.topic){recentTopics.push(String(o.topic));if(recentTopics.length>10)recentTopics.shift();}
-        return {q:String(o.question),opts:o.options.map(String),correct:o.correct,cat:catFor(o.topic)};
+        var mx=mixChoices(o.options.map(String),o.correct);
+        return {q:String(o.question),opts:mx.opts,correct:mx.correct,cat:catFor(o.topic)};
       });
     }
     return {active:active,status:status,setup:setup,quiz:quiz,level:level};
